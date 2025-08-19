@@ -18,13 +18,20 @@ export const userTweaks = {
   },
 
   // 📏 SIZES
-  electronSize: 20,        // Normal electron radius
-  electronHoverSize: 30,  // Size when you hover over it
+  electronSize: 18,        // Normal electron radius
+  electronHoverSize: 22,  // Size when you hover over it
   nucleusSize: 40,        // Center "A" circle size
 
   // ⏱️ TIMING
   hoverAnimationSpeed: 0.15,  // How fast electrons grow/shrink on hover (seconds)
   baselineResetAnimationSpeed: 0.15, // Duration for resetting to baseline (none state)
+
+  // ⚙️ DRAG PHYSICS
+  dragSnapDuration: 0.5,     // How long the snap-back lasts (s)
+  dragElastic: {
+    amplitude: 0.20,          // Elastic ease amplitude (0.1–1.5 typical)
+    period: 0.2             // Elastic ease period (smaller = faster wobble)
+  },
 
   // 🎯 SHELL DISTANCES (from center)
   shellDistances: {
@@ -56,7 +63,7 @@ export const userTweaks = {
   viewportPadding: 80,      // Safe area around edges
 
   // 🔍 OVERALL ATOM SCALE
-  atomScale: 1.25,           // 1.0 = normal, 1.5 = 50% bigger, 0.8 = 20% smaller
+  atomScale: 1,           // 1.0 = normal, 1.5 = 50% bigger, 0.8 = 20% smaller
 
   // 🎯 INTERACTION
   // Shell hover hitbox tolerance (in pixels).

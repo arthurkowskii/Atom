@@ -24,26 +24,30 @@ const electronsByDomain = projects.reduce((acc, project) => {
 		<meta name="generator" content={Astro.generator} />
 		<title>Atom Portfolio</title>
 		<style>
-			body {
-				margin: 0;
-				padding: 0;
-				background: #fff;
-				font-family: system-ui, sans-serif;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				min-height: 100vh;
-			}
-			
-			.atom-container {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-			}
-			
-			#atom-svg {
-				cursor: grab;
-			}
+            body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                font-family: system-ui, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                overflow: hidden; /* prevent page scroll white borders during drag */
+                user-select: none; /* avoid text selection while dragging */
+            }
+            
+            .atom-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            #atom-svg {
+                cursor: grab;
+                touch-action: none; /* prevent touch scrolling/zoom white borders */
+                will-change: transform;
+            }
 			
 			.electron {
 				cursor: pointer;
@@ -170,6 +174,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 
 		<script>
 			import { gsap } from 'gsap';
+			import { Draggable } from 'gsap/Draggable';
 			import { OrbitSystem } from '../atom/core/OrbitSystem.js';
 			import atomConfig from '../atom.config.js';
 			
@@ -184,10 +189,28 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				const orbitSystem = new OrbitSystem(atomConfig);
 				orbitSystem.init();
 				orbitSystem.start();
+
+				// Fit SVG to viewport with uniform scale while keeping math consistent
+				const svgEl = document.getElementById('atom-svg');
+				const baseW = atomConfig.viewport.width;
+				const baseH = atomConfig.viewport.height;
+				function fitToViewport() {
+					const vw = window.innerWidth;
+					const vh = window.innerHeight;
+					const scale = Math.min(vw / baseW, vh / baseH);
+					svgEl.style.transformOrigin = 'center center';
+					svgEl.style.transform = `scale(${scale})`;
+				}
+				fitToViewport();
+				window.addEventListener('resize', fitToViewport);
 				
+				// Register GSAP Draggable
+				gsap.registerPlugin(Draggable);
+
 				// Add hover effects to electrons (includes shell effects)
 				const electrons = document.querySelectorAll('.electron');
 				const shells = document.querySelectorAll('.shell');
+				let dragLock = false; // Suppress hover logic while dragging
 				
 				// IMMEDIATE STATE MANAGER - No timeouts, no race conditions
 				const hoverStateManager = {
@@ -345,6 +368,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 					const shellIndex = parseInt(electron.dataset.shell);
 					
 					electron.addEventListener('mouseenter', () => {
+						if (dragLock) return;
 						// Record electron event timing to prevent mousemove conflicts
 						lastElectronEventTime = performance.now();
 						// Pass the actual electron element to the state manager
@@ -352,10 +376,59 @@ const electronsByDomain = projects.reduce((acc, project) => {
 					});
 					
 					electron.addEventListener('mouseleave', () => {
+						if (dragLock) return;
 						// Check if we're still in the shell's tolerance zone via distance calculation
 						// The mousemove handler will determine the correct next state
 						// For now, assume we're leaving completely (will be corrected by mousemove if needed)
 						hoverStateManager.setState('none');
+					});
+
+					// Minimal drag-and-drop (no tether visuals)
+					let pressTime = 0;
+					let maxTravel = 0;
+					let startX = 0, startY = 0;
+					Draggable.create(electron, {
+						type: 'x,y',
+						onPress: function () {
+							dragLock = true;
+							pressTime = performance.now();
+							startX = parseFloat(gsap.getProperty(electron, 'x')) || 0;
+							startY = parseFloat(gsap.getProperty(electron, 'y')) || 0;
+							maxTravel = 0;
+							// Pause only this electron’s motion
+							orbitSystem.pauseElectron(electron);
+						},
+						onDrag: function () {
+							const curX = parseFloat(gsap.getProperty(electron, 'x')) || 0;
+							const curY = parseFloat(gsap.getProperty(electron, 'y')) || 0;
+							const dx = curX - startX;
+							const dy = curY - startY;
+							const dist = Math.hypot(dx, dy);
+							maxTravel = Math.max(maxTravel, dist);
+						},
+						onRelease: function () {
+							const releaseTime = performance.now();
+							const clickThresholdPx = 8;
+							const clickThresholdMs = 180;
+							const isClick = maxTravel < clickThresholdPx && (releaseTime - pressTime) < clickThresholdMs;
+                    const snapBack = () => {
+                        const amp = atomConfig.timing.dragElastic?.amplitude ?? 0.8;
+                        const per = atomConfig.timing.dragElastic?.period ?? 0.25;
+                        const elasticEase = `elastic.out(${amp}, ${per})`;
+                        gsap.to(electron, {
+                            x: startX,
+                            y: startY,
+                            duration: atomConfig.timing.dragSnapDuration ?? atomConfig.timing.hoverDuration,
+                            ease: elasticEase,
+                            onComplete: () => {
+                                orbitSystem.resumeElectron(electron);
+                                setTimeout(() => { dragLock = false; }, 80);
+                            }
+                        });
+                    };
+							// For now, treat both click and drag release as snap-back
+							snapBack();
+						}
 					});
 				});
 				
@@ -378,11 +451,8 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				// Capture mouse position (high frequency)
 				svgContainer.addEventListener('mousemove', (e) => {
 					const rect = svgContainer.getBoundingClientRect();
-					// Store only the LATEST mouse position
-					pendingMousePosition = {
-						x: e.clientX - rect.left,
-						y: e.clientY - rect.top
-					};
+					// Store only the LATEST mouse position (client coords)
+					pendingMousePosition = { clientX: e.clientX, clientY: e.clientY, rectLeft: rect.left, rectTop: rect.top, rectWidth: rect.width, rectHeight: rect.height };
 					
 					// Schedule processing if not already scheduled (throttled to 60fps)
 					if (!rafId) {
@@ -397,10 +467,22 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						return;
 					}
 					
-					const mouseX = pendingMousePosition.x;
-					const mouseY = pendingMousePosition.y;
-					const centerX = atomConfig.viewport.centerX;
-					const centerY = atomConfig.viewport.centerY;
+					// Skip hover processing while dragging
+					if (dragLock) {
+						pendingMousePosition = null;
+						rafId = null;
+						return;
+					}
+					
+					const rect = svgContainer.getBoundingClientRect();
+					const viewW = baseW;
+					const viewH = baseH;
+					const scaleX = viewW / rect.width;
+					const scaleY = viewH / rect.height;
+					const mouseX = (pendingMousePosition.clientX - rect.left) * scaleX;
+					const mouseY = (pendingMousePosition.clientY - rect.top) * scaleY;
+					const centerX = viewW / 2;
+					const centerY = viewH / 2;
 					
 					// Calculate SQUARED distance (faster - no Math.sqrt needed)
 					const distanceSquared = (mouseX - centerX) ** 2 + (mouseY - centerY) ** 2;

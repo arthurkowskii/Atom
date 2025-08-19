@@ -75,9 +75,10 @@ export default {
   timing: {
     hoverDuration: userTweaks.hoverAnimationSpeed,
     baselineResetDuration: userTweaks.baselineResetAnimationSpeed,
-    dragSpring: {          // Snap-back physics
-      tension: 180,
-      friction: 12
+    dragSnapDuration: userTweaks.dragSnapDuration ?? 0.5,
+    dragElastic: {        // Elastic ease parameters for snap-back
+      amplitude: userTweaks.dragElastic?.amplitude ?? 0.8,
+      period: userTweaks.dragElastic?.period ?? 0.25
     },
     tetherUpdate: 0.016,   // 60fps for tether rendering
     pauseEasing: "power2.out"
