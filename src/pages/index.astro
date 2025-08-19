@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import atomConfig from '../atom.config.js';
+import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
 
 // Get all projects and group by domain to create shells dynamically
@@ -126,13 +127,15 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						<g data-shell={shellIndex} data-domain={domain}>
 							<!-- Shell orbit path -->
 							<circle 
+								class="shell"
 								cx={atomConfig.viewport.centerX}
 								cy={atomConfig.viewport.centerY}
 								r={shell.radius}
 								fill="none"
 								stroke={shell.color}
 								stroke-width={shell.strokeWidth}
-								opacity="0.3"
+								style={`opacity: ${userTweaks.shell.default.opacity}`}
+								data-shell-index={shellIndex}
 							/>
 							
 							<!-- Electrons on this shell -->
@@ -182,23 +185,167 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				orbitSystem.init();
 				orbitSystem.start();
 				
-				// Add hover effects to electrons
+				// Add hover effects to electrons (includes shell effects)
 				const electrons = document.querySelectorAll('.electron');
+				const shells = document.querySelectorAll('.shell');
+				
+				// Track hover states to prevent conflicts
+				const hoverStates = {
+					hoveredElectron: null,
+					hoveredShell: null,
+					shellsInHoverState: new Set(),
+					hoverTimeouts: new Map() // Debounce rapid enter/leave events
+				};
+				
+				// Helper function to reset shell and its electrons to default state
+				function resetShellToDefault(shellIndex) {
+					const shell = shells[shellIndex];
+					const shellConfig = atomConfig.shells[shellIndex];
+					
+					console.log(`🔄 Resetting shell ${shellIndex} to default`);
+					
+					if (!shell || !shellConfig) return;
+					
+					// Reset shell appearance
+					gsap.to(shell, {
+						attr: { 'stroke-width': shellConfig.strokeWidth },
+						opacity: shellConfig.defaultOpacity, // Back to original shell opacity
+						duration: atomConfig.timing.hoverDuration,
+						ease: 'power2.out',
+						onComplete: () => console.log(`✅ Shell ${shellIndex} reset complete`)
+					});
+					
+					// Resume motion and reset all electrons on this shell
+					orbitSystem.resumeShell(shellIndex);
+					const shellElectrons = document.querySelectorAll(`[data-shell="${shellIndex}"]`);
+					shellElectrons.forEach(e => {
+						gsap.to(e, {
+							opacity: 1.0,
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out'
+						});
+					});
+					
+					hoverStates.shellsInHoverState.delete(shellIndex);
+				}
+				
+				// Helper function to apply shell hover effects
+				function applyShellHoverEffects(shellIndex) {
+					const shell = shells[shellIndex];
+					const shellConfig = atomConfig.shells[shellIndex];
+					
+					console.log(`📝 Applying hover to shell ${shellIndex}:`, {
+						shell, 
+						shellConfig, 
+						hoverStrokeWidth: shellConfig?.hoverStrokeWidth,
+						hoverOpacity: shellConfig?.hoverOpacity,
+						alreadyHovered: hoverStates.shellsInHoverState.has(shellIndex)
+					});
+					
+					if (!shell || !shellConfig || hoverStates.shellsInHoverState.has(shellIndex)) return;
+					
+					// Apply shell appearance changes
+					gsap.to(shell, {
+						attr: { 'stroke-width': shellConfig.hoverStrokeWidth },
+						opacity: shellConfig.hoverOpacity,
+						duration: atomConfig.timing.hoverDuration,
+						ease: 'power2.out',
+						onComplete: () => console.log(`✅ Shell ${shellIndex} hover animation complete`)
+					});
+					
+					// Pause electrons and fade them
+					orbitSystem.pauseShell(shellIndex);
+					const shellElectrons = document.querySelectorAll(`[data-shell="${shellIndex}"]`);
+					console.log(`Found ${shellElectrons.length} electrons on shell ${shellIndex}`);
+					shellElectrons.forEach(e => {
+						gsap.to(e, {
+							opacity: shellConfig.electronHoverOpacity,
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out'
+						});
+					});
+					
+					hoverStates.shellsInHoverState.add(shellIndex);
+				}
+				
 				electrons.forEach(electron => {
+					const shellIndex = parseInt(electron.dataset.shell);
+					
 					electron.addEventListener('mouseenter', () => {
+						console.log(`🔴 Electron hover: shell ${shellIndex}`);
+						hoverStates.hoveredElectron = electron;
+						
+						// Apply electron hover effect (grow)
 						gsap.to(electron, {
 							attr: { r: atomConfig.electrons.hoverRadius },
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out'
+						});
+						
+						// Apply shell hover effects
+						applyShellHoverEffects(shellIndex);
+						
+						// Keep the hovered electron at full opacity
+						gsap.to(electron, {
+							opacity: 1.0,
 							duration: atomConfig.timing.hoverDuration,
 							ease: 'power2.out'
 						});
 					});
 					
 					electron.addEventListener('mouseleave', () => {
+						console.log(`🔵 Electron leave: shell ${shellIndex}`);
+						hoverStates.hoveredElectron = null;
+						
+						// Reset electron size
 						gsap.to(electron, {
 							attr: { r: atomConfig.electrons.radius },
 							duration: atomConfig.timing.hoverDuration,
 							ease: 'power2.out'
 						});
+						
+						// Debounced shell reset
+						const timeoutId = setTimeout(() => {
+							if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
+								resetShellToDefault(shellIndex);
+							}
+							hoverStates.hoverTimeouts.delete(shellIndex);
+						}, 50);
+						
+						hoverStates.hoverTimeouts.set(shellIndex, timeoutId);
+					});
+				});
+				
+				// Add hover effects to shells with debouncing
+				shells.forEach((shell) => {
+					const shellIndex = parseInt(shell.dataset.shellIndex);
+					
+					shell.addEventListener('mouseenter', () => {
+						console.log(`🟡 Shell hover: ${shellIndex}`);
+						
+						// Clear any pending reset timeout
+						if (hoverStates.hoverTimeouts.has(shellIndex)) {
+							clearTimeout(hoverStates.hoverTimeouts.get(shellIndex));
+							hoverStates.hoverTimeouts.delete(shellIndex);
+						}
+						
+						hoverStates.hoveredShell = shell;
+						applyShellHoverEffects(shellIndex);
+					});
+					
+					shell.addEventListener('mouseleave', () => {
+						console.log(`🟢 Shell leave: ${shellIndex}`);
+						hoverStates.hoveredShell = null;
+						
+						// Debounce the reset - wait 50ms to see if we re-enter
+						const timeoutId = setTimeout(() => {
+							if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
+								resetShellToDefault(shellIndex);
+							}
+							hoverStates.hoverTimeouts.delete(shellIndex);
+						}, 50);
+						
+						hoverStates.hoverTimeouts.set(shellIndex, timeoutId);
 					});
 				});
 				
@@ -206,6 +353,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				window.orbitSystem = orbitSystem;
 				
 				console.log('Orbit system started - electrons should be moving around static shells');
+				console.log(`Found ${electrons.length} electrons and ${shells.length} shells for hover effects`);
 			});
 		</script>
 	</body>

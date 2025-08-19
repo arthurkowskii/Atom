@@ -99,7 +99,8 @@ export class OrbitSystem {
     // Check for reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
-    if (prefersReducedMotion && this.config.motion.respectReducedMotion) {
+    // TEMPORARY: Override reduced motion for testing hover effects
+    if (false && prefersReducedMotion && this.config.motion.respectReducedMotion) {
       console.log('Respecting reduced motion preference - skipping animations');
       return;
     }

@@ -35,8 +35,20 @@ export const userTweaks = {
   // 📐 ELECTRON SPACING
   minElectronDistance: 30,   // Minimum degrees between electrons on same shell
 
-  // ⭕ SHELL APPEARANCE
-  shellThickness: 3,        // Shell ring stroke width
+  // ⭕ SHELL STATES
+  shell: {
+    // Default state (resting)
+    default: {
+      thickness: 3,           // Shell ring stroke width
+      opacity: 0.3           // Shell opacity (subtle visibility)
+    },
+    // Hover state (focused)
+    hover: {
+      thickness: 4,           // Shell thickness on hover (subtle increase)
+      opacity: 1,           // Shell opacity on hover (modern transparency)
+      electronOpacity: 1    // Electrons opacity when shell hovered
+    }
+  },
 
   // 🖼️ VIEWPORT (prevent electron clipping)
   viewportSize: 900,        // SVG width/height (increase if electrons get cut off)

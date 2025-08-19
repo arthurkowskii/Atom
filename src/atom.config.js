@@ -21,21 +21,33 @@ export default {
       radius: userTweaks.shellDistances.inner * userTweaks.atomScale,
       speed: userTweaks.electronSpeeds.innerShell,          // Speed unchanged
       direction: 1,        // 1 = clockwise, -1 = counterclockwise
-      strokeWidth: userTweaks.shellThickness * userTweaks.atomScale,
+      strokeWidth: userTweaks.shell.default.thickness * userTweaks.atomScale,
+      hoverStrokeWidth: userTweaks.shell.hover.thickness * userTweaks.atomScale,
+      defaultOpacity: userTweaks.shell.default.opacity,
+      hoverOpacity: userTweaks.shell.hover.opacity,
+      electronHoverOpacity: userTweaks.shell.hover.electronOpacity,
       color: "#000"
     },
     {
       radius: userTweaks.shellDistances.middle * userTweaks.atomScale,
       speed: userTweaks.electronSpeeds.middleShell,         // Speed unchanged
       direction: -1,       // Alternating direction for rhythm
-      strokeWidth: userTweaks.shellThickness * userTweaks.atomScale,
+      strokeWidth: userTweaks.shell.default.thickness * userTweaks.atomScale,
+      hoverStrokeWidth: userTweaks.shell.hover.thickness * userTweaks.atomScale,
+      defaultOpacity: userTweaks.shell.default.opacity,
+      hoverOpacity: userTweaks.shell.hover.opacity,
+      electronHoverOpacity: userTweaks.shell.hover.electronOpacity,
       color: "#000"
     },
     {
       radius: userTweaks.shellDistances.outer * userTweaks.atomScale,
       speed: userTweaks.electronSpeeds.outerShell,          // Speed unchanged
       direction: 1,
-      strokeWidth: userTweaks.shellThickness * userTweaks.atomScale,
+      strokeWidth: userTweaks.shell.default.thickness * userTweaks.atomScale,
+      hoverStrokeWidth: userTweaks.shell.hover.thickness * userTweaks.atomScale,
+      defaultOpacity: userTweaks.shell.default.opacity,
+      hoverOpacity: userTweaks.shell.hover.opacity,
+      electronHoverOpacity: userTweaks.shell.hover.electronOpacity,
       color: "#000"
     }
   ],
