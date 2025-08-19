@@ -205,39 +205,57 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						this.applyStateChange();
 					},
 					
-					applyStateChange() {
-						// Immediately apply all visual changes
-						this.exitPreviousState();
-						this.enterCurrentState();
-					},
+              applyStateChange() {
+                // Immediately apply all visual changes
+                this.exitPreviousState();
+                this.enterCurrentState();
+              },
 					
-					exitPreviousState() {
-						if (this.previousState === 'none') return;
-						
-						// KILL ALL EXISTING ANIMATIONS IMMEDIATELY
-						gsap.killTweensOf(shells);
-						gsap.killTweensOf(document.querySelectorAll('.electron'));
-						
-						if (this.previousState.startsWith('shell-')) {
-							const shellIndex = parseInt(this.previousState.split('-')[1]);
-							this.resetShellEffects(shellIndex);
-						} else if (this.previousState.startsWith('electron-')) {
-							const shellIndex = parseInt(this.previousState.split('-')[1]);
-							this.resetElectronEffects(shellIndex);
-						}
-					},
-					
-					enterCurrentState() {
-						if (this.currentState === 'none') return;
-						
-						if (this.currentState.startsWith('shell-')) {
-							const shellIndex = parseInt(this.currentState.split('-')[1]);
-							this.applyShellEffects(shellIndex);
-						} else if (this.currentState.startsWith('electron-')) {
-							const shellIndex = parseInt(this.currentState.split('-')[1]);
-							this.applyElectronEffects(shellIndex, this.currentElectron);
-						}
-					},
+              exitPreviousState() {
+                if (this.previousState === 'none') return;
+                
+                // KILL ALL EXISTING ANIMATIONS IMMEDIATELY
+                gsap.killTweensOf(shells);
+                // Do not kill electron tweens; rely on overwrite for smooth transitions
+                
+                if (this.previousState.startsWith('shell-')) {
+                  const shellIndex = parseInt(this.previousState.split('-')[1]);
+                  this.resetShellEffects(shellIndex);
+                } else if (this.previousState.startsWith('electron-')) {
+                  const shellIndex = parseInt(this.previousState.split('-')[1]);
+                  this.resetElectronEffects(shellIndex);
+                }
+              },
+              
+              enterCurrentState() {
+              if (this.currentState === 'none') {
+                // Smoothly animate all electrons to baseline; overwrite prevents mid-state glitches
+                gsap.to(document.querySelectorAll('.electron'), {
+                  opacity: 1.0,
+                  attr: { r: atomConfig.electrons.radius },
+                  duration: 0.15,
+                  ease: 'power2.out',
+                  overwrite: 'auto'
+                });
+                return;
+              }
+                
+                if (this.currentState.startsWith('shell-')) {
+                  const shellIndex = parseInt(this.currentState.split('-')[1]);
+                  // Ensure electrons are at baseline when only shell is hovered
+                  gsap.to(document.querySelectorAll('.electron'), {
+                    opacity: 1.0,
+                    attr: { r: atomConfig.electrons.radius },
+                    duration: 0.12,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                  });
+                  this.applyShellEffects(shellIndex);
+                } else if (this.currentState.startsWith('electron-')) {
+                  const shellIndex = parseInt(this.currentState.split('-')[1]);
+                  this.applyElectronEffects(shellIndex, this.currentElectron);
+                }
+              },
 					
 					applyShellEffects(shellIndex) {
 						const shell = shells[shellIndex];
@@ -253,36 +271,37 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						});
 					},
 					
-					applyElectronEffects(shellIndex, electron) {
-						const shell = shells[shellIndex];
-						const shellConfig = atomConfig.shells[shellIndex];
-						if (!shell || !shellConfig || !electron) return;
-						
-						console.log(`🔴 Applying electron effects for shell ${shellIndex}`);
-						
-						// Apply shell effects
-						this.applyShellEffects(shellIndex);
-						
-						// Electron growth
-						gsap.to(electron, {
-							attr: { r: atomConfig.electrons.hoverRadius },
-							duration: 0.15,
-							ease: 'power2.out'
-						});
-						
-						// Motion pause
-						orbitSystem.pauseShell(shellIndex);
-						
-						// Global spotlight
-						const allElectrons = document.querySelectorAll('.electron');
-						allElectrons.forEach(e => {
-							if (e === electron) {
-								gsap.to(e, { opacity: 1.0, duration: 0.15, ease: 'power2.out' });
-							} else {
-								gsap.to(e, { opacity: shellConfig.electronHoverOpacity, duration: 0.15, ease: 'power2.out' });
-							}
-						});
-					},
+              applyElectronEffects(shellIndex, electron) {
+                const shell = shells[shellIndex];
+                const shellConfig = atomConfig.shells[shellIndex];
+                if (!shell || !shellConfig || !electron) return;
+                
+                console.log(`🔴 Applying electron effects for shell ${shellIndex}`);
+                
+                // Apply shell effects
+                this.applyShellEffects(shellIndex);
+                
+                // Electron growth
+                gsap.to(electron, {
+                  attr: { r: atomConfig.electrons.hoverRadius },
+                  duration: 0.15,
+                  ease: 'power2.out',
+                  overwrite: 'auto'
+                });
+                
+                // Motion pause
+                orbitSystem.pauseShell(shellIndex);
+                
+                // Global spotlight
+                const allElectrons = document.querySelectorAll('.electron');
+                allElectrons.forEach(e => {
+                  if (e === electron) {
+                    gsap.to(e, { opacity: 1.0, duration: 0.15, ease: 'power2.out', overwrite: 'auto' });
+                  } else {
+                    gsap.to(e, { opacity: shellConfig.electronHoverOpacity, duration: 0.15, ease: 'power2.out', overwrite: 'auto' });
+                  }
+                });
+              },
 					
 					resetShellEffects(shellIndex) {
 						const shell = shells[shellIndex];
@@ -298,26 +317,27 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						});
 					},
 					
-					resetElectronEffects(shellIndex) {
-						console.log(`🔄 Resetting electron effects for shell ${shellIndex}`);
-						
-						// Reset shell
-						this.resetShellEffects(shellIndex);
-						
-						// Resume motion
-						orbitSystem.resumeShell(shellIndex);
-						
-						// Reset all electrons
-						const allElectrons = document.querySelectorAll('.electron');
-						allElectrons.forEach(e => {
-							gsap.to(e, {
-								attr: { r: atomConfig.electrons.radius },
-								opacity: 1.0,
-								duration: 0.15,
-								ease: 'power2.out'
-							});
-						});
-					}
+              resetElectronEffects(shellIndex) {
+                console.log(`🔄 Resetting electron effects for shell ${shellIndex}`);
+                
+                // Reset shell
+                this.resetShellEffects(shellIndex);
+                
+                // Resume motion
+                orbitSystem.resumeShell(shellIndex);
+                
+                // Reset all electrons
+                const allElectrons = document.querySelectorAll('.electron');
+                allElectrons.forEach(e => {
+                  gsap.to(e, {
+                    attr: { r: atomConfig.electrons.radius },
+                    opacity: 1.0,
+                    duration: 0.15,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                  });
+                });
+              }
 				};
 				
 				
