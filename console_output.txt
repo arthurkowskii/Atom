@@ -1,0 +1,197 @@
+🎮 Game-like hitbox system enabled with ±15px tolerance zones
+index.astro:407 🎯 SHELL HITBOX ZONES:
+index.astro:411   Shell 0: radius=150px, hitbox=135-165px
+index.astro:411   Shell 1: radius=250px, hitbox=235-265px
+index.astro:411   Shell 2: radius=350px, hitbox=335-365px
+index.astro:348 🎯 Mouse at (620, 853), distance from center: 388px
+index.astro:348 🎯 Mouse at (620, 852), distance from center: 387px
+index.astro:348 🎯 Mouse at (620, 851), distance from center: 386px
+index.astro:348 🎯 Mouse at (621, 850), distance from center: 386px
+index.astro:348 🎯 Mouse at (621, 849), distance from center: 385px
+index.astro:348 🎯 Mouse at (621, 848), distance from center: 384px
+index.astro:348 🎯 Mouse at (621, 847), distance from center: 383px
+index.astro:348 🎯 Mouse at (621, 846), distance from center: 382px
+index.astro:348 🎯 Mouse at (621, 844), distance from center: 380px
+index.astro:348 🎯 Mouse at (621, 843), distance from center: 379px
+index.astro:348 🎯 Mouse at (621, 842), distance from center: 378px
+index.astro:348 🎯 Mouse at (621, 840), distance from center: 376px
+index.astro:348 🎯 Mouse at (621, 839), distance from center: 376px
+index.astro:348 🎯 Mouse at (621, 838), distance from center: 375px
+index.astro:348 🎯 Mouse at (621, 836), distance from center: 373px
+index.astro:348 🎯 Mouse at (621, 835), distance from center: 372px
+index.astro:348 🎯 Mouse at (621, 833), distance from center: 370px
+index.astro:348 🎯 Mouse at (621, 831), distance from center: 368px
+index.astro:348 🎯 Mouse at (621, 829), distance from center: 366px
+index.astro:348 🎯 Mouse at (620, 827), distance from center: 364px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:383 🟡 Distance-based shell hover: 2
+index.astro:239 📝 Applying hover to shell 2: {shell: circle.shell, shellConfig: {…}, hoverStrokeWidth: 5, hoverOpacity: 0.7, hoveredElectron: null, …}
+index.astro:286 ⚪ Shell ring hover: No electron spotlight effect applied
+index.astro:348 🎯 Mouse at (620, 825), distance from center: 362px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (620, 823), distance from center: 360px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (619, 821), distance from center: 358px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (619, 819), distance from center: 356px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (619, 817), distance from center: 354px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (618, 815), distance from center: 352px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (618, 814), distance from center: 351px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (617, 812), distance from center: 349px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (617, 811), distance from center: 348px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (616, 809), distance from center: 346px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (616, 808), distance from center: 345px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (615, 806), distance from center: 343px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (615, 805), distance from center: 342px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (615, 803), distance from center: 340px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (614, 801), distance from center: 338px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (613, 800), distance from center: 336px
+index.astro:359 🎯 HITBOX: Mouse in shell 2 tolerance zone (335-365px)
+index.astro:348 🎯 Mouse at (613, 797), distance from center: 334px
+index.astro:367 🟢 Distance-based shell leave: 2
+index.astro:348 🎯 Mouse at (612, 795), distance from center: 331px
+index.astro:348 🎯 Mouse at (611, 793), distance from center: 329px
+index.astro:348 🎯 Mouse at (610, 790), distance from center: 326px
+index.astro:348 🎯 Mouse at (609, 789), distance from center: 325px
+index.astro:348 🎯 Mouse at (608, 786), distance from center: 321px
+index.astro:348 🎯 Mouse at (608, 784), distance from center: 320px
+index.astro:348 🎯 Mouse at (606, 780), distance from center: 315px
+index.astro:205 🔄 Resetting shell null to default (wasElectronHovered: false)
+index.astro:348 🎯 Mouse at (606, 779), distance from center: 314px
+index.astro:348 🎯 Mouse at (604, 775), distance from center: 310px
+index.astro:348 🎯 Mouse at (604, 773), distance from center: 308px
+index.astro:348 🎯 Mouse at (603, 771), distance from center: 306px
+index.astro:348 🎯 Mouse at (601, 767), distance from center: 301px
+index.astro:348 🎯 Mouse at (600, 765), distance from center: 299px
+index.astro:348 🎯 Mouse at (598, 760), distance from center: 294px
+index.astro:348 🎯 Mouse at (597, 758), distance from center: 291px
+index.astro:348 🎯 Mouse at (596, 755), distance from center: 288px
+index.astro:348 🎯 Mouse at (594, 750), distance from center: 283px
+index.astro:348 🎯 Mouse at (593, 747), distance from center: 280px
+index.astro:348 🎯 Mouse at (592, 744), distance from center: 277px
+index.astro:348 🎯 Mouse at (591, 741), distance from center: 273px
+index.astro:348 🎯 Mouse at (588, 735), distance from center: 267px
+index.astro:348 🎯 Mouse at (587, 732), distance from center: 264px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:383 🟡 Distance-based shell hover: 1
+index.astro:239 📝 Applying hover to shell 1: {shell: circle.shell, shellConfig: {…}, hoverStrokeWidth: 5, hoverOpacity: 0.7, hoveredElectron: null, …}
+index.astro:286 ⚪ Shell ring hover: No electron spotlight effect applied
+index.astro:256 ✅ Shell 2 hover animation complete
+index.astro:348 🎯 Mouse at (585, 729), distance from center: 260px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:348 🎯 Mouse at (582, 722), distance from center: 252px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:348 🎯 Mouse at (581, 719), distance from center: 249px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:348 🎯 Mouse at (579, 716), distance from center: 246px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:348 🎯 Mouse at (578, 713), distance from center: 243px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:348 🎯 Mouse at (577, 710), distance from center: 239px
+index.astro:359 🎯 HITBOX: Mouse in shell 1 tolerance zone (235-265px)
+index.astro:348 🎯 Mouse at (574, 704), distance from center: 233px
+index.astro:367 🟢 Distance-based shell leave: 1
+index.astro:348 🎯 Mouse at (573, 701), distance from center: 230px
+index.astro:348 🎯 Mouse at (571, 698), distance from center: 226px
+index.astro:348 🎯 Mouse at (570, 695), distance from center: 223px
+index.astro:348 🎯 Mouse at (569, 693), distance from center: 221px
+index.astro:348 🎯 Mouse at (567, 690), distance from center: 217px
+index.astro:348 🎯 Mouse at (565, 684), distance from center: 211px
+index.astro:348 🎯 Mouse at (564, 682), distance from center: 209px
+index.astro:205 🔄 Resetting shell null to default (wasElectronHovered: false)
+index.astro:348 🎯 Mouse at (562, 679), distance from center: 205px
+index.astro:348 🎯 Mouse at (561, 677), distance from center: 203px
+index.astro:348 🎯 Mouse at (560, 674), distance from center: 200px
+index.astro:348 🎯 Mouse at (559, 671), distance from center: 196px
+index.astro:348 🎯 Mouse at (558, 669), distance from center: 194px
+index.astro:348 🎯 Mouse at (557, 666), distance from center: 191px
+index.astro:348 🎯 Mouse at (555, 661), distance from center: 186px
+index.astro:348 🎯 Mouse at (554, 659), distance from center: 183px
+index.astro:348 🎯 Mouse at (553, 656), distance from center: 180px
+index.astro:348 🎯 Mouse at (552, 654), distance from center: 178px
+index.astro:348 🎯 Mouse at (551, 652), distance from center: 176px
+index.astro:348 🎯 Mouse at (550, 649), distance from center: 173px
+index.astro:348 🎯 Mouse at (550, 647), distance from center: 171px
+index.astro:348 🎯 Mouse at (549, 645), distance from center: 169px
+index.astro:348 🎯 Mouse at (548, 643), distance from center: 166px
+index.astro:348 🎯 Mouse at (547, 641), distance from center: 164px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:383 🟡 Distance-based shell hover: 0
+index.astro:239 📝 Applying hover to shell 0: {shell: circle.shell, shellConfig: {…}, hoverStrokeWidth: 5, hoverOpacity: 0.7, hoveredElectron: null, …}
+index.astro:286 ⚪ Shell ring hover: No electron spotlight effect applied
+index.astro:348 🎯 Mouse at (547, 639), distance from center: 162px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (546, 638), distance from center: 161px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (546, 636), distance from center: 159px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (545, 635), distance from center: 158px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (545, 633), distance from center: 156px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (544, 632), distance from center: 155px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (544, 631), distance from center: 154px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (544, 630), distance from center: 153px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:256 ✅ Shell 1 hover animation complete
+index.astro:348 🎯 Mouse at (543, 629), distance from center: 152px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (543, 628), distance from center: 151px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (543, 627), distance from center: 150px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (543, 626), distance from center: 149px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (543, 625), distance from center: 148px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (542, 625), distance from center: 147px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (542, 624), distance from center: 147px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (542, 623), distance from center: 146px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (542, 622), distance from center: 145px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (542, 621), distance from center: 144px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (541, 620), distance from center: 142px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (541, 619), distance from center: 142px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (541, 617), distance from center: 140px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (540, 616), distance from center: 138px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (540, 615), distance from center: 137px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (540, 614), distance from center: 137px
+index.astro:359 🎯 HITBOX: Mouse in shell 0 tolerance zone (135-165px)
+index.astro:348 🎯 Mouse at (539, 612), distance from center: 134px
+index.astro:367 🟢 Distance-based shell leave: 0
+index.astro:348 🎯 Mouse at (539, 611), distance from center: 133px
+index.astro:348 🎯 Mouse at (539, 610), distance from center: 132px
+index.astro:348 🎯 Mouse at (538, 608), distance from center: 130px
+index.astro:348 🎯 Mouse at (538, 607), distance from center: 129px
+index.astro:348 🎯 Mouse at (537, 605), distance from center: 127px
+index.astro:348 🎯 Mouse at (537, 604), distance from center: 126px
+index.astro:205 🔄 Resetting shell null to default (wasElectronHovered: false)
+index.astro:348 🎯 Mouse at (537, 603), distance from center: 125px
+index.astro:348 🎯 Mouse at (536, 602), distance from center: 124px
+index.astro:348 🎯 Mouse at (536, 601), distance from center: 123px
+index.astro:348 🎯 Mouse at (535, 600), distance from center: 122px
+index.astro:348 🎯 Mouse at (535, 599), distance from center: 121px
+index.astro:256 ✅ Shell 0 hover animation complete

@@ -330,44 +330,86 @@ const electronsByDomain = projects.reduce((acc, project) => {
 					});
 				});
 				
-				// Add hover effects to shells with debouncing
-				shells.forEach((shell) => {
-					const shellIndex = parseInt(shell.dataset.shellIndex);
+				// Game-like hitbox system using distance calculation
+				const svgContainer = document.getElementById('atom-svg');
+				const tolerance = 15; // pixels - hitbox tolerance around each shell
+				let currentHoveredShell = null;
+				
+				svgContainer.addEventListener('mousemove', (e) => {
+					const rect = svgContainer.getBoundingClientRect();
+					const mouseX = e.clientX - rect.left;
+					const mouseY = e.clientY - rect.top;
+					const centerX = atomConfig.viewport.centerX;
+					const centerY = atomConfig.viewport.centerY;
 					
-					shell.addEventListener('mouseenter', () => {
-						console.log(`🟡 Shell hover: ${shellIndex}`);
+					// Calculate distance from mouse to atom center
+					const distanceFromCenter = Math.sqrt((mouseX - centerX) ** 2 + (mouseY - centerY) ** 2);
+					
+					
+					// Check which shell we're hovering (if any)
+					let hoveredShellIndex = null;
+					atomConfig.shells.forEach((shell, shellIndex) => {
+						const shellRadius = shell.radius;
+						const innerBound = shellRadius - tolerance;
+						const outerBound = shellRadius + tolerance;
 						
-						// Clear any pending reset timeout
-						if (hoverStates.hoverTimeouts.has(shellIndex)) {
-							clearTimeout(hoverStates.hoverTimeouts.get(shellIndex));
-							hoverStates.hoverTimeouts.delete(shellIndex);
+						if (distanceFromCenter >= innerBound && distanceFromCenter <= outerBound) {
+							hoveredShellIndex = shellIndex;
+							console.log(`🎯 HITBOX: Mouse in shell ${shellIndex} tolerance zone (${innerBound}-${outerBound}px)`);
+						}
+					});
+					
+					// Handle shell hover state changes
+					if (hoveredShellIndex !== currentHoveredShell) {
+						// Leave previous shell
+						if (currentHoveredShell !== null) {
+							const previousShellIndex = currentHoveredShell; // Store before setting to null
+							console.log(`🟢 Distance-based shell leave: ${previousShellIndex}`);
+							hoverStates.hoveredShell = null;
+							
+							// Debounce the reset - wait 50ms to see if we re-enter
+							const timeoutId = setTimeout(() => {
+								if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
+									resetShellToDefault(previousShellIndex, false); // Was NOT electron hovered
+								}
+								hoverStates.hoverTimeouts.delete(previousShellIndex);
+							}, 50);
+							
+							hoverStates.hoverTimeouts.set(previousShellIndex, timeoutId);
 						}
 						
-						hoverStates.hoveredShell = shell;
-						applyShellHoverEffects(shellIndex, null); // No specific electron to spotlight
-					});
-					
-					shell.addEventListener('mouseleave', () => {
-						console.log(`🟢 Shell leave: ${shellIndex}`);
-						hoverStates.hoveredShell = null;
-						
-						// Debounce the reset - wait 50ms to see if we re-enter
-						const timeoutId = setTimeout(() => {
-							if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
-								resetShellToDefault(shellIndex, false); // Was NOT electron hovered
+						// Enter new shell
+						if (hoveredShellIndex !== null) {
+							console.log(`🟡 Distance-based shell hover: ${hoveredShellIndex}`);
+							
+							// Clear any pending reset timeout
+							if (hoverStates.hoverTimeouts.has(hoveredShellIndex)) {
+								clearTimeout(hoverStates.hoverTimeouts.get(hoveredShellIndex));
+								hoverStates.hoverTimeouts.delete(hoveredShellIndex);
 							}
-							hoverStates.hoverTimeouts.delete(shellIndex);
-						}, 50);
+							
+							hoverStates.hoveredShell = shells[hoveredShellIndex];
+							applyShellHoverEffects(hoveredShellIndex, null); // No specific electron to spotlight
+						}
 						
-						hoverStates.hoverTimeouts.set(shellIndex, timeoutId);
-					});
+						currentHoveredShell = hoveredShellIndex;
+					}
 				});
 				
 				// Store reference globally for debugging
 				window.orbitSystem = orbitSystem;
 				
 				console.log('Orbit system started - electrons should be moving around static shells');
-				console.log(`Found ${electrons.length} electrons and ${shells.length} shells for hover effects`);
+				console.log(`Found ${electrons.length} electrons and ${shells.length} visual shells`);
+				console.log(`🎮 Game-like hitbox system enabled with ±${tolerance}px tolerance zones`);
+				
+				// Debug shell zones
+				console.log('🎯 SHELL HITBOX ZONES:');
+				atomConfig.shells.forEach((shell, index) => {
+					const innerBound = shell.radius - tolerance;
+					const outerBound = shell.radius + tolerance;
+					console.log(`  Shell ${index}: radius=${shell.radius}px, hitbox=${innerBound}-${outerBound}px`);
+				});
 			});
 		</script>
 	</body>
