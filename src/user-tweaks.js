@@ -39,12 +39,12 @@ export const userTweaks = {
   shell: {
     // Default state (resting)
     default: {
-      thickness: 3,           // Shell ring stroke width
+      thickness: 5,           // Shell ring stroke width
       opacity: 0.3           // Shell opacity (subtle visibility)
     },
     // Hover state (focused)
     hover: {
-      thickness: 4,           // Shell thickness on hover (subtle increase)
+      thickness: 6,           // Shell thickness on hover (subtle increase)
       opacity: 0.7,           // Shell opacity on hover (modern transparency)
       electronOpacity: 0.2    // Electrons opacity when shell hovered
     }
