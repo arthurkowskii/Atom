@@ -1,0 +1,171 @@
+---
+import { getCollection } from 'astro:content';
+import atomConfig from '../atom.config.js';
+
+// Get all projects and group by domain to create shells dynamically
+const projects = await getCollection('projects');
+const domains = [...new Set(projects.map(p => p.data.domain))];
+
+// Calculate electron positions for each shell
+const electronsByDomain = projects.reduce((acc, project) => {
+  if (!acc[project.data.domain]) acc[project.data.domain] = [];
+  acc[project.data.domain].push(project);
+  return acc;
+}, {});
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Atom Portfolio</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background: #fff;
+				font-family: system-ui, sans-serif;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+			}
+			
+			.atom-container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			#atom-svg {
+				cursor: grab;
+			}
+			
+			.electron {
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="atom-container">
+			<svg 
+				id="atom-svg"
+				width="600" 
+				height="600" 
+				viewBox="0 0 600 600"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<!-- Nucleus -->
+				<circle 
+					cx={atomConfig.viewport.centerX}
+					cy={atomConfig.viewport.centerY}
+					r={atomConfig.nucleus.radius}
+					fill="white"
+					stroke={atomConfig.nucleus.color}
+					stroke-width={atomConfig.nucleus.strokeWidth}
+				/>
+				<text 
+					x={atomConfig.viewport.centerX}
+					y={atomConfig.viewport.centerY}
+					text-anchor="middle"
+					dominant-baseline="middle"
+					font-size={atomConfig.nucleus.fontSize}
+					font-weight="bold"
+					fill={atomConfig.nucleus.color}
+				>
+					{atomConfig.nucleus.text}
+				</text>
+
+				<!-- Orbital Shells -->
+				{domains.map((domain, shellIndex) => {
+					const shell = atomConfig.shells[shellIndex] || atomConfig.shells[atomConfig.shells.length - 1];
+					const electronsInShell = electronsByDomain[domain] || [];
+					const angleStep = (2 * Math.PI) / Math.max(electronsInShell.length, 1);
+					
+					return (
+						<g data-shell={shellIndex} data-domain={domain}>
+							<!-- Shell orbit path -->
+							<circle 
+								cx={atomConfig.viewport.centerX}
+								cy={atomConfig.viewport.centerY}
+								r={shell.radius}
+								fill="none"
+								stroke={shell.color}
+								stroke-width={shell.strokeWidth}
+								opacity="0.3"
+							/>
+							
+							<!-- Electrons on this shell -->
+							{electronsInShell.map((project, electronIndex) => {
+								const angle = electronIndex * angleStep;
+								const x = atomConfig.viewport.centerX + shell.radius * Math.cos(angle);
+								const y = atomConfig.viewport.centerY + shell.radius * Math.sin(angle);
+								
+								return (
+									<circle 
+										class="electron"
+										cx={x}
+										cy={y}
+										r={atomConfig.electrons.radius}
+										fill="white"
+										stroke={atomConfig.electrons.color}
+										stroke-width={atomConfig.electrons.strokeWidth}
+										data-project={project.slug}
+										data-shell={shellIndex}
+										data-angle={angle}
+									>
+										<title>{project.data.title}</title>
+									</circle>
+								);
+							})}
+						</g>
+					);
+				})}
+			</svg>
+		</div>
+
+		<script>
+			import { gsap } from 'gsap';
+			import { OrbitSystem } from '../atom/core/OrbitSystem.js';
+			import atomConfig from '../atom.config.js';
+			
+			// Initialize orbit system when DOM is ready
+			document.addEventListener('DOMContentLoaded', () => {
+				console.log('Initializing Atom Portfolio...');
+				console.log('GSAP version:', gsap.version);
+				
+				// Create and start orbit system
+				const orbitSystem = new OrbitSystem(atomConfig);
+				orbitSystem.init();
+				orbitSystem.start();
+				
+				// Add hover effects to electrons
+				const electrons = document.querySelectorAll('.electron');
+				electrons.forEach(electron => {
+					electron.addEventListener('mouseenter', () => {
+						gsap.to(electron, {
+							attr: { r: atomConfig.electrons.hoverRadius },
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out'
+						});
+					});
+					
+					electron.addEventListener('mouseleave', () => {
+						gsap.to(electron, {
+							attr: { r: atomConfig.electrons.radius },
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out'
+						});
+					});
+				});
+				
+				// Store reference globally for debugging
+				window.orbitSystem = orbitSystem;
+				
+				console.log('Orbit system started - electrons should be moving around static shells');
+			});
+		</script>
+	</body>
+</html>
