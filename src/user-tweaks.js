@@ -30,9 +30,12 @@ export const userTweaks = {
     inner: 120,   // Pixels from nucleus center
     middle: 200,
     outer: 280
-  }
+  },
 
-};
+  // 📐 ELECTRON SPACING
+  minElectronDistance: 30   // Minimum degrees between electrons on same shell
+
+}; 
 
 // Don't edit below this line unless you know what you're doing!
 // ================================================================

@@ -35,14 +35,10 @@ export class OrbitSystem {
         shellIndex: shellIndex,
         shellRadius: shellConfig.radius,
         initialAngle: initialAngle,
-        currentAngle: initialAngle,
+        currentAngle: initialAngle, // Use the carefully calculated angle from positioning algorithm
         direction: shellConfig.direction,
         speed: shellConfig.speed
       };
-      
-      // Add random starting offset for organic motion
-      const randomOffset = Math.random() * 360;
-      electronData.currentAngle += randomOffset;
       
       // Create timeline for this electron
       const timeline = gsap.timeline({ 

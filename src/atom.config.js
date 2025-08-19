@@ -49,6 +49,11 @@ export default {
     strokeWidth: 2
   },
 
+  // Electron spacing
+  spacing: {
+    minElectronDistance: userTweaks.minElectronDistance
+  },
+
   // Animation timing and easing
   timing: {
     hoverDuration: userTweaks.hoverAnimationSpeed,
