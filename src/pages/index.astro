@@ -245,19 +245,23 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						alreadyHovered: hoverStates.shellsInHoverState.has(shellIndex)
 					});
 					
-					if (!shell || !shellConfig || hoverStates.shellsInHoverState.has(shellIndex)) return;
+					if (!shell || !shellConfig) return;
 					
-					// Apply shell appearance changes
-					gsap.to(shell, {
-						attr: { 'stroke-width': shellConfig.hoverStrokeWidth },
-						opacity: shellConfig.hoverOpacity,
-						duration: atomConfig.timing.hoverDuration,
-						ease: 'power2.out',
-						onComplete: () => console.log(`✅ Shell ${shellIndex} hover animation complete`)
-					});
+					// Apply shell appearance changes (only if not already applied)
+					if (!hoverStates.shellsInHoverState.has(shellIndex)) {
+						gsap.to(shell, {
+							attr: { 'stroke-width': shellConfig.hoverStrokeWidth },
+							opacity: shellConfig.hoverOpacity,
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out',
+							onComplete: () => console.log(`✅ Shell ${shellIndex} hover animation complete`)
+						});
+						hoverStates.shellsInHoverState.add(shellIndex);
+					}
 					
-					// Only pause motion and apply electron effects when hovering a specific electron
+					// Always apply electron effects when hovering a specific electron (even if shell already hovered)
 					if (hoveredElectron) {
+						console.log(`🎯 Applying electron-specific effects for shell ${shellIndex}`);
 						// Pause electrons motion
 						orbitSystem.pauseShell(shellIndex);
 						// SPOTLIGHT ALL ELECTRONS ACROSS ALL SHELLS
@@ -285,8 +289,6 @@ const electronsByDomain = projects.reduce((acc, project) => {
 					} else {
 						console.log(`⚪ Shell ring hover: No electron spotlight effect applied`);
 					}
-					
-					hoverStates.shellsInHoverState.add(shellIndex);
 				}
 				
 				electrons.forEach(electron => {
@@ -318,10 +320,23 @@ const electronsByDomain = projects.reduce((acc, project) => {
 							ease: 'power2.out'
 						});
 						
-						// Debounced shell reset
+						// Immediately reset electron-specific effects (motion + spotlight)
+						console.log(`🔄 Resetting electron-specific effects for shell ${shellIndex}`);
+						orbitSystem.resumeShell(shellIndex);
+						const allElectrons = document.querySelectorAll(`.electron`);
+						allElectrons.forEach(e => {
+							gsap.to(e, {
+								opacity: 1.0,
+								duration: atomConfig.timing.hoverDuration,
+								ease: 'power2.out'
+							});
+						});
+						
+						// Debounced full shell reset (only if we're not still hovering the shell)
 						const timeoutId = setTimeout(() => {
 							if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
-								resetShellToDefault(shellIndex, true); // Was electron hovered
+								console.log(`🔄 Full shell reset after electron leave: ${shellIndex}`);
+								resetShellToDefault(shellIndex, false); // Was NOT electron hovered anymore
 							}
 							hoverStates.hoverTimeouts.delete(shellIndex);
 						}, 50);
