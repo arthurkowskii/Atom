@@ -979,3 +979,54 @@ for (let i = 0; i < electronCount; i++) {
 - Prefer `overwrite: 'auto'` over global `killTweensOf` for elements that frequently change state.
 - Define state on enter paths to make transitions deterministic and race-proof.
 - Centralizing timings in config helps tune feel without code edits.
+
+---
+
+## 🚀 Phase 3 (Start): Drag + Elastic Snap, Full-Viewport Fit (Aug 19, 2025)
+
+### What Changed
+- 🖱️ Drag + Drop (no tether):
+  - Added GSAP Draggable per electron (pause only that electron; suppress hover during drag).
+  - On release, snap back with elastic wobble: `elastic.out(amplitude, period)`.
+  - Config knobs in `user-tweaks.js` → `atom.config.js`:
+    - `dragSnapDuration`, `dragElastic.{amplitude, period}`.
+
+- 🧭 Viewport Fit without breaking math:
+  - Uniformly scale the SVG via `transform: scale(...)` to fill the viewport.
+  - Map mouse coords → viewBox coords in hitbox calculation to keep shells clickable precisely after scaling.
+
+- 🧼 White-border elimination:
+  - `body { overflow: hidden; user-select: none }` and `#atom-svg { touch-action: none }` to avoid scroll/overscroll artifacts when dragging.
+
+### Notes
+- No constant line/tether by design (per UX decision).
+- Hover/spotlight remains disabled during drag; restored after short grace.
+- All distances/angles continue to use viewBox space; only rendering is scaled.
+
+### Next
+- Optional: reduced-motion fallback (use `power2.out` instead of elastic when `prefers-reduced-motion`).
+- Optional: tasteful shell reactions (micro-bump/ripple) on reattach, without persistent tether.
+
+---
+
+## ✅ Phase 3 Progress: Nucleus UX + Bio Page (Aug 19, 2025)
+
+### What Changed
+- 🧲 Nucleus behaves like an electron (non-draggable):
+  - Hover grows to `nucleus.hoverRadius` and applies global spotlight.
+  - Leave restores to default radius and clears spotlight.
+  - Click navigates to `/bio`.
+
+- 📝 Bio page added:
+  - `src/pages/bio.astro` — placeholder page with a back link to `/`.
+
+- 🔧 Reset logic refined (no “third size” on nucleus):
+  - Global resets now only change radius for `.electron:not(.nucleus)`; opacity resets still apply to all.
+
+### Notes
+- Drag remains for shell electrons only; nucleus excluded from Draggable.
+- Viewport-fit scaling + hitbox remap still in place; interactions remain precise.
+
+### Ready Next
+- View Transitions: nucleus → bio and back.
+- Reduced-motion path for elastic snap.

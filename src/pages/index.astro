@@ -63,14 +63,17 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				viewBox={`0 0 ${atomConfig.viewport.width} ${atomConfig.viewport.height}`}
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<!-- Nucleus -->
+				<!-- Nucleus (clickable like an electron, not draggable) -->
 				<circle 
+					id="nucleus-circle"
+					class="electron nucleus"
 					cx={atomConfig.viewport.centerX}
 					cy={atomConfig.viewport.centerY}
 					r={atomConfig.nucleus.radius}
 					fill="white"
 					stroke={atomConfig.nucleus.color}
 					stroke-width={atomConfig.nucleus.strokeWidth}
+					tabindex="0"
 				/>
 				<text 
 					x={atomConfig.viewport.centerX}
@@ -208,7 +211,8 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				gsap.registerPlugin(Draggable);
 
 				// Add hover effects to electrons (includes shell effects)
-				const electrons = document.querySelectorAll('.electron');
+				const allElectrons = document.querySelectorAll('.electron'); // includes nucleus
+				const electrons = document.querySelectorAll('.electron:not(.nucleus)'); // exclude nucleus from drag
 				const shells = document.querySelectorAll('.shell');
 				let dragLock = false; // Suppress hover logic while dragging
 				
@@ -252,9 +256,14 @@ const electronsByDomain = projects.reduce((acc, project) => {
               
               enterCurrentState() {
               if (this.currentState === 'none') {
-                // Smoothly animate all electrons to baseline; overwrite prevents mid-state glitches
+                // Reset opacity for all; radius only for non-nucleus electrons
                 gsap.to(document.querySelectorAll('.electron'), {
                   opacity: 1.0,
+                  duration: atomConfig.timing.baselineResetDuration,
+                  ease: 'power2.out',
+                  overwrite: 'auto'
+                });
+                gsap.to(document.querySelectorAll('.electron:not(.nucleus)'), {
                   attr: { r: atomConfig.electrons.radius },
                   duration: atomConfig.timing.baselineResetDuration,
                   ease: 'power2.out',
@@ -266,8 +275,14 @@ const electronsByDomain = projects.reduce((acc, project) => {
                 if (this.currentState.startsWith('shell-')) {
                   const shellIndex = parseInt(this.currentState.split('-')[1]);
                   // Ensure electrons are at baseline when only shell is hovered
+                  // Reset opacity for all; radius only for non-nucleus electrons
                   gsap.to(document.querySelectorAll('.electron'), {
                     opacity: 1.0,
+                    duration: atomConfig.timing.hoverDuration,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                  });
+                  gsap.to(document.querySelectorAll('.electron:not(.nucleus)'), {
                     attr: { r: atomConfig.electrons.radius },
                     duration: atomConfig.timing.hoverDuration,
                     ease: 'power2.out',
@@ -350,15 +365,19 @@ const electronsByDomain = projects.reduce((acc, project) => {
                 orbitSystem.resumeShell(shellIndex);
                 
                 // Reset all electrons
-                const allElectrons = document.querySelectorAll('.electron');
-                allElectrons.forEach(e => {
-                  gsap.to(e, {
-                    attr: { r: atomConfig.electrons.radius },
-                    opacity: 1.0,
-                    duration: atomConfig.timing.hoverDuration,
-                    ease: 'power2.out',
-                    overwrite: 'auto'
-                  });
+                // Opacity reset for all
+                gsap.to(document.querySelectorAll('.electron'), {
+                  opacity: 1.0,
+                  duration: atomConfig.timing.hoverDuration,
+                  ease: 'power2.out',
+                  overwrite: 'auto'
+                });
+                // Radius reset only for non-nucleus electrons
+                gsap.to(document.querySelectorAll('.electron:not(.nucleus)'), {
+                  attr: { r: atomConfig.electrons.radius },
+                  duration: atomConfig.timing.hoverDuration,
+                  ease: 'power2.out',
+                  overwrite: 'auto'
                 });
               }
 				};
@@ -431,6 +450,42 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						}
 					});
 				});
+
+				// Nucleus hover: grow + global spotlight; click placeholder
+				const nucleus = document.getElementById('nucleus-circle');
+				if (nucleus) {
+					nucleus.addEventListener('mouseenter', () => {
+						if (dragLock) return;
+						gsap.to(nucleus, {
+							attr: { r: atomConfig.nucleus.hoverRadius },
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out',
+							overwrite: 'auto'
+						});
+						const dimOpacity = atomConfig.shells[0]?.electronHoverOpacity ?? 0.2;
+						allElectrons.forEach(e => {
+							if (e === nucleus) {
+								gsap.to(e, { opacity: 1.0, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
+							} else {
+								gsap.to(e, { opacity: dimOpacity, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
+							}
+						});
+					});
+					nucleus.addEventListener('mouseleave', () => {
+						gsap.to(nucleus, {
+							attr: { r: atomConfig.nucleus.radius },
+							duration: atomConfig.timing.hoverDuration,
+							ease: 'power2.out',
+							overwrite: 'auto'
+						});
+						allElectrons.forEach(e => {
+							gsap.to(e, { opacity: 1.0, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
+						});
+					});
+					nucleus.addEventListener('click', () => {
+                window.location.href = '/bio';
+              });
+				}
 				
 				// RAF-THROTTLED HITBOX SYSTEM - Optimized for performance
       const svgContainer = document.getElementById('atom-svg');

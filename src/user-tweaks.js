@@ -21,6 +21,7 @@ export const userTweaks = {
   electronSize: 18,        // Normal electron radius
   electronHoverSize: 22,  // Size when you hover over it
   nucleusSize: 40,        // Center "A" circle size
+  nucleusHoverSize: 52,   // Nucleus size on hover (clickable, not draggable)
 
   // ⏱️ TIMING
   hoverAnimationSpeed: 0.15,  // How fast electrons grow/shrink on hover (seconds)
@@ -29,7 +30,7 @@ export const userTweaks = {
   // ⚙️ DRAG PHYSICS
   dragSnapDuration: 0.5,     // How long the snap-back lasts (s)
   dragElastic: {
-    amplitude: 0.20,          // Elastic ease amplitude (0.1–1.5 typical)
+    amplitude: 0.18,          // Elastic ease amplitude (0.1–1.5 typical)
     period: 0.2             // Elastic ease period (smaller = faster wobble)
   },
 

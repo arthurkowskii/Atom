@@ -10,6 +10,7 @@ export default {
   nucleus: {
     text: "A",           // Initial, logo, or avatar
     radius: userTweaks.nucleusSize * userTweaks.atomScale,
+    hoverRadius: (userTweaks.nucleusHoverSize ?? userTweaks.nucleusSize * 1.3) * userTweaks.atomScale,
     fontSize: 24 * userTweaks.atomScale,        // Text size inside nucleus (scaled)
     color: "#000",       // Black for minimal design
     strokeWidth: 2 * userTweaks.atomScale
