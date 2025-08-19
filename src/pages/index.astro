@@ -198,11 +198,11 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				};
 				
 				// Helper function to reset shell and its electrons to default state
-				function resetShellToDefault(shellIndex) {
+				function resetShellToDefault(shellIndex, wasElectronHovered = false) {
 					const shell = shells[shellIndex];
 					const shellConfig = atomConfig.shells[shellIndex];
 					
-					console.log(`🔄 Resetting shell ${shellIndex} to default`);
+					console.log(`🔄 Resetting shell ${shellIndex} to default (wasElectronHovered: ${wasElectronHovered})`);
 					
 					if (!shell || !shellConfig) return;
 					
@@ -215,22 +215,24 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						onComplete: () => console.log(`✅ Shell ${shellIndex} reset complete`)
 					});
 					
-					// Resume motion and reset all electrons on this shell
-					orbitSystem.resumeShell(shellIndex);
-					const shellElectrons = document.querySelectorAll(`[data-shell="${shellIndex}"]`);
-					shellElectrons.forEach(e => {
-						gsap.to(e, {
-							opacity: 1.0,
-							duration: atomConfig.timing.hoverDuration,
-							ease: 'power2.out'
+					// Only resume motion and reset electrons if we were hovering an electron
+					if (wasElectronHovered) {
+						orbitSystem.resumeShell(shellIndex);
+						const allElectrons = document.querySelectorAll(`.electron`);
+						allElectrons.forEach(e => {
+							gsap.to(e, {
+								opacity: 1.0,
+								duration: atomConfig.timing.hoverDuration,
+								ease: 'power2.out'
+							});
 						});
-					});
+					}
 					
 					hoverStates.shellsInHoverState.delete(shellIndex);
 				}
 				
 				// Helper function to apply shell hover effects
-				function applyShellHoverEffects(shellIndex) {
+				function applyShellHoverEffects(shellIndex, hoveredElectron = null) {
 					const shell = shells[shellIndex];
 					const shellConfig = atomConfig.shells[shellIndex];
 					
@@ -239,6 +241,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						shellConfig, 
 						hoverStrokeWidth: shellConfig?.hoverStrokeWidth,
 						hoverOpacity: shellConfig?.hoverOpacity,
+						hoveredElectron: hoveredElectron,
 						alreadyHovered: hoverStates.shellsInHoverState.has(shellIndex)
 					});
 					
@@ -253,17 +256,35 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						onComplete: () => console.log(`✅ Shell ${shellIndex} hover animation complete`)
 					});
 					
-					// Pause electrons and fade them
-					orbitSystem.pauseShell(shellIndex);
-					const shellElectrons = document.querySelectorAll(`[data-shell="${shellIndex}"]`);
-					console.log(`Found ${shellElectrons.length} electrons on shell ${shellIndex}`);
-					shellElectrons.forEach(e => {
-						gsap.to(e, {
-							opacity: shellConfig.electronHoverOpacity,
-							duration: atomConfig.timing.hoverDuration,
-							ease: 'power2.out'
+					// Only pause motion and apply electron effects when hovering a specific electron
+					if (hoveredElectron) {
+						// Pause electrons motion
+						orbitSystem.pauseShell(shellIndex);
+						// SPOTLIGHT ALL ELECTRONS ACROSS ALL SHELLS
+						const allElectrons = document.querySelectorAll(`.electron`);
+						console.log(`Found ${allElectrons.length} total electrons - applying global spotlight effect`);
+						allElectrons.forEach(e => {
+							if (e === hoveredElectron) {
+								// Keep hovered electron at full opacity (spotlight effect)
+								console.log(`🌟 GLOBAL SPOTLIGHT: Keeping electron at full opacity`, e);
+								gsap.to(e, {
+									opacity: 1.0,
+									duration: atomConfig.timing.hoverDuration,
+									ease: 'power2.out'
+								});
+							} else {
+								// Fade ALL other electrons (cross-shell dimming)
+								console.log(`🔅 GLOBAL FADE: Setting electron to opacity ${shellConfig.electronHoverOpacity}`, e);
+								gsap.to(e, {
+									opacity: shellConfig.electronHoverOpacity,
+									duration: atomConfig.timing.hoverDuration,
+									ease: 'power2.out'
+								});
+							}
 						});
-					});
+					} else {
+						console.log(`⚪ Shell ring hover: No electron spotlight effect applied`);
+					}
 					
 					hoverStates.shellsInHoverState.add(shellIndex);
 				}
@@ -282,15 +303,8 @@ const electronsByDomain = projects.reduce((acc, project) => {
 							ease: 'power2.out'
 						});
 						
-						// Apply shell hover effects
-						applyShellHoverEffects(shellIndex);
-						
-						// Keep the hovered electron at full opacity
-						gsap.to(electron, {
-							opacity: 1.0,
-							duration: atomConfig.timing.hoverDuration,
-							ease: 'power2.out'
-						});
+						// Apply shell hover effects with spotlight on this electron
+						applyShellHoverEffects(shellIndex, electron);
 					});
 					
 					electron.addEventListener('mouseleave', () => {
@@ -307,7 +321,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						// Debounced shell reset
 						const timeoutId = setTimeout(() => {
 							if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
-								resetShellToDefault(shellIndex);
+								resetShellToDefault(shellIndex, true); // Was electron hovered
 							}
 							hoverStates.hoverTimeouts.delete(shellIndex);
 						}, 50);
@@ -330,7 +344,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						}
 						
 						hoverStates.hoveredShell = shell;
-						applyShellHoverEffects(shellIndex);
+						applyShellHoverEffects(shellIndex, null); // No specific electron to spotlight
 					});
 					
 					shell.addEventListener('mouseleave', () => {
@@ -340,7 +354,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 						// Debounce the reset - wait 50ms to see if we re-enter
 						const timeoutId = setTimeout(() => {
 							if (hoverStates.hoveredElectron === null && hoverStates.hoveredShell === null) {
-								resetShellToDefault(shellIndex);
+								resetShellToDefault(shellIndex, false); // Was NOT electron hovered
 							}
 							hoverStates.hoverTimeouts.delete(shellIndex);
 						}, 50);

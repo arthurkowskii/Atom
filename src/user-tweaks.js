@@ -45,8 +45,8 @@ export const userTweaks = {
     // Hover state (focused)
     hover: {
       thickness: 4,           // Shell thickness on hover (subtle increase)
-      opacity: 1,           // Shell opacity on hover (modern transparency)
-      electronOpacity: 1    // Electrons opacity when shell hovered
+      opacity: 0.7,           // Shell opacity on hover (modern transparency)
+      electronOpacity: 0.2    // Electrons opacity when shell hovered
     }
   },
 
