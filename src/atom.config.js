@@ -66,6 +66,11 @@ export default {
     minElectronDistance: userTweaks.minElectronDistance
   },
 
+  // Hitbox for shell hover (game-like distance-based detection)
+  hitbox: {
+    tolerance: userTweaks.shellHitboxTolerance // pixels; not scaled to keep absolute feel
+  },
+
   // Animation timing and easing
   timing: {
     hoverDuration: userTweaks.hoverAnimationSpeed,

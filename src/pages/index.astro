@@ -340,8 +340,8 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				});
 				
 				// RAF-THROTTLED HITBOX SYSTEM - Optimized for performance
-				const svgContainer = document.getElementById('atom-svg');
-				const tolerance = 15; // pixels - hitbox tolerance around each shell
+      const svgContainer = document.getElementById('atom-svg');
+      const tolerance = atomConfig.hitbox?.tolerance ?? 15; // pixels - configurable via user-tweaks.js
 				
 				// Pre-calculate shell boundaries for performance (squared distances avoid Math.sqrt)
 				const shellBoundaries = atomConfig.shells.map((shell, shellIndex) => ({

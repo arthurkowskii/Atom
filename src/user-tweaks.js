@@ -55,7 +55,13 @@ export const userTweaks = {
   viewportPadding: 80,      // Safe area around edges
 
   // 🔍 OVERALL ATOM SCALE
-  atomScale: 1.25            // 1.0 = normal, 1.5 = 50% bigger, 0.8 = 20% smaller
+  atomScale: 1.25,           // 1.0 = normal, 1.5 = 50% bigger, 0.8 = 20% smaller
+
+  // 🎯 INTERACTION
+  // Shell hover hitbox tolerance (in pixels).
+  // This defines the +/- distance around each shell radius that counts as a hover.
+  // Example: 15 means a 30px wide ring centered on the shell path.
+  shellHitboxTolerance: 30
 
 }; 
 
