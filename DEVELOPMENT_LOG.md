@@ -943,3 +943,39 @@ for (let i = 0; i < electronCount; i++) {
 - **Memory efficient** - No timeout memory leaks during rapid interactions
 
 **Ready for Phase 3:** Drag & Tether implementation with spring physics and click detection.
+
+---
+
+## 🔧 Post-2G Tweaks: Configurable Hitbox + Hover Reset Polish (Aug 19, 2025)
+
+### What Changed
+- 🔗 User-tweakable shell hitbox tolerance wired end-to-end:
+  - `src/user-tweaks.js`: added `shellHitboxTolerance`.
+  - `src/atom.config.js`: exposed as `hitbox.tolerance`.
+  - `src/pages/index.astro`: hitbox system now uses `atomConfig.hitbox.tolerance` instead of hardcoded `15`.
+
+- 🎚️ Centralized animation durations:
+  - `src/user-tweaks.js`: added `hoverAnimationSpeed` (0.15) and `baselineResetAnimationSpeed` (0.15).
+  - `src/atom.config.js`: mapped to `timing.hoverDuration` and `timing.baselineResetDuration`.
+  - `src/pages/index.astro`: all hover/spotlight/shell/baseline tweens use these timings.
+
+- 🧰 Hover-out polish without bugs:
+  - Removed global kill of electron tweens on state transitions; rely on `overwrite: 'auto'` instead.
+  - On entering `shell-*`: animate all electrons to baseline (opacity 1, base radius) for deterministic state.
+  - On entering `none`: animate all electrons to baseline using `baselineResetDuration`.
+  - Added `overwrite: 'auto'` to growth and spotlight tweens to prevent mid-state leftovers.
+
+### Minor Bug Fixed – “Mid-Opacity” After Hover
+**Symptom:** After leaving an electron, some electrons stuck between spotlight opacity and full opacity.
+
+**Root Cause:** Reset tweens (bringing opacity back to 1) were being killed mid-flight by global tween kills during fast state changes, freezing values mid-transition.
+
+**Solution:**
+- Stop killing electron tweens globally; use `overwrite: 'auto'` so the newest intent wins smoothly.
+- Always define target state on enter (`shell-*` and `none`) by animating electrons to baseline.
+- Keep transitions smooth; baseline snap avoided while race conditions eliminated.
+
+**Key Lessons:**
+- Prefer `overwrite: 'auto'` over global `killTweensOf` for elements that frequently change state.
+- Define state on enter paths to make transitions deterministic and race-proof.
+- Centralizing timings in config helps tune feel without code edits.

@@ -23,7 +23,8 @@ export const userTweaks = {
   nucleusSize: 40,        // Center "A" circle size
 
   // ⏱️ TIMING
-  hoverAnimationSpeed: 0.3,  // How fast electrons grow/shrink on hover (seconds)
+  hoverAnimationSpeed: 0.15,  // How fast electrons grow/shrink on hover (seconds)
+  baselineResetAnimationSpeed: 0.15, // Duration for resetting to baseline (none state)
 
   // 🎯 SHELL DISTANCES (from center)
   shellDistances: {

@@ -233,7 +233,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
                 gsap.to(document.querySelectorAll('.electron'), {
                   opacity: 1.0,
                   attr: { r: atomConfig.electrons.radius },
-                  duration: 0.15,
+                  duration: atomConfig.timing.baselineResetDuration,
                   ease: 'power2.out',
                   overwrite: 'auto'
                 });
@@ -246,7 +246,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
                   gsap.to(document.querySelectorAll('.electron'), {
                     opacity: 1.0,
                     attr: { r: atomConfig.electrons.radius },
-                    duration: 0.12,
+                    duration: atomConfig.timing.hoverDuration,
                     ease: 'power2.out',
                     overwrite: 'auto'
                   });
@@ -257,19 +257,19 @@ const electronsByDomain = projects.reduce((acc, project) => {
                 }
               },
 					
-					applyShellEffects(shellIndex) {
-						const shell = shells[shellIndex];
-						const shellConfig = atomConfig.shells[shellIndex];
-						if (!shell || !shellConfig) return;
-						
-						console.log(`🟡 Applying shell ${shellIndex} effects`);
-						gsap.to(shell, {
-							attr: { 'stroke-width': shellConfig.hoverStrokeWidth },
-							opacity: shellConfig.hoverOpacity,
-							duration: 0.15, // Faster transitions
-							ease: 'power2.out'
-						});
-					},
+              applyShellEffects(shellIndex) {
+                const shell = shells[shellIndex];
+                const shellConfig = atomConfig.shells[shellIndex];
+                if (!shell || !shellConfig) return;
+                
+                console.log(`🟡 Applying shell ${shellIndex} effects`);
+                gsap.to(shell, {
+                  attr: { 'stroke-width': shellConfig.hoverStrokeWidth },
+                  opacity: shellConfig.hoverOpacity,
+                  duration: atomConfig.timing.hoverDuration, // Configurable
+                  ease: 'power2.out'
+                });
+              },
 					
               applyElectronEffects(shellIndex, electron) {
                 const shell = shells[shellIndex];
@@ -284,7 +284,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
                 // Electron growth
                 gsap.to(electron, {
                   attr: { r: atomConfig.electrons.hoverRadius },
-                  duration: 0.15,
+                  duration: atomConfig.timing.hoverDuration,
                   ease: 'power2.out',
                   overwrite: 'auto'
                 });
@@ -296,26 +296,26 @@ const electronsByDomain = projects.reduce((acc, project) => {
                 const allElectrons = document.querySelectorAll('.electron');
                 allElectrons.forEach(e => {
                   if (e === electron) {
-                    gsap.to(e, { opacity: 1.0, duration: 0.15, ease: 'power2.out', overwrite: 'auto' });
+                    gsap.to(e, { opacity: 1.0, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
                   } else {
-                    gsap.to(e, { opacity: shellConfig.electronHoverOpacity, duration: 0.15, ease: 'power2.out', overwrite: 'auto' });
+                    gsap.to(e, { opacity: shellConfig.electronHoverOpacity, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
                   }
                 });
               },
 					
-					resetShellEffects(shellIndex) {
-						const shell = shells[shellIndex];
-						const shellConfig = atomConfig.shells[shellIndex];
-						if (!shell || !shellConfig) return;
-						
-						console.log(`🔄 Resetting shell ${shellIndex} effects`);
-						gsap.to(shell, {
-							attr: { 'stroke-width': shellConfig.strokeWidth },
-							opacity: shellConfig.defaultOpacity,
-							duration: 0.15,
-							ease: 'power2.out'
-						});
-					},
+              resetShellEffects(shellIndex) {
+                const shell = shells[shellIndex];
+                const shellConfig = atomConfig.shells[shellIndex];
+                if (!shell || !shellConfig) return;
+                
+                console.log(`🔄 Resetting shell ${shellIndex} effects`);
+                gsap.to(shell, {
+                  attr: { 'stroke-width': shellConfig.strokeWidth },
+                  opacity: shellConfig.defaultOpacity,
+                  duration: atomConfig.timing.hoverDuration,
+                  ease: 'power2.out'
+                });
+              },
 					
               resetElectronEffects(shellIndex) {
                 console.log(`🔄 Resetting electron effects for shell ${shellIndex}`);
@@ -332,7 +332,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
                   gsap.to(e, {
                     attr: { r: atomConfig.electrons.radius },
                     opacity: 1.0,
-                    duration: 0.15,
+                    duration: atomConfig.timing.hoverDuration,
                     ease: 'power2.out',
                     overwrite: 'auto'
                   });

@@ -74,6 +74,7 @@ export default {
   // Animation timing and easing
   timing: {
     hoverDuration: userTweaks.hoverAnimationSpeed,
+    baselineResetDuration: userTweaks.baselineResetAnimationSpeed,
     dragSpring: {          // Snap-back physics
       tension: 180,
       friction: 12
