@@ -18,7 +18,7 @@ export const userTweaks = {
   },
 
   // 📏 SIZES
-  electronSize: 18,        // Normal electron radius
+  electronSize: 20,        // Normal electron radius
   electronHoverSize: 30,  // Size when you hover over it
   nucleusSize: 40,        // Center "A" circle size
 
@@ -33,18 +33,18 @@ export const userTweaks = {
   },
 
   // 📐 ELECTRON SPACING
-  minElectronDistance: 30,   // Minimum degrees between electrons on same shell
+  minElectronDistance: 50,   // Minimum degrees between electrons on same shell
 
   // ⭕ SHELL STATES
   shell: {
     // Default state (resting)
     default: {
-      thickness: 5,           // Shell ring stroke width
+      thickness: 4,           // Shell ring stroke width
       opacity: 0.3           // Shell opacity (subtle visibility)
     },
     // Hover state (focused)
     hover: {
-      thickness: 6,           // Shell thickness on hover (subtle increase)
+      thickness: 5,           // Shell thickness on hover (subtle increase)
       opacity: 0.7,           // Shell opacity on hover (modern transparency)
       electronOpacity: 0.2    // Electrons opacity when shell hovered
     }
