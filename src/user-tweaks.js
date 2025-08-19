@@ -33,7 +33,17 @@ export const userTweaks = {
   },
 
   // 📐 ELECTRON SPACING
-  minElectronDistance: 30   // Minimum degrees between electrons on same shell
+  minElectronDistance: 30,   // Minimum degrees between electrons on same shell
+
+  // ⭕ SHELL APPEARANCE
+  shellThickness: 3,        // Shell ring stroke width
+
+  // 🖼️ VIEWPORT (prevent electron clipping)
+  viewportSize: 900,        // SVG width/height (increase if electrons get cut off)
+  viewportPadding: 80,      // Safe area around edges
+
+  // 🔍 OVERALL ATOM SCALE
+  atomScale: 1.25            // 1.0 = normal, 1.5 = 50% bigger, 0.8 = 20% smaller
 
 }; 
 

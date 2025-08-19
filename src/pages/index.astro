@@ -53,9 +53,9 @@ const electronsByDomain = projects.reduce((acc, project) => {
 		<div class="atom-container">
 			<svg 
 				id="atom-svg"
-				width="600" 
-				height="600" 
-				viewBox="0 0 600 600"
+				width={atomConfig.viewport.width} 
+				height={atomConfig.viewport.height} 
+				viewBox={`0 0 ${atomConfig.viewport.width} ${atomConfig.viewport.height}`}
 				xmlns="http://www.w3.org/2000/svg"
 			>
 				<!-- Nucleus -->
@@ -148,7 +148,7 @@ const electronsByDomain = projects.reduce((acc, project) => {
 										cx={x}
 										cy={y}
 										r={atomConfig.electrons.radius}
-										fill="white"
+										fill={atomConfig.electrons.color}
 										stroke={atomConfig.electrons.color}
 										stroke-width={atomConfig.electrons.strokeWidth}
 										data-project={project.slug}
