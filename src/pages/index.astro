@@ -122,119 +122,292 @@ const projectSummaries = projectsWithDomains.map(p => ({
                 cursor: pointer; font-size: 18px; line-height: 34px; text-align: center;
             }
             
-            /* Bio-specific styles */
+            /* Bio Original Design - Exact Recreation */
             .bio-layout {
-                max-width: 1000px !important;
-                padding: 60px 32px !important;
-            }
-            .bio-header {
-                display: flex;
-                gap: 40px;
-                align-items: flex-start;
-                margin-bottom: 48px;
-            }
-            .bio-portrait {
-                width: 200px;
-                height: 200px;
-                object-fit: cover;
-                border-radius: 50%;
-                flex-shrink: 0;
-            }
-            .bio-intro {
-                flex: 1;
-            }
-            .bio-intro h1 {
-                font-size: 32px;
-                font-weight: bold;
-                margin: 0 0 8px 0;
-                letter-spacing: 1px;
-            }
-            .bio-subtitle {
-                font-size: 18px;
-                font-weight: 500;
-                margin: 0 0 20px 0;
-                color: #666;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            .bio-intro p {
-                font-size: 16px;
-                line-height: 1.6;
-                margin: 0;
-            }
-            .bio-skills {
-                margin-bottom: 40px;
-            }
-            .bio-skills h3 {
-                font-size: 24px;
-                margin: 0 0 24px 0;
-                font-weight: bold;
-            }
-            #bio-skills-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 24px;
-            }
-            .skill-category {
-                border: 1px solid #ddd;
-                padding: 16px;
-                border-radius: 8px;
-            }
-            .skill-category h4 {
-                font-size: 16px;
-                font-weight: bold;
-                margin: 0 0 12px 0;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            .skill-list {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-            }
-            .skill-item {
-                font-size: 14px;
-                padding: 4px 0;
-                border-bottom: 1px solid #f0f0f0;
-            }
-            .skill-item:last-child {
-                border-bottom: none;
-            }
-            .bio-contact h3 {
-                font-size: 24px;
-                margin: 0 0 16px 0;
-                font-weight: bold;
-            }
-            .bio-contact a {
-                font-size: 18px;
-                color: #000;
-                text-decoration: none;
-                border-bottom: 2px solid #000;
-                padding-bottom: 2px;
-            }
-            .bio-contact a:hover {
-                background: #000;
-                color: #fff;
+                max-width: none !important;
+                width: 100%;
+                height: 100vh;
+                padding: 0 !important;
+                position: relative;
+                background: #fff;
+                font-family: Arial, sans-serif;
+                overflow: auto;
             }
             
-            /* Responsive bio layout */
-            @media (max-width: 768px) {
-                .bio-layout {
-                    padding: 40px 20px !important;
-                }
-                .bio-header {
-                    flex-direction: column;
-                    gap: 24px;
+            /* Header Section - Exact positioning from screenshot */
+            .bio-main-header {
+                position: absolute;
+                top: 40px;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+                width: 100%;
+            }
+            .bio-name-large {
+                font-size: 64px;
+                font-weight: bold;
+                letter-spacing: 8px;
+                margin: 0 0 12px 0;
+                color: #000;
+                font-style: italic;
+            }
+            .bio-subtitle-main {
+                font-size: 14px;
+                font-weight: 400;
+                letter-spacing: 4px;
+                color: #000;
+                margin: 0;
+                text-transform: uppercase;
+            }
+            .bio-social {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 20px;
+            }
+            
+            /* Arrow from header to portrait - recreating exact curve */
+            .arrow-to-portrait {
+                position: absolute;
+                top: 180px;
+                left: 40%;
+                z-index: 1;
+                transform: rotate(15deg);
+            }
+            
+            /* Portrait Section - exact positioning from screenshot */
+            .bio-portrait-section {
+                position: absolute;
+                top: 280px;
+                right: 15%;
+                text-align: center;
+            }
+            .bio-portrait-original {
+                width: 320px;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 0;
+                display: block;
+                margin-bottom: 12px;
+            }
+            .its-me-annotation {
+                font-size: 16px;
+                font-style: italic;
+                color: #000;
+                font-family: cursive;
+                transform: rotate(-5deg);
+                position: absolute;
+                bottom: -10px;
+                right: -30px;
+            }
+            
+            /* Arrow from portrait down - recreating the exact S-curve */
+            .arrow-to-presentation {
+                position: absolute;
+                top: 720px;
+                right: 20%;
+                z-index: 1;
+                transform: rotate(-20deg);
+            }
+            
+            /* Presentation Section - exact positioning */
+            .presentation-section {
+                position: absolute;
+                top: 800px;
+                left: 8%;
+                max-width: 50%;
+            }
+            .presentation-label {
+                font-size: 16px;
+                font-family: cursive;
+                color: #000;
+                margin-bottom: 30px;
+                transform: rotate(-8deg);
+                display: inline-block;
+                font-style: italic;
+            }
+            .bio-text-large {
+                font-size: 48px;
+                line-height: 1.2;
+                color: #000;
+                font-weight: bold;
+                font-style: italic;
+            }
+            .text-italic {
+                font-style: italic;
+            }
+            .underlined {
+                text-decoration: underline;
+                text-decoration-thickness: 3px;
+            }
+            .circled {
+                border: 3px solid #000;
+                border-radius: 50px;
+                padding: 5px 20px;
+                display: inline-block;
+                margin: 0 8px;
+                font-style: normal;
+            }
+            
+            /* Arrow to competences - flowing curve */
+            .arrow-to-competences {
+                position: absolute;
+                top: 1180px;
+                left: 25%;
+                z-index: 1;
+                transform: rotate(45deg);
+            }
+            
+            /* Competences Section - exact positioning */
+            .competences-section {
+                position: absolute;
+                top: 1280px;
+                right: 8%;
+                width: 55%;
+            }
+            .competences-label {
+                font-size: 16px;
+                font-family: cursive;
+                color: #000;
+                margin-bottom: 40px;
+                transform: rotate(-5deg);
+                display: inline-block;
+                font-style: italic;
+            }
+            
+            /* Skills Organic Layout - scattered positioning like original */
+            .skills-organic {
+                position: relative;
+                width: 100%;
+                height: 600px;
+            }
+            
+            /* Exact skill cluster positioning from screenshots */
+            .skill-cluster {
+                position: absolute;
+            }
+            .daw-cluster {
+                top: 80px;
+                left: 0;
+            }
+            .dynamic-cluster {
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .engine-cluster {
+                top: 80px;
+                right: 0;
+            }
+            .image-cluster {
+                top: 380px;
+                left: 25%;
+            }
+            
+            .skill-category-label {
+                font-size: 18px;
+                font-weight: normal;
+                text-align: center;
+                margin-bottom: 24px;
+                padding: 12px 24px;
+                border: 2px solid #000;
+                border-radius: 50px;
+                display: inline-block;
+                background: #fff;
+                font-style: italic;
+            }
+            
+            /* Skill Icons - recreating scattered layout */
+            .skill-icons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                justify-content: center;
+                max-width: 200px;
+            }
+            .skill-icon {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 80px;
+                height: 80px;
+                justify-content: center;
+            }
+            .skill-icon span {
+                font-size: 12px;
+                font-weight: 500;
+                color: #000;
+                margin-top: 4px;
+            }
+            
+            /* Better arrows - more organic curves */
+            .arrow-to-portrait path,
+            .arrow-to-presentation path,
+            .arrow-to-competences path {
+                stroke: #000;
+                stroke-width: 2;
+                fill: none;
+                stroke-linecap: round;
+            }
+            
+            /* Contact Section - bottom positioning */
+            .bio-contact-original {
+                position: absolute;
+                bottom: 80px;
+                left: 8%;
+            }
+            .contact-label {
+                font-size: 16px;
+                font-family: cursive;
+                color: #000;
+                margin-bottom: 16px;
+                transform: rotate(-3deg);
+                display: inline-block;
+                font-style: italic;
+            }
+            .contact-email {
+                font-size: 28px;
+                color: #000;
+                text-decoration: none;
+                border-bottom: 3px solid #000;
+                font-weight: normal;
+            }
+            .contact-email:hover {
+                background: #000;
+                color: #fff;
+                padding: 4px 8px;
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 1024px) {
+                .bio-layout { height: auto; overflow: visible; }
+                .bio-name-large { font-size: 48px; letter-spacing: 4px; }
+                .bio-text-large { font-size: 36px; }
+                .bio-portrait-original { width: 280px; height: 350px; }
+                
+                .bio-portrait-section,
+                .presentation-section,
+                .competences-section,
+                .bio-contact-original {
+                    position: static !important;
+                    margin: 60px auto;
+                    max-width: 90%;
                     text-align: center;
+                    transform: none !important;
                 }
-                .bio-portrait {
-                    width: 150px;
-                    height: 150px;
-                    align-self: center;
+                
+                .arrow-to-portrait,
+                .arrow-to-presentation,
+                .arrow-to-competences { display: none; }
+                
+                .skills-organic {
+                    height: auto;
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 40px;
                 }
-                #bio-skills-grid {
-                    grid-template-columns: 1fr;
-                }
+                .skill-cluster { position: static !important; }
             }
 		</style>
 	</head>
@@ -377,23 +550,104 @@ const projectSummaries = projectsWithDomains.map(p => ({
           
           <!-- Bio content template -->
           <div id="bio-content" class="inner bio-layout" role="dialog" aria-modal="true" aria-labelledby="bio-title" style="display:none;">
-            <div class="bio-header">
-              <img id="bio-portrait" src="" alt="Arthur Kowskii" class="bio-portrait">
-              <div class="bio-intro">
-                <h1 id="bio-name"></h1>
-                <h2 id="bio-title" class="bio-subtitle"></h2>
-                <p id="bio-description"></p>
+            <!-- Header with name and title -->
+            <header class="bio-main-header">
+              <h1 id="bio-name" class="bio-name-large">ARTHUR KOWSKII</h1>
+              <h2 id="bio-title" class="bio-subtitle-main">COMPOSER / SOUND DESIGNER / AUDIO PROGRAMMER</h2>
+              
+              <!-- Social icons -->
+              <div class="bio-social">
+                <!-- Social icons would go here -->
+              </div>
+            </header>
+            
+            <!-- Arrow pointing to portrait - exact curve from original -->
+            <svg class="arrow-to-portrait" viewBox="0 0 300 150" width="200" height="100">
+              <path d="M20 50 Q 80 20 150 60 Q 200 80 250 90 Q 280 100 270 130" stroke="black" stroke-width="2" fill="none"/>
+              <polygon points="265,125 275,135 260,130" fill="black"/>
+            </svg>
+            
+            <!-- Portrait with "it's me!" annotation -->
+            <div class="bio-portrait-section">
+              <img id="bio-portrait" src="" alt="Arthur Kowskii" class="bio-portrait-original">
+              <div class="its-me-annotation">"it's me! ♪"</div>
+            </div>
+            
+            <!-- Arrow to presentation - S-curve from original -->
+            <svg class="arrow-to-presentation" viewBox="0 0 150 400" width="100" height="300">
+              <path d="M75 30 Q 50 80 60 150 Q 70 220 40 280 Q 20 340 50 380" stroke="black" stroke-width="2" fill="none"/>
+              <polygon points="45,375 55,385 40,380" fill="black"/>
+            </svg>
+            
+            <div class="presentation-section">
+              <div class="presentation-label">"Présentation ♪"</div>
+              <div class="bio-text-large">
+                <span class="text-italic">Explorateur sonore et éternel apprenant.</span><br>
+                <span class="text-italic">Étudiant à </span><span class="underlined">ISART Digital Paris</span><br>
+                <span class="text-italic">(Musique & Sound Design),</span> <span class="circled">je vis pour</span><br>
+                <span class="circled">apprendre</span> <span class="text-italic">et concrétiser des</span><br>
+                <span class="text-italic">projets qui me passionnent.</span>
               </div>
             </div>
             
-            <div class="bio-skills">
-              <h3>Skills & Tools</h3>
-              <div id="bio-skills-grid"></div>
+            <!-- Arrow to competences - flowing curve from original -->
+            <svg class="arrow-to-competences" viewBox="0 0 400 200" width="300" height="150">
+              <path d="M30 100 Q 100 50 200 80 Q 300 110 350 150" stroke="black" stroke-width="2" fill="none"/>
+              <polygon points="345,145 355,155 340,150" fill="black"/>
+            </svg>
+            
+            <!-- Competences section -->
+            <div class="competences-section">
+              <div class="competences-label">"compétences ♪"</div>
+              
+              <!-- Skills arranged in organic layout -->
+              <div class="skills-organic">
+                <!-- DAW Section -->
+                <div class="skill-cluster daw-cluster">
+                  <div class="skill-category-label">DAW</div>
+                  <div class="skill-icons">
+                    <div class="skill-icon" data-tool="reaper"><span>Reaper</span></div>
+                    <div class="skill-icon" data-tool="ableton"><span>Ableton</span></div>
+                    <div class="skill-icon" data-tool="logic"><span>Logic Pro</span></div>
+                    <div class="skill-icon" data-tool="protools"><span>Pro Tools</span></div>
+                  </div>
+                </div>
+                
+                <!-- Dynamic Audio Section -->
+                <div class="skill-cluster dynamic-cluster">
+                  <div class="skill-category-label">Dynamic Audio</div>
+                  <div class="skill-icons">
+                    <div class="skill-icon" data-tool="fmod"><span>FMOD</span></div>
+                    <div class="skill-icon" data-tool="wwise"><span>Wwise</span></div>
+                  </div>
+                </div>
+                
+                <!-- Engine & Code Section -->
+                <div class="skill-cluster engine-cluster">
+                  <div class="skill-category-label">Engine & Code</div>
+                  <div class="skill-icons">
+                    <div class="skill-icon" data-tool="unity"><span>Unity</span></div>
+                    <div class="skill-icon" data-tool="csharp"><span>C#</span></div>
+                    <div class="skill-icon" data-tool="git"><span>Git</span></div>
+                  </div>
+                </div>
+                
+                <!-- Image & Video Section -->
+                <div class="skill-cluster image-cluster">
+                  <div class="skill-category-label">Image & Video</div>
+                  <div class="skill-icons">
+                    <div class="skill-icon" data-tool="davinci"><span>DaVinci</span></div>
+                    <div class="skill-icon" data-tool="cinema4d"><span>Cinema 4D</span></div>
+                    <div class="skill-icon" data-tool="photoshop"><span>Photoshop</span></div>
+                  </div>
+                </div>
+              </div>
             </div>
             
-            <div class="bio-contact">
-              <h3>Contact</h3>
-              <a id="bio-email" href=""></a>
+            <!-- Contact section -->
+            <div class="bio-contact-original">
+              <div class="contact-label">"kontakt ♪"</div>
+              <a id="bio-email" href="" class="contact-email">contact@kowskii.com</a>
             </div>
           </div>
         </div>
@@ -498,38 +752,11 @@ const projectSummaries = projectsWithDomains.map(p => ({
             }
 
             function fillBioOverlay(bio) {
-              bioNameEl.textContent = bio.name || '';
-              bioTitleEl.textContent = bio.title || '';
-              bioDescEl.textContent = bio.bio?.en || bio.bio?.fr || '';
+              // The bio content is now static in the HTML template
+              // Just populate the dynamic elements
               bioPortraitEl.src = bio.images?.portrait || '';
               bioEmailEl.href = `mailto:${bio.contact}`;
               bioEmailEl.textContent = bio.contact || '';
-              
-              // Fill skills grid
-              bioSkillsGrid.innerHTML = '';
-              if (bio.skills) {
-                Object.entries(bio.skills).forEach(([category, tools]) => {
-                  const categoryDiv = document.createElement('div');
-                  categoryDiv.className = 'skill-category';
-                  
-                  const categoryTitle = document.createElement('h4');
-                  categoryTitle.textContent = category;
-                  categoryDiv.appendChild(categoryTitle);
-                  
-                  const skillList = document.createElement('div');
-                  skillList.className = 'skill-list';
-                  
-                  tools.forEach(tool => {
-                    const skillItem = document.createElement('div');
-                    skillItem.className = 'skill-item';
-                    skillItem.textContent = tool.name;
-                    skillList.appendChild(skillItem);
-                  });
-                  
-                  categoryDiv.appendChild(skillList);
-                  bioSkillsGrid.appendChild(categoryDiv);
-                });
-              }
             }
 
             function openProjectOverlay(slug, cx, cy, electronEl) {
