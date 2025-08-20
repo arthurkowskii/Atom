@@ -70,7 +70,35 @@ export const userTweaks = {
   // Shell hover hitbox tolerance (in pixels).
   // This defines the +/- distance around each shell radius that counts as a hover.
   // Example: 15 means a 30px wide ring centered on the shell path.
-  shellHitboxTolerance: 30
+  shellHitboxTolerance: 30,
+
+  // 🔄 OVERLAY TRANSITION (one-page project overlay)
+  overlayTransition: {
+    openMs: 1000,   // duration to open overlay (ms)
+    closeMs: 520,  // duration to close overlay (ms)
+    easing: 'power2.inOut' // GSAP ease name
+  },
+
+  // ✨ MICRO INTERACTIONS
+  micro: {
+    // Hover ring around the electron
+    hoverCursorRing: false,
+    hoverRingDelta: 6,          // extra radius in px
+    hoverRingOpacity: 0.6,
+    hoverRingDurationMs: 160,
+
+    // Ripple on click
+    ripple: true,
+    rippleDurationMs: 360,
+    rippleColor: '#000',
+    rippleStrokeWidth: 2,
+    rippleExpandPx: 56,
+
+    // Shell pulse on click
+    shellPulse: true,
+    shellPulseDelta: 1.2,       // add to strokeWidth in px
+    shellPulseDurationMs: 200
+  }
 
 }; 
 

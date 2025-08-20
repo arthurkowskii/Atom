@@ -1,0 +1,133 @@
+---
+import { getCollection, getEntryBySlug } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntryBySlug('projects', slug);
+
+if (!entry) {
+  throw new Error(`Project not found: ${slug}`);
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{entry.data.title} — Project</title>
+    <style>
+      /* View Transition radial mask (progressive enhancement) */
+      :root { view-transition-name: root; }
+      @keyframes vt-reveal { from { clip-path: circle(0 at var(--vt-x,50%) var(--vt-y,50%)); } to { clip-path: circle(150vmax at var(--vt-x,50%) var(--vt-y,50%)); } }
+      @keyframes vt-conceal { from { clip-path: circle(150vmax at var(--vt-x,50%) var(--vt-y,50%)); } to { clip-path: circle(0 at var(--vt-x,50%) var(--vt-y,50%)); } }
+      ::view-transition-new(root) {
+        animation: vt-reveal var(--vt-dur-in, 600ms) var(--vt-ease, ease-in-out) both;
+        filter: blur(var(--vt-soft, 0px));
+      }
+      html[data-vt-dir="back"]::view-transition-old(root) {
+        animation: vt-conceal var(--vt-dur-out, 520ms) var(--vt-ease, ease-in-out) both;
+        filter: blur(var(--vt-soft, 0px));
+      }
+      :root { color-scheme: light; }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, sans-serif;
+        color: #000;
+        background: #fff;
+        line-height: 1.6;
+      }
+      .wrap {
+        max-width: 840px;
+        margin: 0 auto;
+        padding: 48px 24px;
+      }
+      a { color: inherit; }
+      .back {
+        display: inline-block;
+        margin-bottom: 24px;
+        text-decoration: none;
+        border-bottom: 1px solid #000;
+        cursor: pointer;
+      }
+      h1 { margin: 0 0 16px; font-size: 28px; }
+      .meta { margin: 0 0 16px; opacity: 0.7; font-size: 14px; }
+      .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 16px; }
+      .chip { border: 1px solid #000; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+      .actions { display: flex; gap: 12px; margin: 16px 0 24px; }
+      .actions a { border-bottom: 1px solid #000; text-decoration: none; }
+      .content :where(h2, h3) { margin-top: 20px; }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <a class="back" id="back-link" href="/">← Back to Atom</a>
+      <h1 id="project-title">{entry.data.title}</h1>
+      <p class="meta">
+        <strong>Domain:</strong> {entry.data.domain} ·
+        <strong>Status:</strong> {entry.data.status} ·
+        <strong>Date:</strong> {entry.data.date.toLocaleDateString()}
+      </p>
+      {entry.data.tech?.length ? (
+        <div class="chips">
+          {entry.data.tech.map((t) => <span class="chip">{t}</span>)}
+        </div>
+      ) : null}
+      <div class="actions">
+        {entry.data.link ? <a href={entry.data.link} target="_blank" rel="noreferrer noopener">Live</a> : null}
+        {entry.data.github ? <a href={entry.data.github} target="_blank" rel="noreferrer noopener">GitHub</a> : null}
+      </div>
+      <article class="content">
+        <p>{entry.data.description}</p>
+        <slot />
+      </article>
+    </main>
+
+    <script>
+      // Progressive enhancement: native View Transitions if available
+      const supportsVT = 'startViewTransition' in document;
+      const back = document.getElementById('back-link');
+      back?.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Use stored source point if available; fallback to viewport center
+        let x = window.innerWidth / 2;
+        let y = window.innerHeight / 2;
+        try {
+          const raw = sessionStorage.getItem('radialLastSource');
+          if (raw) {
+            const src = JSON.parse(raw);
+            if (typeof src?.x === 'number' && typeof src?.y === 'number') { x = src.x; y = src.y; }
+          }
+        } catch {}
+
+        const url = back.getAttribute('href') || '/';
+        if (supportsVT) {
+          // Set CSS vars and mark back direction, then start VT
+          document.documentElement.style.setProperty('--vt-x', `${x}px`);
+          document.documentElement.style.setProperty('--vt-y', `${y}px`);
+          document.documentElement.style.setProperty('--vt-dur-out', '520ms');
+          document.documentElement.style.setProperty('--vt-ease', 'ease-in-out');
+          document.documentElement.style.setProperty('--vt-soft', '24px');
+          document.documentElement.setAttribute('data-vt-dir', 'back');
+          document.startViewTransition(() => window.location.assign(url));
+        } else {
+          // Fallback: stash reverse payload for JS overlay on home
+          try {
+            const payload = {
+              x, y,
+              durationOut:  520,
+              overlayColor: '#000',
+              edgeSoftnessPx: 24,
+            };
+            sessionStorage.setItem('radialBack', JSON.stringify(payload));
+          } catch {}
+          window.location.assign(url);
+        }
+      });
+    </script>
+  </body>
+  </html>

@@ -14,6 +14,16 @@ const electronsByDomain = projects.reduce((acc, project) => {
   acc[project.data.domain].push(project);
   return acc;
 }, {});
+// Minimal project payload for the client overlay
+const projectSummaries = projects.map(p => ({
+  slug: p.slug,
+  title: p.data.title,
+  description: p.data.description,
+  domain: p.data.domain,
+  tech: p.data.tech,
+  link: p.data.link,
+  github: p.data.github,
+}));
 ---
 
 <html lang="en">
@@ -52,6 +62,35 @@ const electronsByDomain = projects.reduce((acc, project) => {
 			.electron {
 				cursor: pointer;
 			}
+
+            /* One-page overlay for project details (masked by clip-path) */
+            #project-overlay {
+                position: fixed;
+                inset: 0;
+                background: #fff;
+                color: #000;
+                z-index: 9999;
+                display: none; /* shown via .open */
+                clip-path: circle(var(--r, 0px) at var(--x, 50%) var(--y, 50%));
+                will-change: clip-path;
+            }
+            #project-overlay.open { display: block; }
+            #project-overlay .inner {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 48px 24px;
+                opacity: 0;
+                transition: opacity 0.18s ease-out 0.16s;
+            }
+            #project-overlay.open .inner { opacity: 1; }
+            #project-overlay .close-btn {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                width: 36px; height: 36px;
+                border: 1px solid #000; border-radius: 50%; background: #fff; color: #000;
+                cursor: pointer; font-size: 18px; line-height: 34px; text-align: center;
+            }
 		</style>
 	</head>
 	<body>
@@ -175,6 +214,20 @@ const electronsByDomain = projects.reduce((acc, project) => {
 			</svg>
 		</div>
 
+        <!-- Client data payload for overlay -->
+        <script type="application/json" id="project-data" set:html={JSON.stringify(projectSummaries)}></script>
+
+        <!-- Overlay (one-page detail view) -->
+        <div id="project-overlay" aria-hidden="true">
+          <button id="overlay-close" class="close-btn" aria-label="Close">×</button>
+          <div class="inner" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+            <h1 id="overlay-title"></h1>
+            <p id="overlay-desc"></p>
+            <div id="overlay-tech" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px;"></div>
+            <div id="overlay-actions" style="display:flex;gap:12px;margin:8px 0 0;"></div>
+          </div>
+        </div>
+
 		<script>
 			import { gsap } from 'gsap';
 			import { Draggable } from 'gsap/Draggable';
@@ -207,14 +260,133 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				fitToViewport();
 				window.addEventListener('resize', fitToViewport);
 				
-				// Register GSAP Draggable
-				gsap.registerPlugin(Draggable);
+			// Register GSAP Draggable
+			gsap.registerPlugin(Draggable);
 
-				// Add hover effects to electrons (includes shell effects)
-				const allElectrons = document.querySelectorAll('.electron'); // includes nucleus
-				const electrons = document.querySelectorAll('.electron:not(.nucleus)'); // exclude nucleus from drag
-				const shells = document.querySelectorAll('.shell');
-				let dragLock = false; // Suppress hover logic while dragging
+            // Overlay state and helpers
+            const overlay = document.getElementById('project-overlay');
+            const closeBtn = document.getElementById('overlay-close');
+            const titleEl = document.getElementById('overlay-title');
+            const descEl = document.getElementById('overlay-desc');
+            const techEl = document.getElementById('overlay-tech');
+            const actionsEl = document.getElementById('overlay-actions');
+            const dataEl = document.getElementById('project-data');
+            const PROJECTS = dataEl ? JSON.parse(dataEl.textContent) : [];
+            const projectBySlug = new Map(PROJECTS.map(p => [p.slug, p]));
+            let overlayOpen = false;
+            let overlayR = 0;
+            let lastFocused = null;
+            let currentElectron = null;
+
+            function getCoverRadius(x, y) {
+              const vw = window.innerWidth, vh = window.innerHeight;
+              const dx = Math.max(x, vw - x);
+              const dy = Math.max(y, vh - y);
+              return Math.hypot(dx, dy);
+            }
+
+            function fillOverlay(p) {
+              titleEl.textContent = p.title || '';
+              descEl.textContent = p.description || '';
+              techEl.innerHTML = '';
+              if (Array.isArray(p.tech)) {
+                p.tech.forEach(t => {
+                  const span = document.createElement('span');
+                  span.textContent = t;
+                  span.style.border = '1px solid #000';
+                  span.style.padding = '2px 8px';
+                  span.style.borderRadius = '999px';
+                  span.style.fontSize = '12px';
+                  techEl.appendChild(span);
+                });
+              }
+              actionsEl.innerHTML = '';
+              if (p.link) {
+                const a = document.createElement('a'); a.href = p.link; a.target = '_blank'; a.rel='noreferrer noopener'; a.textContent = 'Live'; a.style.borderBottom='1px solid #000'; a.style.textDecoration='none'; actionsEl.appendChild(a);
+              }
+              if (p.github) {
+                const a = document.createElement('a'); a.href = p.github; a.target = '_blank'; a.rel='noreferrer noopener'; a.textContent = 'GitHub'; a.style.borderBottom='1px solid #000'; a.style.textDecoration='none'; actionsEl.appendChild(a);
+              }
+            }
+
+            function openOverlay(slug, cx, cy, electronEl) {
+              const p = projectBySlug.get(slug);
+              if (!p || overlayOpen) return;
+              overlayOpen = true;
+              lastFocused = document.activeElement;
+              currentElectron = electronEl;
+              if (currentElectron) orbitSystem.pauseElectron(currentElectron);
+
+              fillOverlay(p);
+              overlay.style.setProperty('--x', `${cx}px`);
+              overlay.style.setProperty('--y', `${cy}px`);
+              overlay.style.setProperty('--r', `0px`);
+              overlay.style.display = 'block';
+              overlay.setAttribute('aria-hidden', 'false');
+              const R = getCoverRadius(cx, cy);
+              const dur = (atomConfig.overlayTransition?.openMs ?? 600) / 1000;
+              const state = { r: 0 };
+              gsap.to(state, {
+                r: R,
+                duration: dur,
+                ease: atomConfig.overlayTransition?.easing ?? 'power2.inOut',
+                onUpdate: () => {
+                  overlayR = state.r;
+                  overlay.style.setProperty('--r', `${overlayR}px`);
+                },
+                onComplete: () => {
+                  overlay.classList.add('open');
+                  try { history.pushState({ overlay: true, slug }, '', `/projects/${slug}`); } catch {}
+                  closeBtn.focus({ preventScroll: true });
+                }
+              });
+            }
+
+            function closeOverlay() {
+              if (!overlayOpen) return;
+              overlayOpen = false;
+              const dur = (atomConfig.overlayTransition?.closeMs ?? 520) / 1000;
+              const state = { r: overlayR };
+              overlay.classList.remove('open');
+              gsap.to(state, {
+                r: 0,
+                duration: dur,
+                ease: atomConfig.overlayTransition?.easing ?? 'power2.inOut',
+                onUpdate: () => {
+                  overlayR = state.r;
+                  overlay.style.setProperty('--r', `${overlayR}px`);
+                },
+                onComplete: () => {
+                  overlay.style.display = 'none';
+                  overlay.setAttribute('aria-hidden', 'true');
+                  if (currentElectron) { orbitSystem.resumeElectron(currentElectron); currentElectron = null; }
+                  if (lastFocused) { try { lastFocused.focus({ preventScroll: true }); } catch {} }
+                  try { history.replaceState(null, '', '/'); } catch {}
+                }
+              });
+            }
+
+            closeBtn?.addEventListener('click', () => closeOverlay());
+            window.addEventListener('popstate', (e) => {
+              // If overlay is open and we popped back, close it
+              if (overlayOpen && !e.state?.overlay) {
+                closeOverlay();
+              }
+            });
+            document.addEventListener('keydown', (e) => {
+              if (overlayOpen && e.key === 'Escape') {
+                closeOverlay();
+              }
+            });
+            // (Backdrop click and deep-link auto-open were removed per request)
+
+                // Add hover effects to electrons (includes shell effects)
+                const allElectrons = document.querySelectorAll('.electron'); // includes nucleus
+                const electrons = document.querySelectorAll('.electron:not(.nucleus)'); // exclude nucleus from drag
+                const shells = document.querySelectorAll('.shell');
+                let dragLock = false; // Suppress hover logic while dragging
+                const micro = atomConfig.micro || {};
+                const svgNS = 'http://www.w3.org/2000/svg';
 				
 				// IMMEDIATE STATE MANAGER - No timeouts, no race conditions
 				const hoverStateManager = {
@@ -386,21 +558,60 @@ const electronsByDomain = projects.reduce((acc, project) => {
 				electrons.forEach((electron, electronIndex) => {
 					const shellIndex = parseInt(electron.dataset.shell);
 					
-					electron.addEventListener('mouseenter', () => {
-						if (dragLock) return;
-						// Record electron event timing to prevent mousemove conflicts
-						lastElectronEventTime = performance.now();
-						// Pass the actual electron element to the state manager
-						hoverStateManager.setState(`electron-${shellIndex}-${electronIndex}`, electron);
-					});
+                electron.addEventListener('mouseenter', () => {
+                    if (dragLock) return;
+                    // Record electron event timing to prevent mousemove conflicts
+                    lastElectronEventTime = performance.now();
+                    // Pass the actual electron element to the state manager
+                    hoverStateManager.setState(`electron-${shellIndex}-${electronIndex}`, electron);
+                    // Micro: hover ring
+                    try {
+                      if (micro.hoverCursorRing) {
+                        const parent = electron.parentNode;
+                        const baseR = parseFloat(electron.getAttribute('r')) || 0;
+                        const cx = parseFloat(electron.getAttribute('cx'));
+                        const cy = parseFloat(electron.getAttribute('cy'));
+                        const ring = document.createElementNS(svgNS, 'circle');
+                        ring.setAttribute('cx', String(cx));
+                        ring.setAttribute('cy', String(cy));
+                        ring.setAttribute('r', String(baseR));
+                        ring.setAttribute('fill', 'none');
+                        ring.setAttribute('stroke', atomConfig.electrons.color || '#000');
+                        ring.setAttribute('stroke-width', '1');
+                        ring.style.pointerEvents = 'none';
+                        // Align with electron transforms (paused on hover)
+                        const tx = parseFloat(gsap.getProperty(electron, 'x')) || 0;
+                        const ty = parseFloat(gsap.getProperty(electron, 'y')) || 0;
+                        gsap.set(ring, { x: tx, y: ty, opacity: 0 });
+                        parent.appendChild(ring);
+                        // Animate outwards and hold
+                        gsap.to(ring, {
+                          attr: { r: baseR + (micro.hoverRingDelta ?? 6) },
+                          opacity: micro.hoverRingOpacity ?? 0.6,
+                          duration: (micro.hoverRingDurationMs ?? 160) / 1000,
+                          ease: 'power2.out'
+                        });
+                        // Store ref for removal on leave
+                        electron._hoverRing = ring;
+                      }
+                    } catch {}
+                });
 					
-					electron.addEventListener('mouseleave', () => {
-						if (dragLock) return;
-						// Check if we're still in the shell's tolerance zone via distance calculation
-						// The mousemove handler will determine the correct next state
-						// For now, assume we're leaving completely (will be corrected by mousemove if needed)
-						hoverStateManager.setState('none');
-					});
+                electron.addEventListener('mouseleave', () => {
+                    if (dragLock) return;
+                    // Check if we're still in the shell's tolerance zone via distance calculation
+                    // The mousemove handler will determine the correct next state
+                    // For now, assume we're leaving completely (will be corrected by mousemove if needed)
+                    hoverStateManager.setState('none');
+                    // Micro: remove hover ring
+                    try {
+                      const ring = electron._hoverRing;
+                      if (ring) {
+                        gsap.to(ring, { opacity: 0, duration: 0.12, onComplete: () => { try { ring.remove(); } catch {} } });
+                        electron._hoverRing = null;
+                      }
+                    } catch {}
+                });
 
 					// Minimal drag-and-drop (no tether visuals)
 					let pressTime = 0;
@@ -445,8 +656,64 @@ const electronsByDomain = projects.reduce((acc, project) => {
                             }
                         });
                     };
-							// For now, treat both click and drag release as snap-back
-							snapBack();
+                    if (isClick) {
+                        const rect = electron.getBoundingClientRect();
+                        const cx = rect.left + rect.width / 2;
+                        const cy = rect.top + rect.height / 2;
+                        const slug = electron.getAttribute('data-project');
+                        // Micro: ripple and shell pulse
+                        try {
+                          if (micro.ripple) {
+                            const parent = electron.parentNode;
+                            const baseR = parseFloat(electron.getAttribute('r')) || 0;
+                            const cxAttr = parseFloat(electron.getAttribute('cx'));
+                            const cyAttr = parseFloat(electron.getAttribute('cy'));
+                            const ripple = document.createElementNS(svgNS, 'circle');
+                            ripple.setAttribute('cx', String(cxAttr));
+                            ripple.setAttribute('cy', String(cyAttr));
+                            ripple.setAttribute('r', String(baseR));
+                            ripple.setAttribute('fill', 'none');
+                            ripple.setAttribute('stroke', micro.rippleColor || '#000');
+                            ripple.setAttribute('stroke-width', String(micro.rippleStrokeWidth ?? 2));
+                            ripple.style.pointerEvents = 'none';
+                            const tx = parseFloat(gsap.getProperty(electron, 'x')) || 0;
+                            const ty = parseFloat(gsap.getProperty(electron, 'y')) || 0;
+                            gsap.set(ripple, { x: tx, y: ty, opacity: 0.8 });
+                            parent.appendChild(ripple);
+                            gsap.to(ripple, {
+                              attr: { r: baseR + (micro.rippleExpandPx ?? 56) },
+                              opacity: 0,
+                              duration: (micro.rippleDurationMs ?? 360) / 1000,
+                              ease: 'power2.out',
+                              onComplete: () => { try { ripple.remove(); } catch {} }
+                            });
+                          }
+                          if (micro.shellPulse) {
+                            const shell = shells[shellIndex];
+                            if (shell) {
+                              const curW = parseFloat(shell.getAttribute('stroke-width')) || 0;
+                              const target = curW + (micro.shellPulseDelta ?? 1.2);
+                              gsap.to(shell, {
+                                attr: { 'stroke-width': target },
+                                duration: (micro.shellPulseDurationMs ?? 200) / 1000 / 2,
+                                ease: 'power2.out',
+                                yoyo: true,
+                                repeat: 1
+                              });
+                            }
+                          }
+                          // Remove hover ring if present
+                          if (electron._hoverRing) {
+                            const ring = electron._hoverRing; electron._hoverRing = null;
+                            gsap.to(ring, { opacity: 0, duration: 0.1, onComplete: () => { try { ring.remove(); } catch {} } });
+                          }
+                        } catch {}
+                        openOverlay(slug, cx, cy, electron);
+                        setTimeout(() => { dragLock = false; }, 80);
+                    } else {
+                        // Drag release: snap back
+                        snapBack();
+                    }
 						}
 					});
 				});

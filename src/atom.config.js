@@ -123,5 +123,28 @@ export default {
     respectReducedMotion: true,  // Honor prefers-reduced-motion
     fallbackToStatic: true,      // Show static version if needed
     minFPS: 30                   // Performance threshold
+  },
+
+  // One-page project overlay transition
+  overlayTransition: {
+    openMs: userTweaks.overlayTransition?.openMs ?? 600,
+    closeMs: userTweaks.overlayTransition?.closeMs ?? 520,
+    easing: userTweaks.overlayTransition?.easing ?? 'power2.inOut'
+  },
+
+  // Micro-interactions
+  micro: {
+    hoverCursorRing: userTweaks.micro?.hoverCursorRing ?? true,
+    hoverRingDelta: userTweaks.micro?.hoverRingDelta ?? 6,
+    hoverRingOpacity: userTweaks.micro?.hoverRingOpacity ?? 0.6,
+    hoverRingDurationMs: userTweaks.micro?.hoverRingDurationMs ?? 160,
+    ripple: userTweaks.micro?.ripple ?? true,
+    rippleDurationMs: userTweaks.micro?.rippleDurationMs ?? 360,
+    rippleColor: userTweaks.micro?.rippleColor ?? '#000',
+    rippleStrokeWidth: userTweaks.micro?.rippleStrokeWidth ?? 2,
+    rippleExpandPx: userTweaks.micro?.rippleExpandPx ?? 56,
+    shellPulse: userTweaks.micro?.shellPulse ?? true,
+    shellPulseDelta: userTweaks.micro?.shellPulseDelta ?? 1.2,
+    shellPulseDurationMs: userTweaks.micro?.shellPulseDurationMs ?? 200,
   }
 };
