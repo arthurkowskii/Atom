@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import atomConfig from '../atom.config.js';
 import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
+import { bioData } from '../content/bio.js';
 
 // Get all projects and compute domains from folder structure
 const projects = await getCollection('projects');
@@ -119,6 +120,121 @@ const projectSummaries = projectsWithDomains.map(p => ({
                 width: 36px; height: 36px;
                 border: 1px solid #000; border-radius: 50%; background: #fff; color: #000;
                 cursor: pointer; font-size: 18px; line-height: 34px; text-align: center;
+            }
+            
+            /* Bio-specific styles */
+            .bio-layout {
+                max-width: 1000px !important;
+                padding: 60px 32px !important;
+            }
+            .bio-header {
+                display: flex;
+                gap: 40px;
+                align-items: flex-start;
+                margin-bottom: 48px;
+            }
+            .bio-portrait {
+                width: 200px;
+                height: 200px;
+                object-fit: cover;
+                border-radius: 50%;
+                flex-shrink: 0;
+            }
+            .bio-intro {
+                flex: 1;
+            }
+            .bio-intro h1 {
+                font-size: 32px;
+                font-weight: bold;
+                margin: 0 0 8px 0;
+                letter-spacing: 1px;
+            }
+            .bio-subtitle {
+                font-size: 18px;
+                font-weight: 500;
+                margin: 0 0 20px 0;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .bio-intro p {
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 0;
+            }
+            .bio-skills {
+                margin-bottom: 40px;
+            }
+            .bio-skills h3 {
+                font-size: 24px;
+                margin: 0 0 24px 0;
+                font-weight: bold;
+            }
+            #bio-skills-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 24px;
+            }
+            .skill-category {
+                border: 1px solid #ddd;
+                padding: 16px;
+                border-radius: 8px;
+            }
+            .skill-category h4 {
+                font-size: 16px;
+                font-weight: bold;
+                margin: 0 0 12px 0;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .skill-list {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .skill-item {
+                font-size: 14px;
+                padding: 4px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .skill-item:last-child {
+                border-bottom: none;
+            }
+            .bio-contact h3 {
+                font-size: 24px;
+                margin: 0 0 16px 0;
+                font-weight: bold;
+            }
+            .bio-contact a {
+                font-size: 18px;
+                color: #000;
+                text-decoration: none;
+                border-bottom: 2px solid #000;
+                padding-bottom: 2px;
+            }
+            .bio-contact a:hover {
+                background: #000;
+                color: #fff;
+            }
+            
+            /* Responsive bio layout */
+            @media (max-width: 768px) {
+                .bio-layout {
+                    padding: 40px 20px !important;
+                }
+                .bio-header {
+                    flex-direction: column;
+                    gap: 24px;
+                    text-align: center;
+                }
+                .bio-portrait {
+                    width: 150px;
+                    height: 150px;
+                    align-self: center;
+                }
+                #bio-skills-grid {
+                    grid-template-columns: 1fr;
+                }
             }
 		</style>
 	</head>
@@ -245,15 +361,40 @@ const projectSummaries = projectsWithDomains.map(p => ({
 
         <!-- Client data payload for overlay -->
         <script type="application/json" id="project-data" set:html={JSON.stringify(projectSummaries)}></script>
+        <script type="application/json" id="bio-data" set:html={JSON.stringify(bioData)}></script>
 
-        <!-- Overlay (one-page detail view) -->
+        <!-- Overlay (handles both projects and bio) -->
         <div id="project-overlay" aria-hidden="true">
           <button id="overlay-close" class="close-btn" aria-label="Close">×</button>
-          <div class="inner" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+          
+          <!-- Project content template -->
+          <div id="project-content" class="inner" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
             <h1 id="overlay-title"></h1>
             <p id="overlay-desc"></p>
             <div id="overlay-tech" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 16px;"></div>
             <div id="overlay-actions" style="display:flex;gap:12px;margin:8px 0 0;"></div>
+          </div>
+          
+          <!-- Bio content template -->
+          <div id="bio-content" class="inner bio-layout" role="dialog" aria-modal="true" aria-labelledby="bio-title" style="display:none;">
+            <div class="bio-header">
+              <img id="bio-portrait" src="" alt="Arthur Kowskii" class="bio-portrait">
+              <div class="bio-intro">
+                <h1 id="bio-name"></h1>
+                <h2 id="bio-title" class="bio-subtitle"></h2>
+                <p id="bio-description"></p>
+              </div>
+            </div>
+            
+            <div class="bio-skills">
+              <h3>Skills & Tools</h3>
+              <div id="bio-skills-grid"></div>
+            </div>
+            
+            <div class="bio-contact">
+              <h3>Contact</h3>
+              <a id="bio-email" href=""></a>
+            </div>
           </div>
         </div>
 
@@ -295,17 +436,35 @@ const projectSummaries = projectsWithDomains.map(p => ({
             // Overlay state and helpers
             const overlay = document.getElementById('project-overlay');
             const closeBtn = document.getElementById('overlay-close');
+            
+            // Project overlay elements
+            const projectContent = document.getElementById('project-content');
             const titleEl = document.getElementById('overlay-title');
             const descEl = document.getElementById('overlay-desc');
             const techEl = document.getElementById('overlay-tech');
             const actionsEl = document.getElementById('overlay-actions');
-            const dataEl = document.getElementById('project-data');
-            const PROJECTS = dataEl ? JSON.parse(dataEl.textContent) : [];
+            
+            // Bio overlay elements
+            const bioContent = document.getElementById('bio-content');
+            const bioNameEl = document.getElementById('bio-name');
+            const bioTitleEl = document.getElementById('bio-title');
+            const bioDescEl = document.getElementById('bio-description');
+            const bioPortraitEl = document.getElementById('bio-portrait');
+            const bioSkillsGrid = document.getElementById('bio-skills-grid');
+            const bioEmailEl = document.getElementById('bio-email');
+            
+            // Data
+            const projectDataEl = document.getElementById('project-data');
+            const bioDataEl = document.getElementById('bio-data');
+            const PROJECTS = projectDataEl ? JSON.parse(projectDataEl.textContent) : [];
+            const BIO_DATA = bioDataEl ? JSON.parse(bioDataEl.textContent) : {};
             const projectBySlug = new Map(PROJECTS.map(p => [p.slug, p]));
+            
             let overlayOpen = false;
             let overlayR = 0;
             let lastFocused = null;
             let currentElectron = null;
+            let currentOverlayType = null; // 'project' or 'bio'
 
             function getCoverRadius(x, y) {
               const vw = window.innerWidth, vh = window.innerHeight;
@@ -314,7 +473,7 @@ const projectSummaries = projectsWithDomains.map(p => ({
               return Math.hypot(dx, dy);
             }
 
-            function fillOverlay(p) {
+            function fillProjectOverlay(p) {
               titleEl.textContent = p.title || '';
               descEl.textContent = p.description || '';
               techEl.innerHTML = '';
@@ -338,15 +497,56 @@ const projectSummaries = projectsWithDomains.map(p => ({
               }
             }
 
-            function openOverlay(slug, cx, cy, electronEl) {
+            function fillBioOverlay(bio) {
+              bioNameEl.textContent = bio.name || '';
+              bioTitleEl.textContent = bio.title || '';
+              bioDescEl.textContent = bio.bio?.en || bio.bio?.fr || '';
+              bioPortraitEl.src = bio.images?.portrait || '';
+              bioEmailEl.href = `mailto:${bio.contact}`;
+              bioEmailEl.textContent = bio.contact || '';
+              
+              // Fill skills grid
+              bioSkillsGrid.innerHTML = '';
+              if (bio.skills) {
+                Object.entries(bio.skills).forEach(([category, tools]) => {
+                  const categoryDiv = document.createElement('div');
+                  categoryDiv.className = 'skill-category';
+                  
+                  const categoryTitle = document.createElement('h4');
+                  categoryTitle.textContent = category;
+                  categoryDiv.appendChild(categoryTitle);
+                  
+                  const skillList = document.createElement('div');
+                  skillList.className = 'skill-list';
+                  
+                  tools.forEach(tool => {
+                    const skillItem = document.createElement('div');
+                    skillItem.className = 'skill-item';
+                    skillItem.textContent = tool.name;
+                    skillList.appendChild(skillItem);
+                  });
+                  
+                  categoryDiv.appendChild(skillList);
+                  bioSkillsGrid.appendChild(categoryDiv);
+                });
+              }
+            }
+
+            function openProjectOverlay(slug, cx, cy, electronEl) {
               const p = projectBySlug.get(slug);
               if (!p || overlayOpen) return;
+              
+              currentOverlayType = 'project';
               overlayOpen = true;
               lastFocused = document.activeElement;
               currentElectron = electronEl;
               if (currentElectron) orbitSystem.pauseElectron(currentElectron);
 
-              fillOverlay(p);
+              // Show project content, hide bio content
+              projectContent.style.display = 'block';
+              bioContent.style.display = 'none';
+              
+              fillProjectOverlay(p);
               overlay.style.setProperty('--x', `${cx}px`);
               overlay.style.setProperty('--y', `${cy}px`);
               overlay.style.setProperty('--r', `0px`);
@@ -366,6 +566,42 @@ const projectSummaries = projectsWithDomains.map(p => ({
                 onComplete: () => {
                   overlay.classList.add('open');
                   try { history.pushState({ overlay: true, slug }, '', `/projects/${slug}`); } catch {}
+                  closeBtn.focus({ preventScroll: true });
+                }
+              });
+            }
+
+            function openBioOverlay(cx, cy) {
+              if (overlayOpen) return;
+              
+              currentOverlayType = 'bio';
+              overlayOpen = true;
+              lastFocused = document.activeElement;
+
+              // Show bio content, hide project content
+              projectContent.style.display = 'none';
+              bioContent.style.display = 'block';
+              
+              fillBioOverlay(BIO_DATA);
+              overlay.style.setProperty('--x', `${cx}px`);
+              overlay.style.setProperty('--y', `${cy}px`);
+              overlay.style.setProperty('--r', `0px`);
+              overlay.style.display = 'block';
+              overlay.setAttribute('aria-hidden', 'false');
+              const R = getCoverRadius(cx, cy);
+              const dur = (atomConfig.overlayTransition?.openMs ?? 600) / 1000;
+              const state = { r: 0 };
+              gsap.to(state, {
+                r: R,
+                duration: dur,
+                ease: atomConfig.overlayTransition?.easing ?? 'power2.inOut',
+                onUpdate: () => {
+                  overlayR = state.r;
+                  overlay.style.setProperty('--r', `${overlayR}px`);
+                },
+                onComplete: () => {
+                  overlay.classList.add('open');
+                  try { history.pushState({ overlay: true, type: 'bio' }, '', `/bio`); } catch {}
                   closeBtn.focus({ preventScroll: true });
                 }
               });
@@ -737,7 +973,7 @@ const projectSummaries = projectsWithDomains.map(p => ({
                             gsap.to(ring, { opacity: 0, duration: 0.1, onComplete: () => { try { ring.remove(); } catch {} } });
                           }
                         } catch {}
-                        openOverlay(slug, cx, cy, electron);
+                        openProjectOverlay(slug, cx, cy, electron);
                         setTimeout(() => { dragLock = false; }, 80);
                     } else {
                         // Drag release: snap back
@@ -779,7 +1015,10 @@ const projectSummaries = projectsWithDomains.map(p => ({
 						});
 					});
 					nucleus.addEventListener('click', () => {
-                window.location.href = '/bio';
+                const rect = nucleus.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                openBioOverlay(cx, cy);
               });
 				}
 				
