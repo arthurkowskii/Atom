@@ -1,0 +1,80 @@
+# Decap CMS Configuration for Atom Portfolio
+
+# For local development - use proxy server
+backend:
+  name: proxy
+  proxy_url: http://localhost:8081/api/v1
+  branch: main
+
+# For production deployment - uncomment this instead
+# backend:
+#   name: git-gateway
+#   branch: main
+
+# Enable editorial workflow (draft/review/publish)
+publish_mode: editorial_workflow
+
+# Media files configuration
+media_folder: "public/images/uploads" # Folder where uploaded files will be saved
+public_folder: "/images/uploads" # Folder path used in the generated site
+
+# Collections define the structure of your content
+collections:
+  # Bio page collection
+  - name: "bio"
+    label: "Bio Page"
+    files:
+      - label: "About Me"
+        name: "about"
+        file: "src/content/bio/about.md"
+        fields:
+          - { label: "Layout", name: "layout", widget: "hidden", default: "bio" }
+          - { label: "Title", name: "title", widget: "string", default: "Arthur Kowskii" }
+          - { label: "Subtitle", name: "subtitle", widget: "string", default: "Composer / Sound Designer / Audio Programmer" }
+          - { label: "Bio Text", name: "bio", widget: "markdown" }
+          - { label: "Portrait Image", name: "portrait", widget: "image", required: false }
+          - label: "Skills"
+            name: "skills"
+            widget: "list"
+            fields:
+              - { label: "Category", name: "category", widget: "string" }
+              - label: "Tools"
+                name: "tools"
+                widget: "list"
+                field: { label: "Tool", name: "tool", widget: "string" }
+          - { label: "Contact Email", name: "email", widget: "string" }
+          - label: "Social Links"
+            name: "social"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Platform", name: "platform", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+
+  # Projects collection (for future use)
+  - name: "projects"
+    label: "Projects"
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Domain", name: "domain", widget: "select", options: ["music", "sound-design", "tech"] }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Technologies", name: "tech", widget: "list", field: { label: "Tech", name: "tech", widget: "string" } }
+      - { label: "Status", name: "status", widget: "select", options: ["completed", "in-progress", "planned"] }
+      - { label: "Live Link", name: "link", widget: "string", required: false }
+      - { label: "GitHub Link", name: "github", widget: "string", required: false }
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Content", name: "body", widget: "markdown" }
+
+# Site configuration
+site_url: http://localhost:4324
+display_url: http://localhost:4324
+logo_url: /favicon.svg
+
+# Preview settings
+show_preview_links: true
+editor:
+  preview: false # Disable preview pane for now

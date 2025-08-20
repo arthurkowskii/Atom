@@ -17,6 +17,31 @@ const projectsCollection = defineCollection({
   }),
 });
 
+// Define the bio collection schema
+const bioCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    layout: z.string().optional(),
+    title: z.string(), // Display name
+    subtitle: z.string(),
+    bio: z.string(), // Markdown string
+    portrait: z.string().optional(),
+    email: z.string().email(),
+    social: z
+      .array(z.object({ platform: z.string(), url: z.string().url() }))
+      .optional(),
+    skills: z
+      .array(
+        z.object({
+          category: z.string(),
+          tools: z.array(z.string()),
+        })
+      )
+      .optional(),
+  }),
+});
+
 export const collections = {
   projects: projectsCollection,
+  bio: bioCollection,
 };
