@@ -18,10 +18,9 @@ Minimal black–white design, smooth transitions, and tasteful SFX.
 ---
 
 ## Interaction model
-- **Idle motion:** shells rotate slowly; inner/outer direction alternates for visual rhythm.
+- **Idle motion:** electrons orbit smoothly; orbital direction alternates per shell for visual rhythm.
 - **Hover:** focusing an electron gently enlarges it and **pauses its shell** until hover ends.
 - **Drag:** an electron can be dragged off its path and **snaps back** on release with a smooth, spring-like return.
-- **Tether effect:** while dragging, show a modern “gooey” connection between the electron and its shell; disappears when reattached.
 - **Click:** a short, intentional click on an electron **navigates** to its project page (no navigation on long-press/drag).
 
 > All concrete values (sizes, speeds, durations, easing) belong in a **config file**, not here.
@@ -36,10 +35,10 @@ Minimal black–white design, smooth transitions, and tasteful SFX.
 ---
 
 ## Audio guidelines
-- Initialize audio on first user gesture.
+- Defer audio implementation to the final phase (after core interactions).
+- When added, initialize audio on first user gesture.
 - Provide subtle hover/click/transition cues; keep levels consistent and unobtrusive.
-- If precise sync is required (e.g., timed beats), introduce a transport (Tone.js); otherwise keep the wrapper minimal.
-- Audio files will be given by users to use instead of tone.js in the end. But start with tone.js for bet
+- Use user-provided audio files placed in a dedicated folder to be created later (exact path TBD).
 
 ---
 
@@ -54,7 +53,7 @@ Minimal black–white design, smooth transitions, and tasteful SFX.
 ## Acceptance (concept-level)
 - Home renders the atom clearly on all viewports; motion feels calm and consistent.
 - Hover focuses an electron and pauses its shell; unhover resumes exactly from where it stopped.
-- Drag shows a fluid tether; release reliably returns the electron to its shell path and resumes motion.
+- Drag allows off-path movement; release reliably returns the electron to its shell path and resumes motion.
 - Clicking an electron navigates with a smooth view transition; back navigation mirrors the experience.
 - Audio cues complement, never distract; site honors reduced-motion preferences.
 - All specific parameters are sourced from a configuration layer, making future tuning easy without code edits.
