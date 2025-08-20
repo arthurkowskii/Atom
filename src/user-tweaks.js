@@ -66,6 +66,11 @@ export const userTweaks = {
   // 🔍 OVERALL ATOM SCALE
   atomScale: 1,           // 1.0 = normal, 1.5 = 50% bigger, 0.8 = 20% smaller
 
+  // 🎯 DOMAIN SHELL ASSIGNMENT
+  // Order determines shell assignment: first = inner, second = middle, third = outer
+  // Change this array to reorder domains across shells
+  domainShellOrder: ['music', 'sound-design', 'tech'],
+
   // 🎯 INTERACTION
   // Shell hover hitbox tolerance (in pixels).
   // This defines the +/- distance around each shell radius that counts as a hover.

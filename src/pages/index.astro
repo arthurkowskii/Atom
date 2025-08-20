@@ -4,18 +4,47 @@ import atomConfig from '../atom.config.js';
 import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
 
-// Get all projects and group by domain to create shells dynamically
+// Get all projects and compute domains from folder structure
 const projects = await getCollection('projects');
-const domains = [...new Set(projects.map(p => p.data.domain))];
+
+// Compute domain from folder structure or use explicit domain
+const projectsWithDomains = projects.map(project => {
+  let domain = project.data.domain;
+  
+  // If no explicit domain, compute from folder structure
+  if (!domain) {
+    const pathParts = project.id.split('/');
+    if (pathParts.length > 1) {
+      // Project is in a domain folder (e.g., "music/song-alpha.md")
+      domain = pathParts[0];
+    } else {
+      // Project is in root projects folder, default to 'tech'
+      domain = 'tech';
+    }
+  }
+  
+  return {
+    ...project,
+    data: {
+      ...project.data,
+      domain
+    }
+  };
+});
+
+// Use explicit domain shell ordering from configuration
+const domains = userTweaks.domainShellOrder.filter(domain => 
+  projectsWithDomains.some(p => p.data.domain === domain)
+);
 
 // Calculate electron positions for each shell
-const electronsByDomain = projects.reduce((acc, project) => {
+const electronsByDomain = projectsWithDomains.reduce((acc, project) => {
   if (!acc[project.data.domain]) acc[project.data.domain] = [];
   acc[project.data.domain].push(project);
   return acc;
 }, {});
 // Minimal project payload for the client overlay
-const projectSummaries = projects.map(p => ({
+const projectSummaries = projectsWithDomains.map(p => ({
   slug: p.slug,
   title: p.data.title,
   description: p.data.description,
