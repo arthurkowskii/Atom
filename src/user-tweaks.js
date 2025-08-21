@@ -128,12 +128,18 @@ export const userTweaks = {
   // 🔤 SHELL LABELS
   labels: {
     enabled: true,            // master toggle
-    mode: 'orbiting',         // 'ring' | 'orbiting'
+    mode: 'ringPattern',      // 'ring' | 'orbiting' | 'ringPattern'
     fontSize: 14,             // base px before atomScale
     offsetPx: 18,             // outward from shell stroke (ring mode)
-    idleOpacity: 0.35,        // always-visible baseline
-    hoverOpacity: 0.7,        // optional bump on hover (can be unused)
+    idleOpacity: 0.25,        // always-visible baseline
+    hoverOpacity: 0.6,        // optional bump on hover (can be unused)
     repeat: 12,               // how many times to repeat label with separators
+    // Repeating pattern specifics (full-circle text with per-shell offsets)
+    pattern: {
+      offsetsPercentByShell: [0, 3.5, 7], // startOffset percentages per shell (0–100)
+      repeatsByShell: [12, 9, 40],         // inner, middle, outer repeat counts
+      separator: ' • '
+    },
     rotate: {
       enabled: false,
       respectReducedMotion: false, // keep labels rotating even if OS reduces (aligns with current electrons)
@@ -148,7 +154,7 @@ export const userTweaks = {
     wordOrbit: {
       innerOffsetPx: 22,      // inward from shell stroke
       arcDegrees: 160,        // local arc length to curve the single word
-      centerAngleDeg: -60     // center angle for the word arc (-90 = top, -60 = slight right)
+      centerAngleDeg: -60     // center angle for all shells (-90 = top)
     }
   }
 

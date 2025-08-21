@@ -129,7 +129,8 @@ export default {
   overlayTransition: {
     openMs: userTweaks.overlayTransition?.openMs ?? 600,
     closeMs: userTweaks.overlayTransition?.closeMs ?? 520,
-    easing: userTweaks.overlayTransition?.easing ?? 'power2.inOut'
+    easing: userTweaks.overlayTransition?.easing ?? 'power2.inOut',
+    edgeSoftnessPx: (userTweaks.overlayTransition?.edgeSoftnessPx ?? userTweaks.navTransition?.edgeSoftnessPx) ?? 0
   },
 
   // Electron navigation transition (separate in/out)
@@ -168,6 +169,11 @@ export default {
     idleOpacity: userTweaks.labels?.idleOpacity ?? 0.35,
     hoverOpacity: userTweaks.labels?.hoverOpacity ?? 0.7,
     repeat: userTweaks.labels?.repeat ?? 10,
+    pattern: {
+      offsetsPercentByShell: userTweaks.labels?.pattern?.offsetsPercentByShell ?? [0, 3.5, 7],
+      repeatsByShell: userTweaks.labels?.pattern?.repeatsByShell ?? [6, 8, 12],
+      separator: userTweaks.labels?.pattern?.separator ?? ' • '
+    },
     rotate: {
       enabled: userTweaks.labels?.rotate?.enabled ?? false,
       respectReducedMotion: userTweaks.labels?.rotate?.respectReducedMotion ?? false,

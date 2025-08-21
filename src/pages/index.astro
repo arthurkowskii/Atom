@@ -179,8 +179,20 @@ function displayNameForDomain(slug: string) {
                 color: #000;
                 z-index: 9999;
                 display: none; /* shown via .open */
+                /* Hard-edge fallback via clip-path */
                 clip-path: circle(var(--r, 0px) at var(--x, 50%) var(--y, 50%));
-                will-change: clip-path;
+                /* Soft edge via mask-image (progressive enhancement) */
+                -webkit-mask-image: radial-gradient(
+                  circle at var(--x, 50%) var(--y, 50%),
+                  rgba(0,0,0,1) calc(var(--r, 0px) - var(--soft, 0px)),
+                  rgba(0,0,0,0) var(--r, 0px)
+                );
+                mask-image: radial-gradient(
+                  circle at var(--x, 50%) var(--y, 50%),
+                  rgba(0,0,0,1) calc(var(--r, 0px) - var(--soft, 0px)),
+                  rgba(0,0,0,0) var(--r, 0px)
+                );
+                will-change: clip-path, -webkit-mask-image, mask-image;
             }
             #project-overlay.open { display: block; }
             #project-overlay .inner {
@@ -310,7 +322,7 @@ function displayNameForDomain(slug: string) {
 					return (
 						<g data-shell={shellIndex} data-domain={domain}>
 							{/* Label defs and rendering by mode */}
-							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring') ? (
+							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring' || atomConfig.labels?.mode === 'ringPattern') ? (
 								<defs>
 									{(() => {
 										const r = shell.radius + (atomConfig.labels?.offsetPx ?? 16);
@@ -330,21 +342,26 @@ function displayNameForDomain(slug: string) {
 									})()}
 								</defs>
 							) : null}
-							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring') ? (
+							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring' || atomConfig.labels?.mode === 'ringPattern') ? (
 								<g class="shell-label-rotor" data-shell-index={shellIndex} style="pointer-events: none;">
 									{(() => {
 										const display = displayNameForDomain(domain);
-										const repeats = Math.max(1, atomConfig.labels?.repeat ?? 10);
-										const labelText = Array.from({ length: repeats }, () => display).join(' • ');
+                  const repeatsByShell = atomConfig.labels?.pattern?.repeatsByShell || [];
+                  const repeats = Math.max(1, (repeatsByShell[shellIndex] ?? (atomConfig.labels?.repeat ?? 10)));
+                  const sep = atomConfig.labels?.pattern?.separator ?? ' • ';
+                  const labelText = Array.from({ length: repeats }, () => display).join(sep);
 										const fullHref = `#label-path-full-${shellIndex}`;
 										const arcHref = `#label-path-arc-${shellIndex}`;
+										const isPattern = atomConfig.labels?.mode === 'ringPattern';
+										const offsets = atomConfig.labels?.pattern?.offsetsPercentByShell || [];
+										const startOffset = isPattern ? String(offsets[shellIndex % offsets.length] || 0) + '%' : '0%';
 										return (
 											<>
 												<text class="shell-label shell-label--full" data-shell-index={shellIndex} style={`opacity:${atomConfig.labels?.idleOpacity ?? 0.35}`}
 													font-size={atomConfig.labels?.fontSize}
 													text-anchor="start"
 												>
-													<textPath href={fullHref} startOffset="0%">{labelText}</textPath>
+													<textPath href={fullHref} startOffset={startOffset}>{labelText}</textPath>
 												</text>
 												<text class="shell-label shell-label--arc" data-shell-index={shellIndex} style="opacity:0"
 													font-size={atomConfig.labels?.fontSize}
@@ -478,46 +495,49 @@ function displayNameForDomain(slug: string) {
             				    // Respect reduced motion only if labels.rotate.respectReducedMotion is true
             				    if (prefersReduced && (atomConfig.labels?.rotate?.respectReducedMotion === true)) return;
 				    if (!atomConfig.labels?.rotate?.enabled) return;
-            				    const mode = atomConfig.labels?.mode || 'ring';
-            				    const rotors = document.querySelectorAll('.shell-label-rotor');
-            				    let created = 0;
-            				    rotors.forEach((rotor) => {
-				      const shellIndex = parseInt(rotor.getAttribute('data-shell-index') || '0');
-				      const dir = atomConfig.shells[shellIndex]?.direction ?? 1;
-				      const speed = atomConfig.labels.rotate.speedsByShell?.[shellIndex] ?? 100; // seconds per revolution
-				      let tween = null;
-				      if (mode === 'ring') {
-				        tween = gsap.to(rotor, {
-				          rotation: `+=${360 * dir}`,
-				          duration: speed,
-				          ease: 'none',
-				          repeat: -1,
-				          svgOrigin: `${atomConfig.viewport.centerX} ${atomConfig.viewport.centerY}`
-				        });
-				      } else {
-				        // orbiting mode: animate startOffset of the textPath along full circle
-				        const tp = rotor.querySelector('textPath');
-				        if (!tp) return;
-				        const start = 0;
-				        const end = dir >= 0 ? 100 : -100;
-				        const state = { p: start };
-				        tween = gsap.to(state, {
-				          p: end,
-				          duration: speed,
-				          ease: 'none',
-				          repeat: -1,
-				          onUpdate: () => {
-				            const v = ((state.p % 100) + 100) % 100;
-				            tp.setAttribute('startOffset', v + '%');
-				          }
-				        });
-				      }
-            				      if (tween) {
-            				        labelTweens.push(tween);
-            				        labelTweenByShell.set(shellIndex, tween);
-            				        created++;
-            				      }
-            				    });
+                const mode = atomConfig.labels?.mode || 'ring';
+                const rotors = document.querySelectorAll('.shell-label-rotor');
+                let created = 0;
+                rotors.forEach((rotor) => {
+                  const shellIndex = parseInt(rotor.getAttribute('data-shell-index') || '0');
+                  const dir = atomConfig.shells[shellIndex]?.direction ?? 1;
+                  const speed = atomConfig.labels.rotate.speedsByShell?.[shellIndex] ?? 100; // seconds per revolution
+                  let tween = null;
+                  if (mode === 'ring') {
+                    tween = gsap.to(rotor, {
+                      rotation: `+=${360 * dir}`,
+                      duration: speed,
+                      ease: 'none',
+                      repeat: -1,
+                      svgOrigin: `${atomConfig.viewport.centerX} ${atomConfig.viewport.centerY}`
+                    });
+                  } else if (mode === 'orbiting') {
+                    // orbiting mode: animate startOffset of the textPath along full circle
+                    const tp = rotor.querySelector('textPath');
+                    if (!tp) return;
+                    const start = 0;
+                    const end = dir >= 0 ? 100 : -100;
+                    const state = { p: start };
+                    tween = gsap.to(state, {
+                      p: end,
+                      duration: speed,
+                      ease: 'none',
+                      repeat: -1,
+                      onUpdate: () => {
+                        const v = ((state.p % 100) + 100) % 100;
+                        tp.setAttribute('startOffset', v + '%');
+                      }
+                    });
+                  } else if (mode === 'ringPattern') {
+                    // Static pattern: no tween
+                    tween = null;
+                  }
+                  if (tween) {
+                    labelTweens.push(tween);
+                    labelTweenByShell.set(shellIndex, tween);
+                    created++;
+                  }
+                });
             				    console.log(`[labels] mode=${mode} rotors=${rotors.length} tweens=${created} reduced=${prefersReduced}`);
 				  } catch(e) { console.warn('Label rotation init failed', e); }
 				})();
@@ -634,6 +654,11 @@ function displayNameForDomain(slug: string) {
               overlay.style.setProperty('--x', `${cx}px`);
               overlay.style.setProperty('--y', `${cy}px`);
               overlay.style.setProperty('--r', `0px`);
+              // Apply soft edge for project open
+              try {
+                const soft = (atomConfig.navTransition?.edgeSoftnessPx ?? 0);
+                overlay.style.setProperty('--soft', `${soft}px`);
+              } catch {}
               overlay.style.display = 'block';
               overlay.setAttribute('aria-hidden', 'false');
               const R = getCoverRadius(cx, cy);
@@ -645,12 +670,18 @@ function displayNameForDomain(slug: string) {
                 r: R,
                 duration: dur,
                 ease: easeOpen,
-                onUpdate: () => {
+                onUpdate: function () {
                   overlayR = state.r;
                   overlay.style.setProperty('--r', `${overlayR}px`);
+                  // Block input during early phase
+                  if (atomConfig.navTransition?.blockInput) {
+                    const p = this.progress();
+                    overlay.style.pointerEvents = p < 0.85 ? 'none' : 'auto';
+                  }
                 },
                 onComplete: () => {
                   overlay.classList.add('open');
+                  overlay.style.pointerEvents = 'auto';
                   try { history.pushState({ overlay: true, slug }, '', `/projects/${slug}`); } catch {}
                   closeBtn.focus({ preventScroll: true });
                 }
@@ -679,6 +710,11 @@ function displayNameForDomain(slug: string) {
               overlay.style.setProperty('--x', `${cx}px`);
               overlay.style.setProperty('--y', `${cy}px`);
               overlay.style.setProperty('--r', `0px`);
+              // Apply soft edge for bio overlay (configurable)
+              try {
+                const soft = (atomConfig.overlayTransition?.edgeSoftnessPx ?? 0);
+                overlay.style.setProperty('--soft', `${soft}px`);
+              } catch {}
               overlay.style.display = 'block';
               overlay.setAttribute('aria-hidden', 'false');
               const R = getCoverRadius(cx, cy);
