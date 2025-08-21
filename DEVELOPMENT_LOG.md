@@ -4,13 +4,26 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-20 (Phase 3A complete)
+Last updated: 2025-08-21 (Bio page shipped; Phase 3A complete)
 
 ## Project Snapshot
 
 - Purpose: Interactive “atom” portfolio. Nucleus + concentric shells. Electrons represent projects grouped by domain. Smooth orbital motion, rich hover states, and an in-page project overlay.
-- Stack: Astro + GSAP (client only), Astro Content Collections, SVG.
-- Status: Stable motion/hover system; overlay and micro-interactions shipped; config-driven.
+- Stack: Astro + GSAP (client only), Astro Content Collections (projects, bio), Decap CMS (admin; local proxy), SVG.
+- Status: Phase 3A shipped; 3B planned. Stable motion/hover system; overlay and micro-interactions shipped; config-driven.
+- CMS: Decap admin is local-only for now; choose production backend (git-gateway/GitHub) during deploy.
+
+## Quickstart
+
+- Run: `npm install`, then `npm run dev` (opens at http://localhost:4324).
+- Build/Preview: `npm run build`, then `npm run preview`.
+- Admin CMS: visit `/admin` (Decap uses local proxy; production backend TBD).
+
+## Next Actions
+
+- Phase 3B: Roll out electron progressive reveal — see `docs/issues/phase-3b-electron-progressive-reveal.md`.
+- Decide production Decap backend for deployment (git-gateway or GitHub).
+- Add SEO/meta polish for `/bio` (title/description/og image) when finalizing.
 
 ## Key Files
 
@@ -50,6 +63,11 @@ Last updated: 2025-08-20 (Phase 3A complete)
 - Configurable overlay timings and optional micro-interactions (ring, ripple, pulse).
 - See docs/history/PHASE_LOGS.md for the full narrative and file diffs.
 
+## Recent Changes (Bio)
+
+- Bio page shipped: content-driven BW layout, skills with logo chips, Decap admin.
+- Nucleus→bio transition progressively reveals the page during the circle animation.
+
 ## Debug Checklist (High Signal)
 
 - Units: Angles in degrees for OrbitSystem; convert to radians only for trig.
@@ -64,6 +82,35 @@ Last updated: 2025-08-20 (Phase 3A complete)
 - Add a project: Drop a Markdown file in src/content/projects with frontmatter:
   - title, description, domain, tech[], link, github
 - Domain name determines shell grouping; shells are generated from unique domains.
+
+## Bio Page Snapshot
+
+- Route: `/bio` via `src/pages/bio.astro` rendering `src/components/BioBW.astro`.
+- Content: `src/content/bio/about.md` validated by `src/content/config.ts` (collection: `bio`).
+- API (internal): `GET /api/bio.json` returns `{ title, subtitle, bio, portrait, email, social[], skills[] }` with safe defaults.
+- Admin: Decap CMS at `/admin` (`public/admin/config.yml` + `src/pages/admin/index.astro`) using proxy backend for local-only editing.
+- Style: Canonical black & white layout; accessible, responsive; skill chips auto-map logos.
+
+### Key Files (Bio)
+
+- `src/pages/bio.astro` — route wrapper and head.
+- `src/components/BioBW.astro` — layout, chips, logo normalization.
+- `src/content/bio/about.md` — editable content (title, subtitle, bio, portrait, skills, email, social).
+- `src/content/config.ts` — bio collection schema.
+- `src/pages/api/bio.json.ts` — internal JSON endpoint.
+- `public/admin/config.yml` + `src/pages/admin/index.astro` — Decap CMS config and simple viewer.
+
+### How It Works (Bio)
+
+- Content-driven Astro route; markdown fields populate the layout.
+- Logo mapping normalizes labels (e.g., “C#” → “csharp”) to `.webp` assets.
+- Progressive reveal on nucleus→bio transition (page paints during circle animation).
+
+### Debug Notes (Bio)
+
+- Astro image imports require `.src` when passing to `<img>`.
+- Label normalization removes non-alphanumerics and lowercases; map “C#” → “csharp”.
+- Decap proxy backend is for local development; configure git backend for production later.
 
 ## Behavior Snapshot (Current)
 
@@ -81,6 +128,11 @@ Last updated: 2025-08-20 (Phase 3A complete)
 - Domain accent + electron→overlay chip continuity.
 - Soft/squircle mask and optional gooey tether during open.
 - Optional backdrop close, atom scale/blur choreography, deep-link auto-open behind flags.
+- Extend nucleus→bio transition to all electrons (progressive reveal).
+- Choose production Decap backend (git-gateway or GitHub) for deploy.
+
+Tracking
+- Electron progressive reveal rollout: see `docs/issues/phase-3b-electron-progressive-reveal.md`.
 
 ---
 

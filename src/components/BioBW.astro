@@ -14,20 +14,34 @@ import LogoDavinci from '../Assets/software_logos/Davinci_Resolve.webp';
 import LogoCinema4D from '../Assets/software_logos/Cinema_4D.webp';
 import LogoPhotoshop from '../Assets/software_logos/photoshop.webp';
 
-const LOGOS: Record<string, string> = {
-  'Ableton': LogoAbleton,
-  'Reaper': LogoReaper,
-  'Logic Pro': LogoLogicPro,
-  'Pro Tools': LogoProTools,
-  'FMOD': LogoFMOD,
-  'Wwise': LogoWwise,
-  'Unity': LogoUnity,
-  'C#': LogoCsharp,
-  'Git': LogoGit,
-  'DaVinci Resolve': LogoDavinci,
-  'Cinema 4D': LogoCinema4D,
-  'Photoshop': LogoPhotoshop,
+// In Astro, importing images returns an object with a `src` property.
+// Use `any` and normalize to a string at render time.
+const RAW_LOGOS: Record<string, any> = {
+  ableton: LogoAbleton,
+  reaper: LogoReaper,
+  logicpro: LogoLogicPro,
+  protools: LogoProTools,
+  fmod: LogoFMOD,
+  wwise: LogoWwise,
+  unity: LogoUnity,
+  csharp: LogoCsharp,
+  git: LogoGit,
+  davinciresolve: LogoDavinci,
+  cinema4d: LogoCinema4D,
+  photoshop: LogoPhotoshop,
 };
+
+function normLabel(label: string): string {
+  const s = (label || '').toLowerCase().replace(/#/g, 'sharp').replace(/[^a-z0-9]+/g, '');
+  return s;
+}
+
+function logoSrcFor(label: string): string | null {
+  const key = normLabel(label);
+  const val = RAW_LOGOS[key];
+  if (!val) return null;
+  return typeof val === 'string' ? val : (val?.src ?? null);
+}
 ---
 
 <style>
@@ -42,12 +56,16 @@ const LOGOS: Record<string, string> = {
   .divider { height: 1px; background: #000; margin: 40px 0; }
   .label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 12px; color: #000; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #000; border-radius: 6px; padding: 4px 10px; font-size: 12px; transition: background .15s ease, color .15s ease; color: #000; }
-  .chip:hover { background: #000; color: #fff; }
-  .chip img { display: inline-block; height: 16px; width: auto; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #000; border-radius: 6px; padding: 4px 10px; font-size: 12px; background: #fff; color: #000; }
+  .chip img { display: inline-block; width: 16px; height: 16px; object-fit: contain; flex-shrink: 0; }
   .skills { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 24px; }
-  .skill { padding: 18px; border: 2px solid #000; border-radius: 12px; }
+  /* Category cards: white background with black border */
+  .skill { padding: 18px; border: 2px solid #000; border-radius: 12px; background: #fff; color: #000; }
   .skill h3 { margin: 0 0 10px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: #000; }
+  /* Competence chips: white by default; no hover inversion */
+  .skills .chip { background: #fff; color: #000; border-color: #000; }
+  /* Force logos to black on white chips for consistency */
+  .skills .chip img { filter: grayscale(1) brightness(0) contrast(100%); }
   .footer { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px; }
   .email { border-bottom: 2px solid #000; padding-bottom: 2px; color: #000; text-decoration: none; }
   .email:hover { background: #000; color: #fff; padding: 2px 6px; border-bottom-color: transparent; }
@@ -74,9 +92,12 @@ const LOGOS: Record<string, string> = {
           <div class="skill bio-bw-skill">
             <h3>{cat.category}</h3>
             <div class="chips">
-              {(cat.tools || []).map((t: string) => (
-                <span class="chip bio-bw-chip">{LOGOS[t] ? (<img src={LOGOS[t]} alt="" aria-hidden="true" />) : null}{t}</span>
-              ))}
+              {(cat.tools || []).map((t: string) => {
+                const src = logoSrcFor(t);
+                return (
+                  <span class="chip bio-bw-chip">{src ? (<img src={src} alt="" aria-hidden="true" />) : null}{t}</span>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -100,4 +121,3 @@ const LOGOS: Record<string, string> = {
   </div>
   
 </section>
-

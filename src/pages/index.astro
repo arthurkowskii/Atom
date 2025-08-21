@@ -175,29 +175,7 @@ const logosMap = {
             
             /* Pruned old bio styles (legacy) */
 
-            /* === Bio BW Pro (overlay) === */
-            /* Match /bio container width/padding */
-            .bio-bw-inner { max-width: 960px !important; padding: 56px 24px; }
-            .bio-bw-frame { min-height: 100%; display: grid; place-items: center; padding: 0; }
-            .bio-bw-wrap { width: min(100%, 960px); }
-            .bio-bw-row { display: grid; grid-template-columns: 1fr 0.9fr; gap: 40px; align-items: center; }
-            .bio-bw-name { font-size: 72px; letter-spacing: 8px; font-weight: 700; font-style: italic; line-height: 1.04; margin: 0 0 8px; text-transform: uppercase; }
-            .bio-bw-subtitle { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; margin: 0 0 20px; }
-            .bio-bw-lead { font-size: 20px; line-height: 1.6; }
-            .bio-bw-portrait { width: 100%; max-width: 400px; object-fit: cover; justify-self: end; border: 1px solid #000; border-radius: 12px; }
-            .bio-bw-divider { height: 1px; background: #000; margin: 40px 0; }
-            .bio-bw-label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 12px; }
-            .bio-bw-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-            .bio-bw-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #000; border-radius: 6px; padding: 4px 10px; font-size: 12px; transition: background .15s ease, color .15s ease; }
-            .bio-bw-chip:hover, .bio-bw-email:hover { background: #000; color: #fff; }
-            .bio-bw-chip img { display: inline-block; height: 16px; width: auto; }
-            .bio-bw-skills { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 24px; }
-            .bio-bw-skill { padding: 18px; border: 2px solid #000; border-radius: 12px; }
-            .bio-bw-skill h3 { margin: 0 0 10px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
-            .bio-bw-footer { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px; }
-            .bio-bw-email { border-bottom: 2px solid #000; padding-bottom: 2px; }
-            .bio-bw-wrap a:focus-visible, .bio-bw-chip:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
-            @media (max-width: 980px) { .bio-bw-row { grid-template-columns: 1fr; } .bio-bw-portrait { justify-self: start; max-width: 340px; } .bio-bw-skills { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+            /* BioBW component owns its own styles; no duplicates here */
 		</style>
 	</head>
 	<body>

@@ -84,8 +84,17 @@ atom-portfolio/
 
 ---
 
+## TODO — Electron Progressive Reveal Rollout (Planned 3B)
+
+- Extend the nucleus→bio progressive reveal transition to all electrons.
+- Abstract a reusable circular-mask transition util that mounts content early.
+- Preload target route/content to ensure paint during mask expansion (no post-anim flash).
+- Keep Phase 3A history semantics (push on open, restore on close); respect reduced motion.
+- Validate performance on low-end devices; ensure GSAP tweens are cleaned up between transitions.
+
+---
+
 ## Follow‑Ups (Ideas)
 - Domain accents + “chip continuity” header (electron → overlay pill).
 - Soft edge/squircle mask; gooey tether during initial open.
 - Optional deep‑link auto‑open and backdrop close behind flags.
-
