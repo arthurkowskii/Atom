@@ -80,7 +80,7 @@ export const userTweaks = {
   // 🔄 OVERLAY TRANSITION (one-page project overlay)
   overlayTransition: {
     openMs: 1000,   // duration to open overlay (ms)
-    closeMs: 520,  // duration to close overlay (ms)
+    closeMs: 600,  // duration to close overlay (ms)
     easing: 'power2.inOut' // GSAP ease name
   },
 

@@ -132,7 +132,9 @@ const logosMap = {
             #atom-svg {
                 cursor: grab;
                 touch-action: none; /* prevent touch scrolling/zoom white borders */
-                will-change: transform;
+                /* Use layout sizing for crisp vectors instead of CSS transform scaling */
+                width: 100vmin;
+                height: 100vmin;
             }
 			
 			.electron {
@@ -172,6 +174,13 @@ const logosMap = {
                 border: 1px solid #000; border-radius: 50%; background: #fff; color: #000;
                 cursor: pointer; font-size: 18px; line-height: 34px; text-align: center;
             }
+
+            /* Improve SVG text clarity, especially in Chrome */
+            #atom-svg text {
+                text-rendering: geometricPrecision;      /* Hint for precise glyph shapes */
+                -webkit-font-smoothing: antialiased;     /* Chrome/WebKit */
+                -moz-osx-font-smoothing: grayscale;      /* Firefox on macOS */
+            }
             
             /* Pruned old bio styles (legacy) */
 
@@ -194,10 +203,9 @@ const logosMap = {
 					cx={atomConfig.viewport.centerX}
 					cy={atomConfig.viewport.centerY}
 					r={atomConfig.nucleus.radius}
-					fill="white"
+					fill={atomConfig.electrons.color}
 					stroke={atomConfig.nucleus.color}
 					stroke-width={atomConfig.nucleus.strokeWidth}
-					tabindex="0"
 				/>
 				<text 
 					x={atomConfig.viewport.centerX}
@@ -206,7 +214,7 @@ const logosMap = {
 					dominant-baseline="middle"
 					font-size={atomConfig.nucleus.fontSize}
 					font-weight="bold"
-					fill={atomConfig.nucleus.color}
+					fill="#fff"
 				>
 					{atomConfig.nucleus.text}
 				</text>
@@ -340,19 +348,9 @@ const logosMap = {
 				orbitSystem.init();
 				orbitSystem.start();
 
-				// Fit SVG to viewport with uniform scale while keeping math consistent
-				const svgEl = document.getElementById('atom-svg');
+				// Base viewBox size used for hitbox math (no CSS transform scaling)
 				const baseW = atomConfig.viewport.width;
 				const baseH = atomConfig.viewport.height;
-				function fitToViewport() {
-					const vw = window.innerWidth;
-					const vh = window.innerHeight;
-					const scale = Math.min(vw / baseW, vh / baseH);
-					svgEl.style.transformOrigin = 'center center';
-					svgEl.style.transform = `scale(${scale})`;
-				}
-				fitToViewport();
-				window.addEventListener('resize', fitToViewport);
 				
 			// Register GSAP Draggable
 			gsap.registerPlugin(Draggable);

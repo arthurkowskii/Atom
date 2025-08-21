@@ -8,7 +8,7 @@ import { userTweaks } from './user-tweaks.js';
 export default {
   // Central nucleus (bio/about section)
   nucleus: {
-    text: "A",           // Initial, logo, or avatar
+    text: "Me",          // Initial, logo, or avatar
     radius: userTweaks.nucleusSize * userTweaks.atomScale,
     hoverRadius: (userTweaks.nucleusHoverSize ?? userTweaks.nucleusSize * 1.3) * userTweaks.atomScale,
     fontSize: 24 * userTweaks.atomScale,        // Text size inside nucleus (scaled)
