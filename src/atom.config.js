@@ -146,5 +146,24 @@ export default {
     shellPulse: userTweaks.micro?.shellPulse ?? true,
     shellPulseDelta: userTweaks.micro?.shellPulseDelta ?? 1.2,
     shellPulseDurationMs: userTweaks.micro?.shellPulseDurationMs ?? 200,
-  }
+  },
+
+  // Labels (domain text along shells)
+  labels: {
+    enabled: userTweaks.labels?.enabled ?? false,
+    fontSize: (userTweaks.labels?.fontSize ?? 14) * userTweaks.atomScale,
+    offsetPx: userTweaks.labels?.offsetPx ?? 16,
+    idleOpacity: userTweaks.labels?.idleOpacity ?? 0.35,
+    hoverOpacity: userTweaks.labels?.hoverOpacity ?? 0.7,
+    repeat: userTweaks.labels?.repeat ?? 10,
+    rotate: {
+      enabled: userTweaks.labels?.rotate?.enabled ?? false,
+      speedsByShell: userTweaks.labels?.rotate?.speedsByShell ?? [90, 110, 130]
+    },
+    mobileViewportMaxPx: userTweaks.labels?.mobileViewportMaxPx ?? 700,
+    mobileArcDegrees: userTweaks.labels?.mobileArcDegrees ?? 150
+  },
+
+  // Display names for domains
+  domainDisplayNames: userTweaks.domainDisplayNames || {}
 };

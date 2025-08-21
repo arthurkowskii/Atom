@@ -71,6 +71,14 @@ export const userTweaks = {
   // Change this array to reorder domains across shells
   domainShellOrder: ['music', 'sound-design', 'tech'],
 
+  // 📛 DOMAIN DISPLAY NAMES (for labels)
+  // Map slugs to display names. Defaults to slug uppercased with dashes → spaces.
+  domainDisplayNames: {
+    music: 'MUSIC',
+    'sound-design': 'SOUND DESIGN',
+    tech: 'TECH'
+  },
+
   // 🎯 INTERACTION
   // Shell hover hitbox tolerance (in pixels).
   // This defines the +/- distance around each shell radius that counts as a hover.
@@ -103,9 +111,27 @@ export const userTweaks = {
     shellPulse: true,
     shellPulseDelta: 1.2,       // add to strokeWidth in px
     shellPulseDurationMs: 200
+  },
+
+  // 🔤 SHELL LABELS
+  labels: {
+    enabled: true,            // master toggle
+    fontSize: 14,             // base px before atomScale
+    offsetPx: 18,             // outward from shell stroke
+    idleOpacity: 0.35,        // always-visible baseline
+    hoverOpacity: 0.7,        // optional bump on hover (can be unused)
+    repeat: 12,               // how many times to repeat label with separators
+    rotate: {
+      enabled: true,
+      // seconds per revolution for inner/middle/outer; sign from shell.direction
+      speedsByShell: [90, 110, 130]
+    },
+    // Mobile behavior
+    mobileViewportMaxPx: 700,     // below this viewport width, prefer arc variant
+    mobileArcDegrees: 150         // arc length for small screens (top-centered)
   }
 
-}; 
+};
 
 // Don't edit below this line unless you know what you're doing!
 // ================================================================

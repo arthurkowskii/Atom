@@ -100,6 +100,36 @@ const logosMap = {
   'Cinema 4D': LogoCinema4D,
   'Photoshop': LogoPhotoshop,
 };
+
+// Helpers for label paths
+function circlePathD(cx: number, cy: number, r: number) {
+  // Draw full circle with two 180° arcs for Safari reliability
+  const x0 = cx - r;
+  const y0 = cy;
+  const d = [
+    `M ${x0} ${y0}`,
+    `a ${r} ${r} 0 1 1 ${2 * r} 0`,
+    `a ${r} ${r} 0 1 1 ${-2 * r} 0`
+  ].join(' ');
+  return d;
+}
+
+function arcPathD(cx: number, cy: number, r: number, startDeg: number, endDeg: number) {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const sx = cx + r * Math.cos(toRad(startDeg));
+  const sy = cy + r * Math.sin(toRad(startDeg));
+  const ex = cx + r * Math.cos(toRad(endDeg));
+  const ey = cy + r * Math.sin(toRad(endDeg));
+  const sweep = endDeg > startDeg ? 1 : 0;
+  const large = Math.abs(endDeg - startDeg) > 180 ? 1 : 0;
+  return `M ${sx} ${sy} A ${r} ${r} 0 ${large} ${sweep} ${ex} ${ey}`;
+}
+
+function displayNameForDomain(slug: string) {
+  const map = (atomConfig as any).domainDisplayNames || {};
+  if (map && slug in map) return map[slug];
+  return String(slug || '').replace(/-/g, ' ').toUpperCase();
+}
 ---
 
 <html lang="en">
@@ -107,9 +137,9 @@ const logosMap = {
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Atom Portfolio</title>
-		<style>
+			<meta name="generator" content={Astro.generator} />
+			<title>Atom Portfolio</title>
+			<style>
             body {
                 margin: 0;
                 padding: 0;
@@ -184,7 +214,17 @@ const logosMap = {
             
             /* Pruned old bio styles (legacy) */
 
-            /* BioBW component owns its own styles; no duplicates here */
+				/* BioBW component owns its own styles; no duplicates here */
+
+            /* Shell labels (curved text on rings) */
+            .shell-label { fill: #000; letter-spacing: 2px; text-transform: uppercase; }
+            .shell-label-rotor { transform-box: fill-box; transform-origin: center; }
+            /* Mobile: prefer arc label, hide full circle */
+            .shell-label--arc { display: none; }
+            @media (max-width: 700px) {
+              .shell-label--full { display: none; }
+              .shell-label--arc { display: inline; opacity: 0.35 !important; }
+            }
 		</style>
 	</head>
 	<body>
@@ -264,6 +304,27 @@ const logosMap = {
 					
 					return (
 						<g data-shell={shellIndex} data-domain={domain}>
+							<!-- Label paths for this shell (full ring + mobile arc) -->
+							{atomConfig.labels?.enabled ? (
+								<defs>
+									{(() => {
+										const r = shell.radius + (atomConfig.labels?.offsetPx ?? 16);
+										const cx = atomConfig.viewport.centerX;
+										const cy = atomConfig.viewport.centerY;
+										const fullId = `label-path-full-${shellIndex}`;
+										const arcId = `label-path-arc-${shellIndex}`;
+										const arcDeg = atomConfig.labels?.mobileArcDegrees ?? 150;
+										const start = -90 - arcDeg / 2;
+										const end = -90 + arcDeg / 2;
+										return (
+											<>
+												<path id={fullId} d={circlePathD(cx, cy, r)} fill="none" />
+												<path id={arcId} d={arcPathD(cx, cy, r, start, end)} fill="none" />
+											</>
+										);
+									})()}
+								</defs>
+							) : null}
 							<!-- Shell orbit path -->
 							<circle 
 								class="shell"
@@ -276,6 +337,33 @@ const logosMap = {
 								style={`opacity: ${userTweaks.shell.default.opacity}`}
 								data-shell-index={shellIndex}
 							/>
+							{atomConfig.labels?.enabled ? (
+								<g class="shell-label-rotor" data-shell-index={shellIndex} style="pointer-events: none;">
+									{(() => {
+										const display = displayNameForDomain(domain);
+										const repeats = Math.max(1, atomConfig.labels?.repeat ?? 10);
+										const labelText = Array.from({ length: repeats }, () => display).join(' • ');
+										const fullHref = `#label-path-full-${shellIndex}`;
+										const arcHref = `#label-path-arc-${shellIndex}`;
+										return (
+											<>
+												<text class="shell-label shell-label--full" data-shell-index={shellIndex} style={`opacity:${atomConfig.labels?.idleOpacity ?? 0.35}`}
+													font-size={atomConfig.labels?.fontSize}
+													text-anchor="start"
+												>
+													<textPath href={fullHref} startOffset="0%">{labelText}</textPath>
+												</text>
+												<text class="shell-label shell-label--arc" data-shell-index={shellIndex} style="opacity:0"
+													font-size={atomConfig.labels?.fontSize}
+													text-anchor="middle"
+												>
+													<textPath href={arcHref} startOffset="50%">{display}</textPath>
+												</text>
+											</>
+										);
+									})()}
+								</g>
+							) : null}
 							
 							<!-- Electrons on this shell -->
 							{electronsInShell.map((project, electronIndex) => {
@@ -347,6 +435,38 @@ const logosMap = {
 				const orbitSystem = new OrbitSystem(atomConfig);
 				orbitSystem.init();
 				orbitSystem.start();
+
+				// Labels rotation setup
+				const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+				let labelTweens = [];
+				(function initLabelRotation(){
+				  try {
+				    if (!atomConfig.labels?.enabled) return;
+				    if (prefersReduced && atomConfig.motion?.respectReducedMotion) return;
+				    if (!atomConfig.labels?.rotate?.enabled) return;
+				    const rotors = document.querySelectorAll('.shell-label-rotor');
+				    rotors.forEach((rotor) => {
+				      const shellIndex = parseInt(rotor.getAttribute('data-shell-index') || '0');
+				      const dir = atomConfig.shells[shellIndex]?.direction ?? 1;
+				      const speed = atomConfig.labels.rotate.speedsByShell?.[shellIndex] ?? 100; // seconds per rev
+				      const tween = gsap.to(rotor, {
+				        rotation: `+=${360 * dir}`,
+				        duration: speed,
+				        ease: 'none',
+				        repeat: -1
+				      });
+				      labelTweens.push(tween);
+				    });
+				  } catch(e) { console.warn('Label rotation init failed', e); }
+				})();
+
+				function pauseLabelRotation() { try { labelTweens.forEach(t => t?.pause()); } catch {} }
+				function resumeLabelRotation() {
+				  try {
+				    if (prefersReduced && atomConfig.motion?.respectReducedMotion) return;
+				    labelTweens.forEach(t => t?.resume());
+				  } catch {}
+				}
 
 				// Base viewBox size used for hitbox math (no CSS transform scaling)
 				const baseW = atomConfig.viewport.width;
@@ -442,6 +562,7 @@ const logosMap = {
               lastFocused = document.activeElement;
               currentElectron = electronEl;
               if (currentElectron) orbitSystem.pauseElectron(currentElectron);
+              pauseLabelRotation();
 
               // Show project content, hide bio content
               projectContent.style.display = 'block';
@@ -478,6 +599,7 @@ const logosMap = {
               currentOverlayType = 'bio';
               overlayOpen = true;
               lastFocused = document.activeElement;
+              pauseLabelRotation();
 
               // Show bio content, hide project content
               projectContent.style.display = 'none';
@@ -532,6 +654,7 @@ const logosMap = {
                   overlay.style.display = 'none';
                   overlay.setAttribute('aria-hidden', 'true');
                   if (currentElectron) { orbitSystem.resumeElectron(currentElectron); currentElectron = null; }
+                  resumeLabelRotation();
                   if (lastFocused) { try { lastFocused.focus({ preventScroll: true }); } catch {} }
                   try { history.replaceState(null, '', '/'); } catch {}
                 }
