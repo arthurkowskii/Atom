@@ -4,7 +4,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-21 (Bio page shipped; Phase 3A complete)
+Last updated: 2025-08-21 (Phase 3B shipped; dynamic shells + labels)
 
 ## Project Snapshot
 
@@ -21,38 +21,46 @@ Last updated: 2025-08-21 (Bio page shipped; Phase 3A complete)
 
 ## Next Actions
 
-- Phase 3B: Roll out electron progressive reveal — see `docs/issues/phase-3b-electron-progressive-reveal.md`.
+- Validate dynamic shells across 1–5 domain folders; tune spacing/label density if needed.
 - Decide production Decap backend for deployment (git-gateway or GitHub).
 - Add SEO/meta polish for `/bio` (title/description/og image) when finalizing.
 
 ## Key Files
 
-- src/pages/index.astro: Main scene, overlay, event wiring.
+- src/pages/index.astro: Main scene, overlay, event wiring, dynamic shell/viewport generator.
 - src/atom/core/OrbitSystem.js: Electron orbital motion (GSAP transforms).
 - src/atom/utils/electronPositioning.js: Random positions with min angular distance.
 - src/atom/transition/radial.js: Circular reveal helpers (clip-path/GSAP).
-- src/atom.config.js: Client-safe config exported from user tweaks.
-- src/user-tweaks.js: Single place to tune sizes, speeds, transitions, micro-interactions.
-- src/content/config.ts: Content schema; src/content/projects/*.md provide projects.
+- src/atom.config.js: Client-safe config exported from user tweaks (now exposes navTransition/dynamicShells/labels density).
+- src/user-tweaks.js: Central knobs (sizes, speeds, transitions, micro, labels, dynamicShells).
+- src/content/config.ts: Content schema; `src/content/projects/**` now folder-driven domains.
+- public/admin/config.yml: Decap config (domain select removed; rely on folders).
 
 ## How It Works
 
 - Static geometry: Nucleus and shell rings are non-moving; electrons move via GSAP x/y transforms computed from angles.
-- Domains → shells: Unique project domains form shells; electrons are projects within that domain.
+- Domains → shells (dynamic): Top-level folders under `src/content/projects/` determine domains. Numeric prefixes (e.g., `1_Music`, `2_Sound-Design`) drive order; names are transformed to slugs (kebab) and display (UPPERCASE). Up to 5 shells are rendered (extras hidden).
+- Shell radii/viewport: Radii are generated from a base radius plus a gap that shrinks as N grows; viewport auto-computed to avoid clipping.
 - Random placement: Each electron gets a random angle with collision avoidance (min angular distance, wrap-around aware).
+- Labels: Ring pattern (full-circle) with per-shell start offsets; repeat density auto-computed from circumference (overrides available). Alternate mode: single curved word (static arc) per shell.
 - Hover model: Two distinct systems coordinated by a single state source:
   - Shell hover: Opacity/thickness change only; motion continues.
-  - Electron hover: Electron grows, global spotlight dims others, shell may accent, orbit pauses for that shell.
+  - Electron hover: Electron grows, global spotlight dims others, shell may accent, orbit pauses for that shell; label brightens.
 - Hitboxes: Distance-from-center tolerance bands (requestAnimationFrame throttled) ensure reliable shell hover without SVG overlap issues.
 - Overlay: Clicking an electron opens a full-page circular masked overlay; pushes URL to /projects/:slug and restores on close.
 
 ## Configure Quickly (user-tweaks.js)
 
 - atomScale, nucleusSize, nucleusHoverSize
-- shellDistances.inner|middle|outer; shell.default.thickness|opacity; shell.hover.thickness|opacity|electronOpacity
-- electrons.radius|hoverRadius|color; electronSpeeds.innerShell|middleShell|outerShell
-- spacing.minElectronDistance
-- overlayTransition.openMs|closeMs|easing
+- electrons.radius|hoverRadius|color; electronSpeeds.*, spacing.minElectronDistance
+- overlayTransition.openMs|closeMs|easing|edgeSoftnessPx (bio/nucleus)
+- navTransition.enabled|inMs|outMs|easing|edgeSoftnessPx|blockInput (electrons)
+- dynamicShells.enabled|baseRadius|baseGap|minGap|maxGap|directionMode|speed.base|speed.deltaPerShell
+- labels:
+  - mode: `ringPattern` (default) | `orbiting` | `ring`
+  - fontSize|offsetPx|idleOpacity|hoverOpacity
+  - pattern.repeatsByShell (optional), pattern.densityPxPerRepeat|minRepeats|maxRepeats, pattern.offsetsPercentByShell, separator
+  - wordOrbit.innerOffsetPx|arcDegrees|centerAngleDeg
 - micro.hoverCursorRing|ripple|shellPulse (toggles + durations/sizes/colors)
 
 ## Recent Changes (Phase 3A)
@@ -75,13 +83,14 @@ Last updated: 2025-08-21 (Bio page shipped; Phase 3A complete)
 - Inline JSON: Inject with set:html; avoid HTML-escaped JSON that breaks JSON.parse.
 - Event flood: Use rAF throttling for mousemove; precompute squared distances.
 - State: Keep a single state machine; kill GSAP tweens on transitions to avoid buildup.
-- Scope: Pass server-only values through atom.config.js; don’t import userTweaks in client code.
+- Scope: Pass server-only values through atom.config.js; don’t import userTweaks in client code. When using dynamic shells, inject a client-safe cfg JSON and read it before initializing clients (e.g., OrbitSystem).
 
 ## Content Authoring
 
-- Add a project: Drop a Markdown file in src/content/projects with frontmatter:
-  - title, description, domain, tech[], link, github
-- Domain name determines shell grouping; shells are generated from unique domains.
+- Structure: Organize projects under `src/content/projects/<order>_<DomainName>/project.md` (e.g., `1_Music/ambient-album.md`).
+- Order: `<order>_` numeric prefix controls shell order; max 5 shells; additional domains are ignored (logged in console).
+- Display: `<DomainName>` is transformed to display (UPPERCASE) and slug (kebab-case) for routing/labels.
+- Project fields: title, description, tech[], link, github, status, date; domain field is optional/ignored (folders win).
 
 ## Bio Page Snapshot
 
@@ -136,4 +145,14 @@ Tracking
 
 ---
 
+- Nucleus click ripple: Nucleus now uses the same SVG ripple-on-click as electrons.
+
+## Recent Changes (2025‑08‑21)
+
+- Dynamic shells: Number/order of shells derive from top-level project folders. Numeric prefix defines order; display names strip the prefix; cap at 5 shells; viewport auto-computed.
+- Label system: Added static ring-pattern labels (always visible) with per-shell offsets and auto density based on circumference; optional single-word curved mode (static arc) per shell with shared center angle.
+- Electron transition (Phase 3B shipped): Project overlay now progressively reveals with a circular mask from the electron position; content paints during expansion; URL/history maintained.
+- Soft edge + input block: Optional feathered edge for the circular mask (configurable `edgeSoftnessPx`); blocks input until ~85% progress of open; applied to both electrons and nucleus (using respective transition configs).
+- Nucleus text interaction: Nucleus label ignores pointer events to keep hover consistent.
+- Decap CMS: Removed fixed domain select; domain now derived from folder placement.
 Notes for agents: Keep this file concise. If you need rationale, code snippets, or the blow-by-blow history, follow the links above. Prefer editing user-tweaks.js and atom.config.js for behavior; index.astro wires interactions and overlay.

@@ -17,38 +17,50 @@ import atomConfig from '../atom.config.js';
 import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
 
-// Get all projects and compute domains from folder structure
+// Get all projects and compute domains from folder structure (prefix-ordered)
 const projects = await getCollection('projects');
 
-// Compute domain from folder structure or use explicit domain
+function parseDomainFolder(folder) {
+  const m = folder.match(/^(\d+)[-_ ]?(.*)$/);
+  const order = m ? parseInt(m[1], 10) : null;
+  const nameRaw = (m ? m[2] : folder) || '';
+  const name = nameRaw.trim();
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const display = name.replace(/[-_]+/g, ' ').trim().toUpperCase();
+  return { order, name, slug, display };
+}
+
+// Build domain meta from top-level folder of each project
+const domainMap = new Map(); // slug -> { order, name, slug, display }
 const projectsWithDomains = projects.map(project => {
-  let domain = project.data.domain;
-  
-  // If no explicit domain, compute from folder structure
-  if (!domain) {
-    const pathParts = project.id.split('/');
-    if (pathParts.length > 1) {
-      // Project is in a domain folder (e.g., "music/song-alpha.md")
-      domain = pathParts[0];
-    } else {
-      // Project is in root projects folder, default to 'tech'
-      domain = 'tech';
-    }
+  const folder = (project.id.split('/')[0] || '').trim();
+  const meta = parseDomainFolder(folder);
+  if (meta.slug) {
+    if (!domainMap.has(meta.slug)) domainMap.set(meta.slug, meta);
   }
-  
   return {
     ...project,
     data: {
       ...project.data,
-      domain
+      domain: meta.slug || 'misc'
     }
   };
 });
 
-// Use explicit domain shell ordering from configuration
-const domains = userTweaks.domainShellOrder.filter(domain => 
-  projectsWithDomains.some(p => p.data.domain === domain)
-);
+// Sort domains by numeric prefix, then alpha, and cap at 5
+let domainMetaList = Array.from(domainMap.values());
+domainMetaList.sort((a, b) => {
+  const ao = a.order ?? Infinity;
+  const bo = b.order ?? Infinity;
+  if (ao !== bo) return ao - bo;
+  return a.name.localeCompare(b.name);
+});
+const maxShells = 5;
+if (domainMetaList.length > maxShells) {
+  console.warn(`[atom] Domain folders exceed ${maxShells}; extra domains will be hidden:`, domainMetaList.slice(maxShells).map(d => d.slug));
+}
+domainMetaList = domainMetaList.slice(0, maxShells);
+const domains = domainMetaList.map(d => d.slug);
 
 // Calculate electron positions for each shell
 const electronsByDomain = projectsWithDomains.reduce((acc, project) => {
@@ -125,11 +137,57 @@ function arcPathD(cx: number, cy: number, r: number, startDeg: number, endDeg: n
   return `M ${sx} ${sy} A ${r} ${r} 0 ${large} ${sweep} ${ex} ${ey}`;
 }
 
+// Prefer dynamic folder display names; fall back to overrides + slug transform
+const DYNAMIC_NAMES: Record<string,string> = Object.fromEntries(domainMetaList.map(d => [d.slug, d.display]));
 function displayNameForDomain(slug: string) {
+  if (slug in DYNAMIC_NAMES) return DYNAMIC_NAMES[slug];
   const map = (atomConfig as any).domainDisplayNames || {};
   if (map && slug in map) return map[slug];
   return String(slug || '').replace(/-/g, ' ').toUpperCase();
 }
+
+// Compute dynamic shells and viewport
+function computeShellsAndViewport() {
+  const N = domains.length;
+  const ds = (atomConfig as any).dynamicShells || {};
+  const baseRadius = ds.baseRadius ?? 120;
+  const baseGap = ds.baseGap ?? 80;
+  const minGap = ds.minGap ?? 56;
+  const maxGap = ds.maxGap ?? 110;
+  const dirMode = ds.directionMode ?? 'alternate';
+  const speedBase = ds.speed?.base ?? 9;
+  const speedDelta = ds.speed?.deltaPerShell ?? 0;
+  const factor = Math.max(1, 3 / Math.max(N, 1));
+  const gapRaw = baseGap * factor;
+  const gap = Math.min(maxGap, Math.max(minGap, gapRaw));
+  const shells = Array.from({ length: N }, (_, i) => {
+    const radius = baseRadius + i * gap;
+    const direction = dirMode === 'cw' ? 1 : dirMode === 'ccw' ? -1 : (i % 2 === 0 ? 1 : -1);
+    const speed = speedBase + i * speedDelta;
+    return {
+      radius,
+      speed,
+      direction,
+      strokeWidth: (atomConfig as any).shells?.[0]?.strokeWidth ?? 4,
+      hoverStrokeWidth: (atomConfig as any).shells?.[0]?.hoverStrokeWidth ?? 5,
+      defaultOpacity: (atomConfig as any).shells?.[0]?.defaultOpacity ?? 0.3,
+      hoverOpacity: (atomConfig as any).shells?.[0]?.hoverOpacity ?? 0.7,
+      electronHoverOpacity: (atomConfig as any).shells?.[0]?.electronHoverOpacity ?? 0.2,
+      color: '#000'
+    };
+  });
+  const maxR = shells.length ? shells[shells.length - 1].radius : baseRadius;
+  const atomScale = (userTweaks as any).atomScale ?? 1;
+  const padding = ((userTweaks as any).viewportPadding ?? 80) * atomScale;
+  const hoverR = (atomConfig as any).electrons?.hoverRadius ?? 22;
+  const requiredSize = (maxR + hoverR + padding) * 2;
+  const finalSize = Math.max((userTweaks as any).viewportSize ?? 900, requiredSize);
+  const viewport = { width: finalSize, height: finalSize, centerX: finalSize / 2, centerY: finalSize / 2, padding };
+  return { shells, viewport };
+}
+
+const { shells: dynamicShells, viewport: dynamicViewport } = computeShellsAndViewport();
+const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicViewport } as any;
 ---
 
 <html lang="en">
@@ -245,19 +303,19 @@ function displayNameForDomain(slug: string) {
 	</head>
 	<body>
 		<div class="atom-container">
-			<svg 
-				id="atom-svg"
-				width={atomConfig.viewport.width} 
-				height={atomConfig.viewport.height} 
-				viewBox={`0 0 ${atomConfig.viewport.width} ${atomConfig.viewport.height}`}
-				xmlns="http://www.w3.org/2000/svg"
-			>
+				<svg 
+					id="atom-svg"
+					width={cfg.viewport.width} 
+					height={cfg.viewport.height} 
+					viewBox={`0 0 ${cfg.viewport.width} ${cfg.viewport.height}`}
+					xmlns="http://www.w3.org/2000/svg"
+				>
 				<!-- Nucleus (clickable like an electron, not draggable) -->
 				<circle 
 					id="nucleus-circle"
 					class="electron nucleus"
-					cx={atomConfig.viewport.centerX}
-					cy={atomConfig.viewport.centerY}
+					cx={cfg.viewport.centerX}
+					cy={cfg.viewport.centerY}
 					r={atomConfig.nucleus.radius}
 					fill={atomConfig.electrons.color}
 					stroke={atomConfig.nucleus.color}
@@ -265,8 +323,8 @@ function displayNameForDomain(slug: string) {
 				/>
 				<text 
 					class="nucleus-label"
-					x={atomConfig.viewport.centerX}
-					y={atomConfig.viewport.centerY}
+					x={cfg.viewport.centerX}
+					y={cfg.viewport.centerY}
 					text-anchor="middle"
 					dominant-baseline="middle"
 					font-size={atomConfig.nucleus.fontSize}
@@ -278,7 +336,7 @@ function displayNameForDomain(slug: string) {
 
 				<!-- Orbital Shells -->
 				{domains.map((domain, shellIndex) => {
-					const shell = atomConfig.shells[shellIndex] || atomConfig.shells[atomConfig.shells.length - 1];
+					const shell = cfg.shells[shellIndex] || cfg.shells[cfg.shells.length - 1];
 					const electronsInShell = electronsByDomain[domain] || [];
 					
 					// Random positioning with collision avoidance
@@ -324,10 +382,10 @@ function displayNameForDomain(slug: string) {
 							{/* Label defs and rendering by mode */}
 							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring' || atomConfig.labels?.mode === 'ringPattern') ? (
 								<defs>
-									{(() => {
-										const r = shell.radius + (atomConfig.labels?.offsetPx ?? 16);
-										const cx = atomConfig.viewport.centerX;
-										const cy = atomConfig.viewport.centerY;
+                    {(() => {
+                      const r = shell.radius + (atomConfig.labels?.offsetPx ?? 16);
+                      const cx = cfg.viewport.centerX;
+                      const cy = cfg.viewport.centerY;
 										const fullId = `label-path-full-${shellIndex}`;
 										const arcId = `label-path-arc-${shellIndex}`;
 										const arcDeg = atomConfig.labels?.mobileArcDegrees ?? 150;
@@ -347,7 +405,13 @@ function displayNameForDomain(slug: string) {
 									{(() => {
 										const display = displayNameForDomain(domain);
                   const repeatsByShell = atomConfig.labels?.pattern?.repeatsByShell || [];
-                  const repeats = Math.max(1, (repeatsByShell[shellIndex] ?? (atomConfig.labels?.repeat ?? 10)));
+                  const density = atomConfig.labels?.pattern?.densityPxPerRepeat ?? 26;
+                  const minRep = atomConfig.labels?.pattern?.minRepeats ?? 3;
+                  const maxRep = atomConfig.labels?.pattern?.maxRepeats ?? 40;
+                  const rLabel = shell.radius + (atomConfig.labels?.offsetPx ?? 16);
+                  const circ = 2 * Math.PI * rLabel;
+                  const autoRep = Math.max(minRep, Math.min(maxRep, Math.round(circ / Math.max(8, density))));
+                  const repeats = Math.max(1, (repeatsByShell[shellIndex] ?? autoRep));
                   const sep = atomConfig.labels?.pattern?.separator ?? ' • ';
                   const labelText = Array.from({ length: repeats }, () => display).join(sep);
 										const fullHref = `#label-path-full-${shellIndex}`;
@@ -378,8 +442,8 @@ function displayNameForDomain(slug: string) {
                 {atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'orbiting') ? (
                   <g class="shell-label-rotor" data-shell-index={shellIndex} style="pointer-events: none;">
                     {(() => {
-                      const cx = atomConfig.viewport.centerX;
-                      const cy = atomConfig.viewport.centerY;
+                      const cx = cfg.viewport.centerX;
+                      const cy = cfg.viewport.centerY;
                       const r = Math.max(10, shell.radius - (atomConfig.labels?.wordOrbit?.innerOffsetPx ?? 20));
                       const arcDeg = atomConfig.labels?.wordOrbit?.arcDegrees ?? 160;
                       const center = atomConfig.labels?.wordOrbit?.centerAngleDeg ?? -90;
@@ -402,11 +466,11 @@ function displayNameForDomain(slug: string) {
                 ) : null}
 
 							<!-- Shell orbit path -->
-							<circle 
-								class="shell"
-								cx={atomConfig.viewport.centerX}
-								cy={atomConfig.viewport.centerY}
-								r={shell.radius}
+              <circle 
+                class="shell"
+                cx={cfg.viewport.centerX}
+                cy={cfg.viewport.centerY}
+                r={shell.radius}
 								fill="none"
 								stroke={shell.color}
 								stroke-width={shell.strokeWidth}
@@ -418,8 +482,8 @@ function displayNameForDomain(slug: string) {
 							{electronsInShell.map((project, electronIndex) => {
 								const angleDegrees = electronPositions[electronIndex];
 								const angleRadians = (angleDegrees * Math.PI) / 180; // Convert to radians for trig functions
-								const x = atomConfig.viewport.centerX + shell.radius * Math.cos(angleRadians);
-								const y = atomConfig.viewport.centerY + shell.radius * Math.sin(angleRadians);
+                  const x = cfg.viewport.centerX + shell.radius * Math.cos(angleRadians);
+                  const y = cfg.viewport.centerY + shell.radius * Math.sin(angleRadians);
 								
 								return (
 									<circle 
@@ -448,6 +512,7 @@ function displayNameForDomain(slug: string) {
         <script type="application/json" id="project-data" set:html={JSON.stringify(projectSummaries)}></script>
         <script type="application/json" id="bio-data" set:html={JSON.stringify(bioPayload)}></script>
         <script type="application/json" id="logos-map" set:html={JSON.stringify(logosMap)}></script>
+        <script type="application/json" id="cfg-data" set:html={JSON.stringify(cfg)}></script>
 
         <!-- Overlay (handles both projects and bio) -->
         <div id="project-overlay" aria-hidden="true">
@@ -480,8 +545,14 @@ function displayNameForDomain(slug: string) {
 				
 				// Minimum distance system is working correctly!
 				
+				// Read dynamic config generated server-side (fallback to atomConfig)
+				const cfgDataNode = document.getElementById('cfg-data');
+				let cfg = null;
+				try { cfg = cfgDataNode ? JSON.parse(cfgDataNode.textContent) : null; } catch {}
+				if (!cfg) cfg = atomConfig;
+
 				// Create and start orbit system
-				const orbitSystem = new OrbitSystem(atomConfig);
+				const orbitSystem = new OrbitSystem(cfg);
 				orbitSystem.init();
 				orbitSystem.start();
 
@@ -500,7 +571,7 @@ function displayNameForDomain(slug: string) {
                 let created = 0;
                 rotors.forEach((rotor) => {
                   const shellIndex = parseInt(rotor.getAttribute('data-shell-index') || '0');
-                  const dir = atomConfig.shells[shellIndex]?.direction ?? 1;
+                  const dir = cfg.shells[shellIndex]?.direction ?? 1;
                   const speed = atomConfig.labels.rotate.speedsByShell?.[shellIndex] ?? 100; // seconds per revolution
                   let tween = null;
                   if (mode === 'ring') {
@@ -509,7 +580,7 @@ function displayNameForDomain(slug: string) {
                       duration: speed,
                       ease: 'none',
                       repeat: -1,
-                      svgOrigin: `${atomConfig.viewport.centerX} ${atomConfig.viewport.centerY}`
+                      svgOrigin: `${cfg.viewport.centerX} ${cfg.viewport.centerY}`
                     });
                   } else if (mode === 'orbiting') {
                     // orbiting mode: animate startOffset of the textPath along full circle
@@ -551,8 +622,8 @@ function displayNameForDomain(slug: string) {
 				}
 
 				// Base viewBox size used for hitbox math (no CSS transform scaling)
-				const baseW = atomConfig.viewport.width;
-				const baseH = atomConfig.viewport.height;
+				const baseW = cfg.viewport.width;
+				const baseH = cfg.viewport.height;
 				
 			// Register GSAP Draggable
 			gsap.registerPlugin(Draggable);
@@ -900,7 +971,7 @@ function displayNameForDomain(slug: string) {
 					
               applyShellEffects(shellIndex) {
                 const shell = shells[shellIndex];
-                const shellConfig = atomConfig.shells[shellIndex];
+                const shellConfig = cfg.shells[shellIndex];
                 if (!shell || !shellConfig) return;
                 
                 console.log(`🟡 Applying shell ${shellIndex} effects`);
@@ -914,7 +985,7 @@ function displayNameForDomain(slug: string) {
 					
               applyElectronEffects(shellIndex, electron) {
                 const shell = shells[shellIndex];
-                const shellConfig = atomConfig.shells[shellIndex];
+                const shellConfig = cfg.shells[shellIndex];
                 if (!shell || !shellConfig || !electron) return;
                 
                 console.log(`🔴 Applying electron effects for shell ${shellIndex}`);
@@ -947,7 +1018,7 @@ function displayNameForDomain(slug: string) {
 					
               resetShellEffects(shellIndex) {
                 const shell = shells[shellIndex];
-                const shellConfig = atomConfig.shells[shellIndex];
+                const shellConfig = cfg.shells[shellIndex];
                 if (!shell || !shellConfig) return;
                 
                 console.log(`🔄 Resetting shell ${shellIndex} effects`);
@@ -1191,7 +1262,7 @@ function displayNameForDomain(slug: string) {
 							ease: 'power2.out',
 							overwrite: 'auto'
 						});
-						const dimOpacity = atomConfig.shells[0]?.electronHoverOpacity ?? 0.2;
+                const dimOpacity = cfg.shells[0]?.electronHoverOpacity ?? 0.2;
 						allElectrons.forEach(e => {
 							if (e === nucleus) {
 								gsap.to(e, { opacity: 1.0, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
@@ -1252,7 +1323,7 @@ function displayNameForDomain(slug: string) {
       const tolerance = atomConfig.hitbox?.tolerance ?? 15; // pixels - configurable via user-tweaks.js
 				
 				// Pre-calculate shell boundaries for performance (squared distances avoid Math.sqrt)
-				const shellBoundaries = atomConfig.shells.map((shell, shellIndex) => ({
+				const shellBoundaries = cfg.shells.map((shell, shellIndex) => ({
 					innerBoundSquared: (shell.radius - tolerance) ** 2,
 					outerBoundSquared: (shell.radius + tolerance) ** 2,
 					shellIndex: shellIndex

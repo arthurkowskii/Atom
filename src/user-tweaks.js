@@ -137,7 +137,10 @@ export const userTweaks = {
     // Repeating pattern specifics (full-circle text with per-shell offsets)
     pattern: {
       offsetsPercentByShell: [0, 3.5, 7], // startOffset percentages per shell (0–100)
-      repeatsByShell: [12, 9, 40],         // inner, middle, outer repeat counts
+      repeatsByShell: [12, 9, 40],         // per-shell repeat counts (used if present)
+      densityPxPerRepeat: 26,              // auto: px of circumference per repetition
+      minRepeats: 3,
+      maxRepeats: 40,
       separator: ' • '
     },
     rotate: {
@@ -156,6 +159,17 @@ export const userTweaks = {
       arcDegrees: 160,        // local arc length to curve the single word
       centerAngleDeg: -60     // center angle for all shells (-90 = top)
     }
+  },
+
+  // 🧮 DYNAMIC SHELLS (compute shells from domain folders)
+  dynamicShells: {
+    enabled: true,
+    baseRadius: 120,    // px, distance of inner-most shell from center
+    baseGap: 80,        // px, nominal spacing between shells
+    minGap: 56,         // px, lower bound when many shells
+    maxGap: 110,        // px, upper bound clamp
+    directionMode: 'alternate', // 'alternate' | 'cw' | 'ccw'
+    speed: { base: 9.0, deltaPerShell: 0.0 } // degrees/sec; 360/speed = seconds per orbit
   }
 
 };

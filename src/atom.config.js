@@ -172,6 +172,9 @@ export default {
     pattern: {
       offsetsPercentByShell: userTweaks.labels?.pattern?.offsetsPercentByShell ?? [0, 3.5, 7],
       repeatsByShell: userTweaks.labels?.pattern?.repeatsByShell ?? [6, 8, 12],
+      densityPxPerRepeat: userTweaks.labels?.pattern?.densityPxPerRepeat ?? 26,
+      minRepeats: userTweaks.labels?.pattern?.minRepeats ?? 3,
+      maxRepeats: userTweaks.labels?.pattern?.maxRepeats ?? 40,
       separator: userTweaks.labels?.pattern?.separator ?? ' • '
     },
     rotate: {
@@ -190,4 +193,19 @@ export default {
 
   // Display names for domains
   domainDisplayNames: userTweaks.domainDisplayNames || {}
+
+  ,
+  // Dynamic shells generator parameters
+  dynamicShells: {
+    enabled: userTweaks.dynamicShells?.enabled ?? false,
+    baseRadius: userTweaks.dynamicShells?.baseRadius ?? 120,
+    baseGap: userTweaks.dynamicShells?.baseGap ?? 80,
+    minGap: userTweaks.dynamicShells?.minGap ?? 56,
+    maxGap: userTweaks.dynamicShells?.maxGap ?? 110,
+    directionMode: userTweaks.dynamicShells?.directionMode ?? 'alternate',
+    speed: {
+      base: userTweaks.dynamicShells?.speed?.base ?? 9.0,
+      deltaPerShell: userTweaks.dynamicShells?.speed?.deltaPerShell ?? 0.0
+    }
+  }
 };

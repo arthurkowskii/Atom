@@ -59,7 +59,8 @@ collections:
     slug: "{{slug}}"
     fields:
       - { label: "Title", name: "title", widget: "string" }
-      - { label: "Domain", name: "domain", widget: "select", options: ["music", "sound-design", "tech"] }
+      # Domain is derived from top-level folder name (e.g., "1_Music/")
+      # Remove explicit domain field to avoid drift with folder-driven shells
       - { label: "Description", name: "description", widget: "text" }
       - { label: "Technologies", name: "tech", widget: "list", field: { label: "Tech", name: "tech", widget: "string" } }
       - { label: "Status", name: "status", widget: "select", options: ["completed", "in-progress", "planned"] }
