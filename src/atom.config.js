@@ -151,6 +151,7 @@ export default {
   // Labels (domain text along shells)
   labels: {
     enabled: userTweaks.labels?.enabled ?? false,
+    mode: userTweaks.labels?.mode ?? 'ring',
     fontSize: (userTweaks.labels?.fontSize ?? 14) * userTweaks.atomScale,
     offsetPx: userTweaks.labels?.offsetPx ?? 16,
     idleOpacity: userTweaks.labels?.idleOpacity ?? 0.35,
@@ -158,10 +159,16 @@ export default {
     repeat: userTweaks.labels?.repeat ?? 10,
     rotate: {
       enabled: userTweaks.labels?.rotate?.enabled ?? false,
+      respectReducedMotion: userTweaks.labels?.rotate?.respectReducedMotion ?? false,
       speedsByShell: userTweaks.labels?.rotate?.speedsByShell ?? [90, 110, 130]
     },
     mobileViewportMaxPx: userTweaks.labels?.mobileViewportMaxPx ?? 700,
-    mobileArcDegrees: userTweaks.labels?.mobileArcDegrees ?? 150
+    mobileArcDegrees: userTweaks.labels?.mobileArcDegrees ?? 150,
+    wordOrbit: {
+      innerOffsetPx: userTweaks.labels?.wordOrbit?.innerOffsetPx ?? 20,
+      arcDegrees: userTweaks.labels?.wordOrbit?.arcDegrees ?? 160,
+      centerAngleDeg: userTweaks.labels?.wordOrbit?.centerAngleDeg ?? -90
+    }
   },
 
   // Display names for domains

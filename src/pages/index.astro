@@ -211,6 +211,8 @@ function displayNameForDomain(slug: string) {
                 -webkit-font-smoothing: antialiased;     /* Chrome/WebKit */
                 -moz-osx-font-smoothing: grayscale;      /* Firefox on macOS */
             }
+            /* Ensure nucleus label does not intercept pointer events */
+            .nucleus-label { pointer-events: none; }
             
             /* Pruned old bio styles (legacy) */
 
@@ -218,13 +220,15 @@ function displayNameForDomain(slug: string) {
 
             /* Shell labels (curved text on rings) */
             .shell-label { fill: #000; letter-spacing: 2px; text-transform: uppercase; }
-            .shell-label-rotor { transform-box: fill-box; transform-origin: center; }
-            /* Mobile: prefer arc label, hide full circle */
+            .shell-label-rotor { pointer-events: none; }
+            /* Ring mode: prefer arc on small screens */
             .shell-label--arc { display: none; }
             @media (max-width: 700px) {
               .shell-label--full { display: none; }
               .shell-label--arc { display: inline; opacity: 0.35 !important; }
             }
+            /* Orbiting word mode */
+            .orbit-label { fill: #000; letter-spacing: 2px; text-transform: uppercase; }
 		</style>
 	</head>
 	<body>
@@ -248,6 +252,7 @@ function displayNameForDomain(slug: string) {
 					stroke-width={atomConfig.nucleus.strokeWidth}
 				/>
 				<text 
+					class="nucleus-label"
 					x={atomConfig.viewport.centerX}
 					y={atomConfig.viewport.centerY}
 					text-anchor="middle"
@@ -304,8 +309,8 @@ function displayNameForDomain(slug: string) {
 					
 					return (
 						<g data-shell={shellIndex} data-domain={domain}>
-							<!-- Label paths for this shell (full ring + mobile arc) -->
-							{atomConfig.labels?.enabled ? (
+							{/* Label defs and rendering by mode */}
+							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring') ? (
 								<defs>
 									{(() => {
 										const r = shell.radius + (atomConfig.labels?.offsetPx ?? 16);
@@ -325,19 +330,7 @@ function displayNameForDomain(slug: string) {
 									})()}
 								</defs>
 							) : null}
-							<!-- Shell orbit path -->
-							<circle 
-								class="shell"
-								cx={atomConfig.viewport.centerX}
-								cy={atomConfig.viewport.centerY}
-								r={shell.radius}
-								fill="none"
-								stroke={shell.color}
-								stroke-width={shell.strokeWidth}
-								style={`opacity: ${userTweaks.shell.default.opacity}`}
-								data-shell-index={shellIndex}
-							/>
-							{atomConfig.labels?.enabled ? (
+							{atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'ring') ? (
 								<g class="shell-label-rotor" data-shell-index={shellIndex} style="pointer-events: none;">
 									{(() => {
 										const display = displayNameForDomain(domain);
@@ -364,6 +357,45 @@ function displayNameForDomain(slug: string) {
 									})()}
 								</g>
 							) : null}
+
+                {atomConfig.labels?.enabled && (atomConfig.labels?.mode === 'orbiting') ? (
+                  <g class="shell-label-rotor" data-shell-index={shellIndex} style="pointer-events: none;">
+                    {(() => {
+                      const cx = atomConfig.viewport.centerX;
+                      const cy = atomConfig.viewport.centerY;
+                      const r = Math.max(10, shell.radius - (atomConfig.labels?.wordOrbit?.innerOffsetPx ?? 20));
+                      const arcDeg = atomConfig.labels?.wordOrbit?.arcDegrees ?? 160;
+                      const center = atomConfig.labels?.wordOrbit?.centerAngleDeg ?? -90;
+                      const start = center - arcDeg / 2;
+                      const end = center + arcDeg / 2;
+                      const id = `orbit-label-path-${shellIndex}`;
+                      const display = displayNameForDomain(domain);
+                      return (
+                        <>
+                          <defs>
+                            <path id={id} d={arcPathD(cx, cy, r, start, end)} fill="none" />
+                          </defs>
+                          <text class="orbit-label" style={`opacity:${atomConfig.labels?.idleOpacity ?? 0.35}`} font-size={atomConfig.labels?.fontSize}>
+                            <textPath href={`#${id}`} startOffset="50%" text-anchor="middle">{display}</textPath>
+                          </text>
+                        </>
+                      );
+                    })()}
+                  </g>
+                ) : null}
+
+							<!-- Shell orbit path -->
+							<circle 
+								class="shell"
+								cx={atomConfig.viewport.centerX}
+								cy={atomConfig.viewport.centerY}
+								r={shell.radius}
+								fill="none"
+								stroke={shell.color}
+								stroke-width={shell.strokeWidth}
+								style={`opacity: ${userTweaks.shell.default.opacity}`}
+								data-shell-index={shellIndex}
+							/>
 							
 							<!-- Electrons on this shell -->
 							{electronsInShell.map((project, electronIndex) => {
@@ -436,27 +468,57 @@ function displayNameForDomain(slug: string) {
 				orbitSystem.init();
 				orbitSystem.start();
 
-				// Labels rotation setup
+            // Labels rotation setup
 				const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 				let labelTweens = [];
+				const labelTweenByShell = new Map();
 				(function initLabelRotation(){
-				  try {
-				    if (!atomConfig.labels?.enabled) return;
-				    if (prefersReduced && atomConfig.motion?.respectReducedMotion) return;
+            				  try {
+            				    if (!atomConfig.labels?.enabled) return;
+            				    // Respect reduced motion only if labels.rotate.respectReducedMotion is true
+            				    if (prefersReduced && (atomConfig.labels?.rotate?.respectReducedMotion === true)) return;
 				    if (!atomConfig.labels?.rotate?.enabled) return;
-				    const rotors = document.querySelectorAll('.shell-label-rotor');
-				    rotors.forEach((rotor) => {
+            				    const mode = atomConfig.labels?.mode || 'ring';
+            				    const rotors = document.querySelectorAll('.shell-label-rotor');
+            				    let created = 0;
+            				    rotors.forEach((rotor) => {
 				      const shellIndex = parseInt(rotor.getAttribute('data-shell-index') || '0');
 				      const dir = atomConfig.shells[shellIndex]?.direction ?? 1;
-				      const speed = atomConfig.labels.rotate.speedsByShell?.[shellIndex] ?? 100; // seconds per rev
-				      const tween = gsap.to(rotor, {
-				        rotation: `+=${360 * dir}`,
-				        duration: speed,
-				        ease: 'none',
-				        repeat: -1
-				      });
-				      labelTweens.push(tween);
-				    });
+				      const speed = atomConfig.labels.rotate.speedsByShell?.[shellIndex] ?? 100; // seconds per revolution
+				      let tween = null;
+				      if (mode === 'ring') {
+				        tween = gsap.to(rotor, {
+				          rotation: `+=${360 * dir}`,
+				          duration: speed,
+				          ease: 'none',
+				          repeat: -1,
+				          svgOrigin: `${atomConfig.viewport.centerX} ${atomConfig.viewport.centerY}`
+				        });
+				      } else {
+				        // orbiting mode: animate startOffset of the textPath along full circle
+				        const tp = rotor.querySelector('textPath');
+				        if (!tp) return;
+				        const start = 0;
+				        const end = dir >= 0 ? 100 : -100;
+				        const state = { p: start };
+				        tween = gsap.to(state, {
+				          p: end,
+				          duration: speed,
+				          ease: 'none',
+				          repeat: -1,
+				          onUpdate: () => {
+				            const v = ((state.p % 100) + 100) % 100;
+				            tp.setAttribute('startOffset', v + '%');
+				          }
+				        });
+				      }
+            				      if (tween) {
+            				        labelTweens.push(tween);
+            				        labelTweenByShell.set(shellIndex, tween);
+            				        created++;
+            				      }
+            				    });
+            				    console.log(`[labels] mode=${mode} rotors=${rotors.length} tweens=${created} reduced=${prefersReduced}`);
 				  } catch(e) { console.warn('Label rotation init failed', e); }
 				})();
 
@@ -736,6 +798,16 @@ function displayNameForDomain(slug: string) {
                   ease: 'power2.out',
                   overwrite: 'auto'
                 });
+                // Reset labels to idle
+                if (atomConfig.labels?.enabled) {
+                  const allLabelTexts = document.querySelectorAll('.shell-label-rotor text');
+                  gsap.to(allLabelTexts, {
+                    opacity: atomConfig.labels?.idleOpacity ?? 0.35,
+                    duration: atomConfig.timing.baselineResetDuration,
+                    ease: 'power2.out',
+                    overwrite: 'auto'
+                  });
+                }
                 return;
               }
                 
@@ -756,9 +828,33 @@ function displayNameForDomain(slug: string) {
                     overwrite: 'auto'
                   });
                   this.applyShellEffects(shellIndex);
+                  // Brighten label for this shell
+                  if (atomConfig.labels?.enabled) {
+                    const rotor = document.querySelector(`.shell-label-rotor[data-shell-index="${shellIndex}"]`);
+                    if (rotor) {
+                      gsap.to(rotor.querySelectorAll('text'), {
+                        opacity: atomConfig.labels?.hoverOpacity ?? 0.7,
+                        duration: atomConfig.timing.hoverDuration,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    }
+                  }
                 } else if (this.currentState.startsWith('electron-')) {
                   const shellIndex = parseInt(this.currentState.split('-')[1]);
                   this.applyElectronEffects(shellIndex, this.currentElectron);
+                  // Brighten label for this shell
+                  if (atomConfig.labels?.enabled) {
+                    const rotor = document.querySelector(`.shell-label-rotor[data-shell-index="${shellIndex}"]`);
+                    if (rotor) {
+                      gsap.to(rotor.querySelectorAll('text'), {
+                        opacity: atomConfig.labels?.hoverOpacity ?? 0.7,
+                        duration: atomConfig.timing.hoverDuration,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    }
+                  }
                 }
               },
 					
@@ -796,6 +892,7 @@ function displayNameForDomain(slug: string) {
                 
                 // Motion pause
                 orbitSystem.pauseShell(shellIndex);
+                try { const t = labelTweenByShell.get(shellIndex); t && t.pause(); } catch {}
                 
                 // Global spotlight
                 const allElectrons = document.querySelectorAll('.electron');
@@ -820,6 +917,18 @@ function displayNameForDomain(slug: string) {
                   duration: atomConfig.timing.hoverDuration,
                   ease: 'power2.out'
                 });
+                // Dim label back to idle
+                if (atomConfig.labels?.enabled) {
+                  const rotor = document.querySelector(`.shell-label-rotor[data-shell-index="${shellIndex}"]`);
+                  if (rotor) {
+                    gsap.to(rotor.querySelectorAll('text'), {
+                      opacity: atomConfig.labels?.idleOpacity ?? 0.35,
+                      duration: atomConfig.timing.hoverDuration,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  }
+                }
               },
 					
               resetElectronEffects(shellIndex) {
@@ -830,6 +939,12 @@ function displayNameForDomain(slug: string) {
                 
                 // Resume motion
                 orbitSystem.resumeShell(shellIndex);
+                try {
+                  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                  if (!(prefersReduced && atomConfig.motion?.respectReducedMotion)) {
+                    const t = labelTweenByShell.get(shellIndex); t && t.resume();
+                  }
+                } catch {}
                 
                 // Reset all electrons
                 // Opacity reset for all
@@ -846,6 +961,18 @@ function displayNameForDomain(slug: string) {
                   ease: 'power2.out',
                   overwrite: 'auto'
                 });
+                // Reset label to idle
+                if (atomConfig.labels?.enabled) {
+                  const rotor = document.querySelector(`.shell-label-rotor[data-shell-index="${shellIndex}"]`);
+                  if (rotor) {
+                    gsap.to(rotor.querySelectorAll('text'), {
+                      opacity: atomConfig.labels?.idleOpacity ?? 0.35,
+                      duration: atomConfig.timing.hoverDuration,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  }
+                }
               }
 				};
 				
@@ -1045,6 +1172,34 @@ function displayNameForDomain(slug: string) {
 						});
 					});
 					nucleus.addEventListener('click', () => {
+                // Micro: ripple effect similar to electrons
+                try {
+                  if (micro.ripple) {
+                    const parent = nucleus.parentNode;
+                    const baseR = parseFloat(nucleus.getAttribute('r')) || 0;
+                    const cxAttr = parseFloat(nucleus.getAttribute('cx'));
+                    const cyAttr = parseFloat(nucleus.getAttribute('cy'));
+                    const ripple = document.createElementNS(svgNS, 'circle');
+                    ripple.setAttribute('cx', String(cxAttr));
+                    ripple.setAttribute('cy', String(cyAttr));
+                    ripple.setAttribute('r', String(baseR));
+                    ripple.setAttribute('fill', 'none');
+                    ripple.setAttribute('stroke', micro.rippleColor || '#000');
+                    ripple.setAttribute('stroke-width', String(micro.rippleStrokeWidth ?? 2));
+                    ripple.style.pointerEvents = 'none';
+                    const tx = parseFloat(gsap.getProperty(nucleus, 'x')) || 0;
+                    const ty = parseFloat(gsap.getProperty(nucleus, 'y')) || 0;
+                    gsap.set(ripple, { x: tx, y: ty, opacity: 0.8 });
+                    parent.appendChild(ripple);
+                    gsap.to(ripple, {
+                      attr: { r: baseR + (micro.rippleExpandPx ?? 56) },
+                      opacity: 0,
+                      duration: (micro.rippleDurationMs ?? 360) / 1000,
+                      ease: 'power2.out',
+                      onComplete: () => { try { ripple.remove(); } catch {} }
+                    });
+                  }
+                } catch {}
                 const rect = nucleus.getBoundingClientRect();
                 const cx = rect.left + rect.width / 2;
                 const cy = rect.top + rect.height / 2;

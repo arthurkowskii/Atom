@@ -104,7 +104,7 @@ export const userTweaks = {
     ripple: true,
     rippleDurationMs: 360,
     rippleColor: '#000',
-    rippleStrokeWidth: 2,
+    rippleStrokeWidth: 2.7,
     rippleExpandPx: 56,
 
     // Shell pulse on click
@@ -116,19 +116,28 @@ export const userTweaks = {
   // 🔤 SHELL LABELS
   labels: {
     enabled: true,            // master toggle
+    mode: 'orbiting',         // 'ring' | 'orbiting'
     fontSize: 14,             // base px before atomScale
-    offsetPx: 18,             // outward from shell stroke
+    offsetPx: 18,             // outward from shell stroke (ring mode)
     idleOpacity: 0.35,        // always-visible baseline
     hoverOpacity: 0.7,        // optional bump on hover (can be unused)
     repeat: 12,               // how many times to repeat label with separators
     rotate: {
-      enabled: true,
+      enabled: false,
+      respectReducedMotion: false, // keep labels rotating even if OS reduces (aligns with current electrons)
       // seconds per revolution for inner/middle/outer; sign from shell.direction
       speedsByShell: [90, 110, 130]
     },
-    // Mobile behavior
+    // Mobile behavior (ring mode)
     mobileViewportMaxPx: 700,     // below this viewport width, prefer arc variant
-    mobileArcDegrees: 150         // arc length for small screens (top-centered)
+    mobileArcDegrees: 150,        // arc length for small screens (top-centered)
+
+    // Orbiting word mode specifics
+    wordOrbit: {
+      innerOffsetPx: 22,      // inward from shell stroke
+      arcDegrees: 160,        // local arc length to curve the single word
+      centerAngleDeg: -60     // center angle for the word arc (-90 = top, -60 = slight right)
+    }
   }
 
 };
