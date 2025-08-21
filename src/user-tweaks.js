@@ -92,6 +92,18 @@ export const userTweaks = {
     easing: 'power2.inOut' // GSAP ease name
   },
 
+  // 🌀 NAV TRANSITION (electron → overlay)
+  // Mirrors nucleus timings by default; separate in/out for clarity
+  navTransition: {
+    enabled: true,
+    inMs: 1000,          // open duration (ms)
+    outMs: 600,          // close duration (ms)
+    easing: 'power2.inOut',
+    respectReducedMotion: true,
+    edgeSoftnessPx: 0,   // no soft edge per request
+    blockInput: true
+  },
+
   // ✨ MICRO INTERACTIONS
   micro: {
     // Hover ring around the electron

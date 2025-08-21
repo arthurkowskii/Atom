@@ -132,6 +132,17 @@ export default {
     easing: userTweaks.overlayTransition?.easing ?? 'power2.inOut'
   },
 
+  // Electron navigation transition (separate in/out)
+  navTransition: {
+    enabled: userTweaks.navTransition?.enabled ?? true,
+    inMs: userTweaks.navTransition?.inMs ?? (userTweaks.overlayTransition?.openMs ?? 600),
+    outMs: userTweaks.navTransition?.outMs ?? (userTweaks.overlayTransition?.closeMs ?? 520),
+    easing: userTweaks.navTransition?.easing ?? (userTweaks.overlayTransition?.easing ?? 'power2.inOut'),
+    respectReducedMotion: userTweaks.navTransition?.respectReducedMotion ?? true,
+    edgeSoftnessPx: userTweaks.navTransition?.edgeSoftnessPx ?? 0,
+    blockInput: userTweaks.navTransition?.blockInput ?? true
+  },
+
   // Micro-interactions
   micro: {
     hoverCursorRing: userTweaks.micro?.hoverCursorRing ?? true,
