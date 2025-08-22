@@ -4,7 +4,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-21 (Phase 3B shipped; dynamic shells + labels)
+Last updated: 2025-08-22 (ProjectBento template implemented; responsive gallery system shipped)
 
 ## Project Snapshot
 
@@ -155,4 +155,20 @@ Tracking
 - Soft edge + input block: Optional feathered edge for the circular mask (configurable `edgeSoftnessPx`); blocks input until ~85% progress of open; applied to both electrons and nucleus (using respective transition configs).
 - Nucleus text interaction: Nucleus label ignores pointer events to keep hover consistent.
 - Decap CMS: Removed fixed domain select; domain now derived from folder placement.
+## Recent Changes (2025‑08‑22)
+
+- ProjectBento template: Created comprehensive bento-style project layout for rich content display. Features responsive gallery, stats/results, and tech sections. Usable via `useBentoLayout: true` in project frontmatter.
+- Template preview system: Added `/preview-templates` route for testing ProjectBento and ProjectAtomic layouts side-by-side with navigation.
+- Gallery redesign: Completely rebuilt gallery component with modern hero + thumbnail strip layout. Professional hover effects, smart responsive behavior across 5 breakpoints.
+- Responsive fixes: Maintained desktop aesthetics while ensuring proper mobile display. Gallery images maintain aspect ratios, cards stack cleanly.
+- Overlay scrolling: Fixed bottom card accessibility by adding overflow-y: auto to overlay container.
+- Bento layout routing: Prevented 404 errors by skipping URL navigation for bento layout projects in overlay system.
+
+### Key Files (Bento)
+
+- `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; white background with responsive grid.
+- `src/pages/preview-templates.astro` — Testing environment for both template components.
+- `src/content/config.ts` — Added `useBentoLayout` boolean field to project schema.
+- Projects with `useBentoLayout: true` bypass normal overlay routing and use bento display.
+
 Notes for agents: Keep this file concise. If you need rationale, code snippets, or the blow-by-blow history, follow the links above. Prefer editing user-tweaks.js and atom.config.js for behavior; index.astro wires interactions and overlay.
