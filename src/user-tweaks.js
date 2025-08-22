@@ -172,6 +172,59 @@ export const userTweaks = {
     speed: { base: 9.0, deltaPerShell: 0.0 } // degrees/sec; 360/speed = seconds per orbit
   },
 
+  // 🎵 BENTO CARD ANIMATIONS (Simple Scale + Audio)
+  bentoAnimations: {
+    enabled: true,
+    
+    // Simple animation parameters
+    staggerDelayMs: 80,           // Delay between each card (ms)
+    animationDurationMs: 400,     // Duration of each card animation (ms)
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)', // Bouncy easing
+    
+    // Individual card controls (set to false to disable specific cards)
+    cardEnabled: {
+      hero: true,
+      stats: true,
+      actions: true,
+      tech: true,
+      gallery: true,
+      process: true,
+      challenges: true,
+      results: true
+    },
+    
+    // Audio settings
+    audio: {
+      enabled: true,
+      volume: 0.4,        // Volume level (0-1)
+      syncWithAnimation: true,  // Sync audio with animation start
+      
+      // Card-specific pitches (musical notes)
+      pitches: {
+        hero: 'C3',       // Low, impactful
+        stats: 'E3',      // Mid tone
+        actions: 'G3',    // Higher tone
+        tech: 'C4',       // Bright
+        gallery: 'E4',    // Visual, bright
+        process: 'G4',    // High, detailed
+        challenges: 'B3', // Mid-range
+        results: 'D4'     // Conclusive
+      },
+      
+      // Tone synthesis settings
+      synthesis: {
+        attack: 0.01,     // Quick bubble pop attack
+        decay: 0.3,       // Bubbly decay
+        sustain: 0,       // No sustain (pure burst)
+        release: 0.8,     // Gentle release
+        chorus: {
+          frequency: 4,   // Wobble frequency
+          depth: 0.3      // Chorus depth
+        }
+      }
+    }
+  },
+
 
 };
 

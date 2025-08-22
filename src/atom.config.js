@@ -209,4 +209,13 @@ export default {
     }
   },
 
+  // Bento animations configuration
+  bentoAnimations: userTweaks.bentoAnimations || {
+    enabled: false,
+    bpm: 120,
+    musicalTiming: { beat: 500, eighth: 250, sixteenth: 125 },
+    cardTypes: {},
+    audio: { enabled: false, volume: 0.3 }
+  }
+
 };
