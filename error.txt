@@ -1,0 +1,11 @@
+⏱️ Progress: 98.1% Trigger at: undefined%
+index.astro:777 ⏱️ Progress: 98.6% Trigger at: undefined%
+index.astro:777 ⏱️ Progress: 99.1% Trigger at: undefined%
+index.astro:976 🎯 STATE CHANGE: electron-1-2 → none
+index.astro:1154 🔄 Resetting electron effects for shell 1
+index.astro:1132 🔄 Resetting shell 1 effects
+index.astro:777 ⏱️ Progress: 99.3% Trigger at: undefined%
+index.astro:777 ⏱️ Progress: 99.6% Trigger at: undefined%
+index.astro:777 ⏱️ Progress: 99.8% Trigger at: undefined%
+2index.astro:777 ⏱️ Progress: 99.9% Trigger at: undefined%
+4index.astro:777 ⏱️ Progress: 100.0% Trigger at: undefined%

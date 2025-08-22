@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntryBySlug } from 'astro:content';
 import BioBW from '../components/BioBW.astro';
+import ProjectBento from '../components/ProjectBento.astro';
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
 import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
@@ -77,6 +78,7 @@ const projectSummaries = projectsWithDomains.map(p => ({
   tech: p.data.tech,
   link: p.data.link,
   github: p.data.github,
+  useBentoLayout: p.data.useBentoLayout,
 }));
 
 // Prepare Bio payload from content collection (bio/about)
@@ -237,6 +239,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 color: #000;
                 z-index: 9999;
                 display: none; /* shown via .open */
+                overflow-y: auto; /* Allow vertical scrolling */
+                overflow-x: hidden; /* Prevent horizontal overflow */
                 /* Hard-edge fallback via clip-path */
                 clip-path: circle(var(--r, 0px) at var(--x, 50%) var(--y, 50%));
                 /* Soft edge via mask-image (progressive enhancement) */
@@ -259,6 +263,13 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 padding: 48px 24px;
                 opacity: 1; /* Opaque during opening for progressive reveal */
                 transition: none;
+            }
+            
+            /* Bento content should fill available space and be scrollable */
+            #project-overlay #bento-content {
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
             }
             /* Ensure Bio uses its own layout widths/padding to match /bio */
             #project-overlay #bio-content.inner {
@@ -526,6 +537,11 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             <div id="overlay-actions" style="display:flex;gap:12px;margin:8px 0 0;"></div>
           </div>
           
+          <!-- Bento layout for special projects -->
+          <div id="bento-content" style="display:none;">
+            <ProjectBento />
+          </div>
+          
           <!-- Bio content template (BW Pro, shared component) -->
           <div id="bio-content" role="dialog" aria-modal="true" aria-label="Bio" style="display:none;">
             <BioBW data={bioPayload} />
@@ -717,11 +733,20 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               if (currentElectron) orbitSystem.pauseElectron(currentElectron);
               pauseLabelRotation();
 
-              // Show project content, hide bio content
-              projectContent.style.display = 'block';
-              bioContent.style.display = 'none';
-              
-              fillProjectOverlay(p);
+              // Check if project uses bento layout
+              const bentoContent = document.getElementById('bento-content');
+              if (p.useBentoLayout) {
+                // Show bento content, hide others
+                projectContent.style.display = 'none';
+                bioContent.style.display = 'none';
+                bentoContent.style.display = 'block';
+              } else {
+                // Show project content, hide others
+                projectContent.style.display = 'block';
+                bioContent.style.display = 'none';
+                bentoContent.style.display = 'none';
+                fillProjectOverlay(p);
+              }
               overlay.style.setProperty('--x', `${cx}px`);
               overlay.style.setProperty('--y', `${cy}px`);
               overlay.style.setProperty('--r', `0px`);
@@ -744,6 +769,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 onUpdate: function () {
                   overlayR = state.r;
                   overlay.style.setProperty('--r', `${overlayR}px`);
+                  
+                  
+                  
                   // Block input during early phase
                   if (atomConfig.navTransition?.blockInput) {
                     const p = this.progress();
@@ -753,7 +781,13 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 onComplete: () => {
                   overlay.classList.add('open');
                   overlay.style.pointerEvents = 'auto';
-                  try { history.pushState({ overlay: true, slug }, '', `/projects/${slug}`); } catch {}
+                  
+                  // Only push history for non-bento projects (bento stays in overlay)
+                  const currentProject = projectBySlug.get(slug);
+                  if (!currentProject?.useBentoLayout) {
+                    try { history.pushState({ overlay: true, slug }, '', `/projects/${slug}`); } catch {}
+                  }
+                  
                   closeBtn.focus({ preventScroll: true });
                 }
               });
@@ -807,6 +841,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               });
             }
 
+
             function closeOverlay() {
               if (!overlayOpen) return;
               overlayOpen = false;
@@ -826,6 +861,14 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 onComplete: () => {
                   overlay.style.display = 'none';
                   overlay.setAttribute('aria-hidden', 'true');
+                  
+                  // Reset all content sections to hidden state
+                  projectContent.style.display = 'none';
+                  bioContent.style.display = 'none';
+                  const bentoContent = document.getElementById('bento-content');
+                  if (bentoContent) bentoContent.style.display = 'none';
+                  
+                  
                   if (currentElectron) { orbitSystem.resumeElectron(currentElectron); currentElectron = null; }
                   resumeLabelRotation();
                   if (lastFocused) { try { lastFocused.focus({ preventScroll: true }); } catch {} }

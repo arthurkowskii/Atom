@@ -14,6 +14,7 @@ const projectsCollection = defineCollection({
     image: z.string().optional(),
     featured: z.boolean().default(false),
     date: z.date(),
+    useBentoLayout: z.boolean().default(false),
   }),
 });
 

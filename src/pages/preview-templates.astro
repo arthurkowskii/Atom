@@ -1,0 +1,104 @@
+---
+// Template preview page to test ProjectBento component
+import ProjectBento from '../components/ProjectBento.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Preview - ProjectBento</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: system-ui, sans-serif;
+        }
+        
+        .preview-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.3);
+        }
+        
+        .preview-nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .preview-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ff6b00;
+            margin-right: 2rem;
+        }
+        
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 107, 0, 0.1);
+            color: #ff6b00;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 107, 0, 0.2);
+            border-color: rgba(255, 107, 0, 0.5);
+        }
+        
+        .nav-btn.active {
+            background: #ff6b00;
+            color: white;
+        }
+        
+        .template-section {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            display: none;
+        }
+        
+        .template-section.active {
+            display: block;
+        }
+        
+        .section-label {
+            position: sticky;
+            top: 80px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ff6b00;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-header">
+        <div class="preview-nav">
+            <div class="preview-title">ProjectBento Preview</div>
+            <a href="/" class="nav-btn">← Back to Portfolio</a>
+        </div>
+    </div>
+    
+    <div class="template-section active">
+        <ProjectBento />
+    </div>
+    
+</body>
+</html>

@@ -170,7 +170,8 @@ export const userTweaks = {
     maxGap: 110,        // px, upper bound clamp
     directionMode: 'alternate', // 'alternate' | 'cw' | 'ccw'
     speed: { base: 9.0, deltaPerShell: 0.0 } // degrees/sec; 360/speed = seconds per orbit
-  }
+  },
+
 
 };
 

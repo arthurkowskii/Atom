@@ -207,5 +207,6 @@ export default {
       base: userTweaks.dynamicShells?.speed?.base ?? 9.0,
       deltaPerShell: userTweaks.dynamicShells?.speed?.deltaPerShell ?? 0.0
     }
-  }
+  },
+
 };
