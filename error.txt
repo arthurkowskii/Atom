@@ -1,11 +1,16 @@
-⏱️ Progress: 98.1% Trigger at: undefined%
-index.astro:777 ⏱️ Progress: 98.6% Trigger at: undefined%
-index.astro:777 ⏱️ Progress: 99.1% Trigger at: undefined%
-index.astro:976 🎯 STATE CHANGE: electron-1-2 → none
-index.astro:1154 🔄 Resetting electron effects for shell 1
-index.astro:1132 🔄 Resetting shell 1 effects
-index.astro:777 ⏱️ Progress: 99.3% Trigger at: undefined%
-index.astro:777 ⏱️ Progress: 99.6% Trigger at: undefined%
-index.astro:777 ⏱️ Progress: 99.8% Trigger at: undefined%
-2index.astro:777 ⏱️ Progress: 99.9% Trigger at: undefined%
-4index.astro:777 ⏱️ Progress: 100.0% Trigger at: undefined%
+🎵 Playing C3 for hero card 0
+ProjectBento.astro:1122 🎵 Playing E3 for stats card 1
+ProjectBento.astro:1122 🎵 Playing G3 for actions card 2
+ProjectBento.astro:1122 🎵 Playing C4 for tech card 3
+ProjectBento.astro:1122 🎵 Playing G4 for process card 4
+ProjectBento.astro:1122 🎵 Playing E4 for gallery card 5
+ProjectBento.astro:1122 🎵 Playing B3 for challenges card 6
+ProjectBento.astro:1122 🎵 Playing D4 for results card 7
+ProjectBento.astro:1122 🎵 Playing C3 for hero card 8
+ProjectBento.astro:1122 🎵 Playing E3 for stats card 9
+ProjectBento.astro:1122 🎵 Playing G3 for actions card 10
+ProjectBento.astro:1122 🎵 Playing C4 for tech card 11
+ProjectBento.astro:1122 🎵 Playing G4 for process card 12
+ProjectBento.astro:1122 🎵 Playing E4 for gallery card 13
+ProjectBento.astro:1122 🎵 Playing B3 for challenges card 14
+ProjectBento.astro:1122 🎵 Playing D4 for results card 15

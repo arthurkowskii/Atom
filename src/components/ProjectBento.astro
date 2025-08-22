@@ -1003,8 +1003,8 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
       if (this.isInitialized) return;
       
       try {
-        // Get config from global or fallback
-        this.config = window.atomConfig?.bentoAnimations || {
+        // Always set config with fallback
+        this.config = {
           enabled: true,
           staggerDelayMs: 80,
           animationDurationMs: 400,
@@ -1018,9 +1018,32 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
             synthesis: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.8, chorus: { frequency: 4, depth: 0.3 } }
           }
         };
+        
+        // Override with global config if available
+        if (window.atomConfig?.bentoAnimations) {
+          this.config = { ...this.config, ...window.atomConfig.bentoAnimations };
+        }
 
-        if (!this.config.audio?.enabled) return;
+        if (!this.config.audio?.enabled) {
+          this.isInitialized = true;
+          return;
+        }
 
+        // Only create audio objects when actually needed (defer until user interaction)
+        console.log('🎵 Bento Animation System initialized (audio deferred until user interaction)');
+        this.isInitialized = true;
+        
+      } catch (error) {
+        console.warn('Failed to initialize Bento system:', error);
+      }
+    }
+
+    async initAudio() {
+      if (this.synth) return; // Already initialized
+      
+      try {
+        console.log('🎵 Initializing audio after user interaction...');
+        
         // Create bubbly sine wave synth
         this.chorus = new Tone.Chorus(
           this.config.audio.synthesis.chorus.frequency,
@@ -1039,11 +1062,10 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
         }).connect(this.chorus);
 
         this.synth.volume.value = Tone.gainToDb(this.config.audio.volume);
-        this.isInitialized = true;
         
-        console.log('🎵 Bento Animation System initialized');
+        console.log('🎵 Audio components created successfully');
       } catch (error) {
-        console.warn('Failed to initialize Tone.js:', error);
+        console.warn('Failed to initialize audio:', error);
       }
     }
 
@@ -1060,30 +1082,24 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
       return 'hero'; // fallback
     }
 
-    async playBubbleSound(pitch) {
-      if (!this.isInitialized || !this.synth) return;
+    async ensureAudioReady() {
+      if (!this.isInitialized) await this.init();
       
-      try {
-        // Ensure audio context is started
-        if (Tone.context.state !== 'running') {
-          await Tone.start();
-        }
-        
-        // Add slight frequency sweep for bubbly effect
-        const baseFreq = Tone.Frequency(pitch).toFrequency();
-        const sweepFreq = baseFreq * 1.15;
-        
-        this.synth.frequency.setValueAtTime(baseFreq, Tone.now());
-        this.synth.frequency.exponentialRampToValueAtTime(sweepFreq, Tone.now() + 0.03);
-        this.synth.frequency.exponentialRampToValueAtTime(baseFreq, Tone.now() + 0.1);
-        
-        this.synth.triggerAttackRelease(pitch, '16n');
-      } catch (error) {
-        console.warn('Audio playback error:', error);
+      // Initialize audio components on first use (user gesture)
+      if (!this.synth && this.config.audio?.enabled) {
+        await this.initAudio();
+      }
+      
+      // Start Tone.js context if needed
+      if (this.synth && Tone.context.state !== 'running') {
+        console.log('🎵 Starting Tone.js context...');
+        await Tone.start();
       }
     }
 
     animateCard(card, cardType, index) {
+      if (!this.config) return; // Safety check
+      
       const isEnabled = this.config.cardEnabled?.[cardType] ?? true;
       if (!isEnabled) return;
       
@@ -1100,22 +1116,47 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
         // Start animation
         card.classList.add('animate-in');
         
-        // Play audio EXACTLY when animation starts (if sync enabled)
-        if (this.config.audio?.enabled && this.config.audio?.syncWithAnimation) {
+        // Play ONE note ONLY when animation starts
+        if (this.config.audio?.enabled && this.isInitialized && this.synth) {
           const pitch = this.config.audio.pitches?.[cardType] || 'C4';
-          this.playBubbleSound(pitch);
+          console.log(`🎵 Playing ${pitch} for ${cardType} card ${index}`);
+          
+          try {
+            // Use Tone.now() + small offset to prevent timing conflicts
+            const when = Tone.now() + 0.01; // 10ms offset to ensure proper scheduling
+            this.synth.triggerAttackRelease(pitch, '8n', when);
+          } catch (error) {
+            console.warn(`Audio error for ${cardType}:`, error);
+          }
         }
       }, delay);
     }
 
     async startAnimation() {
-      if (this.isPlaying) return;
+      console.log('🎵 startAnimation() called', { isPlaying: this.isPlaying });
+      
+      if (this.isPlaying) {
+        console.log('🎵 Already playing, returning early');
+        return;
+      }
       this.isPlaying = true;
       
-      await this.init();
+      // Ensure config is loaded first
+      if (!this.config) {
+        await this.init();
+      }
       
-      const cards = document.querySelectorAll('.bento-card');
-      console.log(`🎵 Starting bento animation for ${cards.length} cards`);
+      // Ensure audio is ready ONCE before starting
+      if (this.config?.audio?.enabled) {
+        await this.ensureAudioReady();
+      }
+      
+      // Only select cards from the currently visible bento project
+      const visibleBentoProject = document.querySelector('#bento-content .bento-project[style*="display: block"]');
+      const cards = visibleBentoProject ? visibleBentoProject.querySelectorAll('.bento-card') : [];
+      
+      console.log(`🎵 Starting bento animation for ${cards.length} cards (audio: ${this.config.audio?.enabled})`);
+      console.log(`🎵 Visible project:`, visibleBentoProject?.dataset?.projectSlug || 'none');
       
       cards.forEach((card, index) => {
         const cardType = this.getCardType(card);
@@ -1130,7 +1171,9 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
     }
 
     reset() {
-      const cards = document.querySelectorAll('.bento-card');
+      console.log('🎵 reset() called');
+      // Reset ALL bento cards (since we're closing/switching projects)
+      const cards = document.querySelectorAll('#bento-content .bento-card');
       cards.forEach(card => {
         card.classList.remove('animate-in');
       });
@@ -1143,8 +1186,20 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
 
   // Main animation function with perfect audio sync
   async function animateBentoCards() {
+    console.log('🎵 animateBentoCards() called', { 
+      hasSystem: !!bentoAnimationSystem, 
+      isPlaying: bentoAnimationSystem?.isPlaying,
+      stack: new Error().stack 
+    });
+    
     if (!bentoAnimationSystem) {
       bentoAnimationSystem = new BentoAnimationSystem();
+    }
+    
+    // Extra safety: prevent multiple calls
+    if (bentoAnimationSystem.isPlaying) {
+      console.log('🎵 Animation already playing, skipping...');
+      return;
     }
     
     await bentoAnimationSystem.startAnimation();
@@ -1152,6 +1207,7 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
 
   // Reset function for overlay close
   function resetBentoCards() {
+    console.log('🎵 resetBentoCards() called globally');
     if (bentoAnimationSystem) {
       bentoAnimationSystem.reset();
     }
