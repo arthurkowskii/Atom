@@ -225,6 +225,36 @@ export const userTweaks = {
     }
   },
 
+  // 🔊 ATOM INTERFACE SOUNDS (Tone.js Placeholders)
+  atomSounds: {
+    enabled: true,
+    volume: 0.2,        // Lower than bento sounds for subtlety
+    
+    // Sound events with placeholder Tone.js pitches
+    events: {
+      electronHover: 'C4',      // Electron mouseenter - mid frequency
+      electronClick: 'C3',      // Electron click - deep impact  
+      shellHover: 'G4',         // Shell hover - higher ambient
+      nucleusHover: 'F2',       // Nucleus hover - deep resonant
+      nucleusClick: 'A2',       // Nucleus click - bio transition
+      ripple: 'E5',             // Micro-interaction ripple
+      shellPulse: 'D4',         // Micro-interaction shell pulse
+      
+      // Creative electron drag sounds (no nucleus drag) - simplified: detach + drop only
+      electronDragStart: 'B4',  // Electron detach - bright grab when starting drag
+      electronDragSnap: 'C5',   // Electron snap back - satisfying return
+      electronDragRelease: 'E4' // Electron gentle release - soft drop without snap
+    },
+    
+    // Tone synthesis settings
+    synthesis: {
+      attack: 0.02,
+      decay: 0.4,
+      sustain: 0,
+      release: 1.2
+    }
+  },
+
 
 };
 

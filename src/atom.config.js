@@ -216,6 +216,14 @@ export default {
     musicalTiming: { beat: 500, eighth: 250, sixteenth: 125 },
     cardTypes: {},
     audio: { enabled: false, volume: 0.3 }
+  },
+
+  // Atom interface sounds configuration
+  atomSounds: userTweaks.atomSounds || {
+    enabled: false,
+    volume: 0.2,
+    events: {},
+    synthesis: {}
   }
 
 };

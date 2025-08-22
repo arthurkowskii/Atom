@@ -987,6 +987,8 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
 </div>
 
 <script>
+  // PLACEHOLDER: Tone.js is temporary - will be replaced with custom OGG audio files
+  // See docs/history/PHASE_LOGS.md Phase 3C for audio architecture plan
   import * as Tone from 'tone';
 
   // Simple Bento Animation System with Synced Audio
@@ -1029,6 +1031,7 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
           return;
         }
 
+        // PLACEHOLDER: Audio will be replaced with custom OGG files + Web Audio API
         // Only create audio objects when actually needed (defer until user interaction)
         console.log('🎵 Bento Animation System initialized (audio deferred until user interaction)');
         this.isInitialized = true;
@@ -1044,6 +1047,7 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
       try {
         console.log('🎵 Initializing audio after user interaction...');
         
+        // PLACEHOLDER: Tone.js synthesis - replace with OGG file loading
         // Create bubbly sine wave synth
         this.chorus = new Tone.Chorus(
           this.config.audio.synthesis.chorus.frequency,
@@ -1090,6 +1094,7 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
         await this.initAudio();
       }
       
+      // PLACEHOLDER: Replace with Web Audio API context initialization
       // Start Tone.js context if needed
       if (this.synth && Tone.context.state !== 'running') {
         console.log('🎵 Starting Tone.js context...');
@@ -1122,6 +1127,7 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
           console.log(`🎵 Playing ${pitch} for ${cardType} card ${index}`);
           
           try {
+            // PLACEHOLDER: Replace with Web Audio API buffer source playback
             // Use Tone.now() + small offset to prevent timing conflicts
             const when = Tone.now() + 0.01; // 10ms offset to ensure proper scheduling
             this.synth.triggerAttackRelease(pitch, '8n', when);

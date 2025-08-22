@@ -67,6 +67,10 @@ Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color
   - cardEnabled.{hero|stats|actions|tech|gallery|process|challenges|results} (individual toggles)
   - audio.enabled|volume|pitches.{cardType} (musical notes per card type)
   - audio.synthesis.{attack|decay|sustain|release|chorus} (Tone.js sound design)
+- atomSounds:
+  - enabled|volume (master controls)
+  - events.{electronHover|electronClick|shellHover|nucleusHover|nucleusClick|ripple|shellPulse|electronDragStart|electronDragSnap|electronDragRelease} (pitch mappings)
+  - synthesis.{attack|decay|sustain|release} (Tone.js envelope)
 
 ## Recent Changes (Phase 3A)
 
@@ -177,6 +181,8 @@ Tracking
 - Starter template: Added ready-to-copy `templates/bento-project.template.md` and documented in `BENTO_TEMPLATE.md`.
 
 - Musical bento animations: Added Tone.js-powered scale-up animations for bento cards with configurable timing and audio. Each card animates with staggered delays and plays a unique musical note. Fully configurable via `user-tweaks.js` with individual card toggles, pitch mappings, and timing controls. Proper AudioContext handling prevents browser warnings; scoped card selection fixes duplicate animation sequences.
+
+- Atom interface sounds: Added comprehensive Tone.js placeholder sounds for all atom interactions. Includes electron hover/click, shell hover, nucleus hover/click, micro-interactions (ripple, shell pulse), and simplified electron drag sequence (detach + drop sounds only). State tracking prevents annoying sound repetition during hover states. All sounds configured via `user-tweaks.js` with placeholder comments for future OGG file replacement.
 
 ### Key Files (Bento)
 
