@@ -95,6 +95,46 @@ atom-portfolio/
 ---
 
 ## Follow‑Ups (Ideas)
-- Domain accents + “chip continuity” header (electron → overlay pill).
+- Domain accents + "chip continuity" header (electron → overlay pill).
 - Soft edge/squircle mask; gooey tether during initial open.
 - Optional deep‑link auto‑open and backdrop close behind flags.
+
+---
+
+## Phase 3C — Custom Audio System (Planned)
+
+### Audio Architecture Evolution
+Current: Tone.js placeholder synthesis (working, configurable)
+Planned: Custom OGG audio files with Web Audio API
+
+### Design Decisions (2025-08-22)
+- **Format**: OGG Vorbis (excellent compression, modern browser support)
+- **Fallback**: Safari compatibility via MP3 or silence on load failure
+- **Loading**: Preload all sounds on page load (zero latency + future atom sound effects)
+- **Mapping**: One audio file per card type (hero, stats, actions, tech, gallery, process, challenges, results)
+- **Delivery**: Sound designer will provide folder + naming guide txt file
+
+### Architecture Requirements
+- Web Audio API buffer management system
+- Preloading with progress indication
+- Graceful fallback (silence) on load failure  
+- Maintain current timing precision with scheduled playback
+- Keep Tone.js as development placeholder until custom sounds ready
+
+### Current Implementation Notes
+- Tone.js code marked as placeholder throughout `ProjectBento.astro`
+- All timing/sync architecture ready for file-based audio
+- Configuration system supports both modes via `user-tweaks.js`
+
+### Future File Structure
+```
+src/assets/audio/bento/
+├── hero.ogg
+├── stats.ogg  
+├── actions.ogg
+├── tech.ogg
+├── gallery.ogg
+├── process.ogg
+├── challenges.ogg
+└── results.ogg
+```

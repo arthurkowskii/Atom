@@ -4,7 +4,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color; starter template; asset glob fix)
+Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color; starter template; asset glob fix; musical bento animations)
 
 ## Project Snapshot
 
@@ -62,6 +62,11 @@ Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color
   - pattern.repeatsByShell (optional), pattern.densityPxPerRepeat|minRepeats|maxRepeats, pattern.offsetsPercentByShell, separator
   - wordOrbit.innerOffsetPx|arcDegrees|centerAngleDeg
 - micro.hoverCursorRing|ripple|shellPulse (toggles + durations/sizes/colors)
+- bentoAnimations:
+  - enabled|staggerDelayMs|animationDurationMs|easing (timing and motion)
+  - cardEnabled.{hero|stats|actions|tech|gallery|process|challenges|results} (individual toggles)
+  - audio.enabled|volume|pitches.{cardType} (musical notes per card type)
+  - audio.synthesis.{attack|decay|sustain|release|chorus} (Tone.js sound design)
 
 ## Recent Changes (Phase 3A)
 
@@ -139,6 +144,7 @@ Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color
 - Optional backdrop close, atom scale/blur choreography, deep-link auto-open behind flags.
 - Extend nucleus→bio transition to all electrons (progressive reveal).
 - Choose production Decap backend (git-gateway or GitHub) for deploy.
+- **Phase 3C**: Replace Tone.js placeholders with custom OGG audio files (see docs/history/PHASE_LOGS.md for architecture).
 
 Tracking
 - Electron progressive reveal rollout: see `docs/issues/phase-3b-electron-progressive-reveal.md`.
@@ -170,9 +176,11 @@ Tracking
 - Asset glob + URL resolution: Replaced fs scanning with `import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif}', { eager: true, query: '?url', import: 'default' })` and a resolver so raw `/src/...` paths map to served URLs.
 - Starter template: Added ready-to-copy `templates/bento-project.template.md` and documented in `BENTO_TEMPLATE.md`.
 
+- Musical bento animations: Added Tone.js-powered scale-up animations for bento cards with configurable timing and audio. Each card animates with staggered delays and plays a unique musical note. Fully configurable via `user-tweaks.js` with individual card toggles, pitch mappings, and timing controls. Proper AudioContext handling prevents browser warnings; scoped card selection fixes duplicate animation sequences.
+
 ### Key Files (Bento)
 
-- `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; responsive grid; auto-scans `bento.assetsFolder` for hero/logo and gallery.
+- `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; responsive grid; auto-scans `bento.assetsFolder` for hero/logo and gallery; includes musical animation system with Tone.js audio.
 - `src/pages/preview-templates.astro` — Testing environment for both template components.
 - `src/content/config.ts` — Added `useBentoLayout` boolean field and `bento.assetsFolder` to project schema.
 - `templates/bento-project.template.md` — Copy-paste template for new Bento projects.
