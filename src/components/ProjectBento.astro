@@ -166,7 +166,10 @@ const galleryImages: Img[] = (configuredImages && configuredImages.length > 0)
 const finalHeroUrl = heroBackgroundUrl || (galleryImages[0]?.src);
 
 // Generate CSS custom properties for the accent color
-const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join(', ') || '255, 107, 0';
+// Handle both 6-char (#ff6b00) and 8-char (#dfdb00ff) hex colors
+const cleanHex = accentColor.replace('#', '');
+const hexRgb = cleanHex.length === 8 ? cleanHex.slice(0, 6) : cleanHex; // Remove alpha if present
+const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join(', ') || '255, 107, 0';
 ---
 
 <style define:vars={{ accentColor, accentColorRgb, heroSubtitleColor }}>
@@ -218,9 +221,24 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
                 opacity var(--duration, 400ms) ease;
   }
 
-  .bento-card:hover {
+  .bento-card:hover,
+  .bento-card:focus {
     border-color: rgba(var(--accent-color-rgb), 0.3);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    outline: none; /* Remove any browser default outline */
+  }
+
+  /* Remove browser default outlines from all interactive elements */
+  .bento-card button,
+  .bento-card a,
+  .bento-card [onclick] {
+    outline: none;
+  }
+
+  .bento-card button:focus,
+  .bento-card a:focus,
+  .bento-card [onclick]:focus {
+    outline: none;
   }
 
   .bento-card::before {
