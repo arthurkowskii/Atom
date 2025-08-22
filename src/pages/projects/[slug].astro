@@ -1,5 +1,6 @@
 ---
-import { getCollection, getEntryBySlug } from 'astro:content';
+import { getCollection } from 'astro:content';
+import ProjectBento from '../../components/ProjectBento.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -7,11 +8,14 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const entry = await getEntryBySlug('projects', slug);
+const projects = await getCollection('projects');
+const entry = projects.find(p => p.slug === slug);
 
 if (!entry) {
   throw new Error(`Project not found: ${slug}`);
 }
+
+const useBentoLayout = entry.data.useBentoLayout || false;
 ---
 
 <html lang="en">
@@ -64,28 +68,34 @@ if (!entry) {
     </style>
   </head>
   <body>
-    <main class="wrap">
-      <a class="back" id="back-link" href="/">← Back to Atom</a>
-      <h1 id="project-title">{entry.data.title}</h1>
-      <p class="meta">
-        <strong>Domain:</strong> {entry.data.domain} ·
-        <strong>Status:</strong> {entry.data.status} ·
-        <strong>Date:</strong> {entry.data.date.toLocaleDateString()}
-      </p>
-      {entry.data.tech?.length ? (
-        <div class="chips">
-          {entry.data.tech.map((t) => <span class="chip">{t}</span>)}
+    {useBentoLayout ? (
+      <!-- Bento Layout -->
+      <ProjectBento project={entry} />
+    ) : (
+      <!-- Traditional Layout -->
+      <main class="wrap">
+        <a class="back" id="back-link" href="/">← Back to Atom</a>
+        <h1 id="project-title">{entry.data.title}</h1>
+        <p class="meta">
+          <strong>Domain:</strong> {entry.data.domain} ·
+          <strong>Status:</strong> {entry.data.status} ·
+          <strong>Date:</strong> {entry.data.date.toLocaleDateString()}
+        </p>
+        {entry.data.tech?.length ? (
+          <div class="chips">
+            {entry.data.tech.map((t) => <span class="chip">{t}</span>)}
+          </div>
+        ) : null}
+        <div class="actions">
+          {entry.data.link ? <a href={entry.data.link} target="_blank" rel="noreferrer noopener">Live</a> : null}
+          {entry.data.github ? <a href={entry.data.github} target="_blank" rel="noreferrer noopener">GitHub</a> : null}
         </div>
-      ) : null}
-      <div class="actions">
-        {entry.data.link ? <a href={entry.data.link} target="_blank" rel="noreferrer noopener">Live</a> : null}
-        {entry.data.github ? <a href={entry.data.github} target="_blank" rel="noreferrer noopener">GitHub</a> : null}
-      </div>
-      <article class="content">
-        <p>{entry.data.description}</p>
-        <slot />
-      </article>
-    </main>
+        <article class="content">
+          <p>{entry.data.description}</p>
+          <slot />
+        </article>
+      </main>
+    )}
 
     <script>
       // Progressive enhancement: native View Transitions if available

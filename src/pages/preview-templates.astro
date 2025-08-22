@@ -1,6 +1,11 @@
 ---
 // Template preview page to test ProjectBento component
+import { getCollection } from 'astro:content';
 import ProjectBento from '../components/ProjectBento.astro';
+
+// Load the Kubika project for preview
+const projects = await getCollection('projects');
+const kubikaProject = projects.find(p => p.slug === '2_game-audio/kubika-showcase');
 ---
 
 <!DOCTYPE html>
@@ -97,7 +102,7 @@ import ProjectBento from '../components/ProjectBento.astro';
     </div>
     
     <div class="template-section active">
-        <ProjectBento />
+        {kubikaProject && <ProjectBento project={kubikaProject} />}
     </div>
     
 </body>

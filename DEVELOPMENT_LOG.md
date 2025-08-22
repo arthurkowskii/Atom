@@ -4,7 +4,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-22 (ProjectBento template implemented; responsive gallery system shipped)
+Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color; starter template; asset glob fix)
 
 ## Project Snapshot
 
@@ -164,11 +164,18 @@ Tracking
 - Overlay scrolling: Fixed bottom card accessibility by adding overflow-y: auto to overlay container.
 - Bento layout routing: Prevented 404 errors by skipping URL navigation for bento layout projects in overlay system.
 
+- Bento assetsFolder: Added `bento.assetsFolder` in project schema; ProjectBento now auto-detects `hero.*` and `logo.*` for the hero card and builds the gallery from all other images in the folder (alphabetical). Explicit `bento.hero.backgroundImage`/`logo` still override.
+- Kubika migration: Updated Kubika project to use `assetsFolder` and reserved filenames (`hero.jpg`, `Logo.png`); removed hardcoded hero CSS; gallery now auto-populates.
+- Hero subtitle color: Added `bento.hero.subtitleColor` (optional). Defaults to `bento.accentColor`. Wired as inline style to ensure per-project color wins.
+- Asset glob + URL resolution: Replaced fs scanning with `import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif}', { eager: true, query: '?url', import: 'default' })` and a resolver so raw `/src/...` paths map to served URLs.
+- Starter template: Added ready-to-copy `templates/bento-project.template.md` and documented in `BENTO_TEMPLATE.md`.
+
 ### Key Files (Bento)
 
-- `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; white background with responsive grid.
+- `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; responsive grid; auto-scans `bento.assetsFolder` for hero/logo and gallery.
 - `src/pages/preview-templates.astro` — Testing environment for both template components.
-- `src/content/config.ts` — Added `useBentoLayout` boolean field to project schema.
+- `src/content/config.ts` — Added `useBentoLayout` boolean field and `bento.assetsFolder` to project schema.
+- `templates/bento-project.template.md` — Copy-paste template for new Bento projects.
 - Projects with `useBentoLayout: true` bypass normal overlay routing and use bento display.
 
-Notes for agents: Keep this file concise. If you need rationale, code snippets, or the blow-by-blow history, follow the links above. Prefer editing user-tweaks.js and atom.config.js for behavior; index.astro wires interactions and overlay.
+Notes for agents: Keep this file concise. If you need rationale, code snippets, or the blow-by-blow history, follow the links above. Prefer editing user-tweaks.js and atom.config.js for behavior; index.astro wires interactions and overlay. For Bento, see `BENTO_TEMPLATE.md` for the `assetsFolder` pattern (reserved `hero.*`, `logo.*`) and `bento.hero.subtitleColor`. The starter file is at `templates/bento-project.template.md`.
