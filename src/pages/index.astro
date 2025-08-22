@@ -760,6 +760,12 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 const targetBentoProject = bentoContent.querySelector(`[data-project-slug="${slug}"]`);
                 if (targetBentoProject) {
                   targetBentoProject.style.display = 'block';
+                  
+                  // Reset animation state for bento cards
+                  const bentoCards = targetBentoProject.querySelectorAll('.bento-card');
+                  bentoCards.forEach(card => {
+                    card.classList.remove('animate-in');
+                  });
                 }
               } else {
                 // Show project content, hide others
@@ -807,6 +813,14 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                   const currentProject = projectBySlug.get(slug);
                   if (!currentProject?.useBentoLayout) {
                     try { history.pushState({ overlay: true, slug }, '', `/projects/${slug}`); } catch {}
+                  }
+                  
+                  // Trigger bento card animations for bento projects
+                  if (p.useBentoLayout && typeof window.animateBentoCards === 'function') {
+                    // Small delay to ensure the overlay is fully visible
+                    setTimeout(() => {
+                      window.animateBentoCards();
+                    }, 100);
                   }
                   
                   closeBtn.focus({ preventScroll: true });
@@ -889,9 +903,16 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                   const bentoContent = document.getElementById('bento-content');
                   if (bentoContent) {
                     bentoContent.style.display = 'none';
-                    // Hide all individual bento projects
+                    // Hide all individual bento projects and reset animations
                     const allBentoProjects = bentoContent.querySelectorAll('.bento-project');
-                    allBentoProjects.forEach(bp => bp.style.display = 'none');
+                    allBentoProjects.forEach(bp => {
+                      bp.style.display = 'none';
+                      // Reset bento card animations for next time
+                      const bentoCards = bp.querySelectorAll('.bento-card');
+                      bentoCards.forEach(card => {
+                        card.classList.remove('animate-in');
+                      });
+                    });
                   }
                   
                   

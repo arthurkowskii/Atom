@@ -203,6 +203,18 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
     transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
+    
+    /* Initial state for scale animation */
+    transform: scale(0);
+    opacity: 0;
+    transform-origin: center;
+  }
+  
+  /* Animated state when cards become visible */
+  .bento-card.animate-in {
+    transform: scale(1);
+    opacity: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
   }
 
   .bento-card:hover {
@@ -972,3 +984,35 @@ const accentColorRgb = accentColor.replace('#', '').match(/.{2}/g)?.map(hex => p
 
   </div>
 </div>
+
+<script>
+  // Scale-up animation for bento cards when they become visible
+  function animateBentoCards() {
+    const cards = document.querySelectorAll('.bento-card');
+    
+    cards.forEach((card, index) => {
+      // Add a staggered delay for each card
+      const delay = index * 80; // 80ms delay between each card
+      
+      setTimeout(() => {
+        card.classList.add('animate-in');
+      }, delay);
+    });
+  }
+
+  // Trigger animation when the bento content is shown
+  // This function should be called when the overlay opens with bento content
+  if (typeof window !== 'undefined') {
+    // Export the animation function globally so it can be called from the main script
+    window.animateBentoCards = animateBentoCards;
+    
+    // Also run immediately if cards are already visible (for direct page loads)
+    document.addEventListener('DOMContentLoaded', () => {
+      const bentoContent = document.getElementById('bento-content');
+      if (bentoContent && bentoContent.style.display !== 'none') {
+        // Small delay to ensure rendering is complete
+        setTimeout(animateBentoCards, 50);
+      }
+    });
+  }
+</script>
