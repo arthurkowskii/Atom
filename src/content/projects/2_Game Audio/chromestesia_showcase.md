@@ -32,6 +32,7 @@ bento:
   hero:
     subtitle: "Musicien, Sound-Designer et Intégrateur Audio"
     subtitleColor: "#faf525"
+    showLogo: false
 
   # Optional stats
   stats:

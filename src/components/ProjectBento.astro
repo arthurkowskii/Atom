@@ -22,8 +22,10 @@ export interface Props {
         accentColor?: string;
         hero?: {
           subtitle?: string;
+          subtitleColor?: string;
           backgroundImage?: string;
           logo?: string;
+          showLogo?: boolean;
         };
         stats?: Array<{ value: string; label: string; }>;
         actions?: {
@@ -296,6 +298,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     align-items: flex-end;
     background-size: cover;
     background-position: center;
+    border: none;
+    box-shadow: none;
   }
 
   .hero-content {
@@ -306,7 +310,6 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     width: 150px;
     height: auto;
     margin-bottom: 1rem;
-    filter: drop-shadow(0 4px 20px rgba(255,107,0,0.6));
   }
 
   .hero-title {
@@ -890,7 +893,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     {cards.hero && (
       <div class="bento-card hero-card" style={finalHeroUrl ? `background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35)), url('${finalHeroUrl}')` : undefined}>
         <div class="hero-content">
-          {(heroLogoUrl) && (
+          {(heroLogoUrl && (bento.hero?.showLogo ?? true)) && (
             <img src={heroLogoUrl} alt={`${data.title} Logo`} class="hero-logo">
           )}
           <h1 class="hero-title">{data.title}</h1>

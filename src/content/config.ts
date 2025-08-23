@@ -39,6 +39,7 @@ const projectsCollection = defineCollection({
         subtitleColor: z.string().optional(),
         backgroundImage: z.string().optional(),
         logo: z.string().optional(),
+        showLogo: z.boolean().optional(),
       }).optional(),
       
       // Stats configuration

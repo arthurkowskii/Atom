@@ -44,6 +44,7 @@ bento:
     subtitle: "Project Category or Type"
     backgroundImage: "/path/to/your/hero-image.jpg" # Optional
     logo: "/path/to/your/logo.png" # Optional
+    showLogo: true # Optional - controls logo visibility (default: true)
   
   # Project statistics (customize as needed)
   stats:
@@ -182,7 +183,12 @@ src/content/projects/3_YourDomain/
 - Test the overlay by clicking the project from the atom view
 - Check responsive behavior on different screen sizes
 
-### 7. Assets Folder Pattern (auto gallery)
+### 7. Logo Control
+- **Show Logo**: Set `bento.hero.showLogo: true` to display the logo (default)
+- **Hide Logo**: Set `bento.hero.showLogo: false` to hide the logo completely
+- Works with both explicit logo paths and auto-detected logo files
+
+### 8. Assets Folder Pattern (auto gallery)
 
 To simplify image management, you can let the Bento template auto-build the hero and gallery from a single folder.
 
