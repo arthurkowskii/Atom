@@ -256,6 +256,20 @@ export default {
     audio: { enabled: false, volume: 0.3 }
   },
 
+  // Bento hero liquid glass configuration
+  bentoGlass: userTweaks.bentoGlass || {
+    enabled: true,
+    blurPx: 16,
+    saturatePct: 140,
+    bgAlpha: 0.18,
+    borderAlpha: 0.5,
+    radiusPx: 16,
+    paddingPx: 16,
+    maxWidthPx: 640,
+    shadow: '0 10px 30px rgba(0,0,0,0.15)',
+    distortion: { enabled: true, edgeWidthPx: 16, baseFrequencyMin: 0.008, baseFrequencyMax: 0.010, numOctaves: 1, scale: 4, animate: true, durationSec: 16 }
+  },
+
   // Atom interface sounds configuration
   atomSounds: userTweaks.atomSounds || {
     enabled: false,

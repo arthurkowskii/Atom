@@ -55,6 +55,8 @@ export interface Props {
   };
 }
 
+import atomConfig from '../atom.config.js';
+
 const { project } = Astro.props;
 
 // Handle case where no project is passed (for preview pages)
@@ -78,8 +80,23 @@ const cards = {
   ...bento.cards 
 };
 const accentColor = bento.accentColor || '#ff6b00';
-// Subtitle color defaults to accentColor; inline style enforces per-project override
-const heroSubtitleColor = bento.hero?.subtitleColor || accentColor;
+// Compute lightness to guard against low-contrast accent-on-white text
+function hexToRgb(hex) {
+  const h = hex.replace('#', '').slice(0, 6);
+  const m = h.match(/.{2}/g);
+  if (!m) return { r: 0, g: 0, b: 0 };
+  return { r: parseInt(m[0], 16), g: parseInt(m[1], 16), b: parseInt(m[2], 16) };
+}
+function relativeLuminance({ r, g, b }) {
+  const srgb = [r, g, b].map(v => v / 255);
+  const lin = srgb.map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+}
+const accentRgbObj = hexToRgb(accentColor);
+const accentLum = relativeLuminance(accentRgbObj);
+const isLightAccent = accentLum > 0.7; // high-luminance accents (e.g., neon yellows)
+// Subtitle text color: prefer black when accent is too light to ensure readability
+const heroSubtitleColor = isLightAccent ? '#000000' : (bento.hero?.subtitleColor || accentColor);
 
 // Build gallery and hero assets automatically from a folder when provided
 type Img = { src: string; alt: string };
@@ -184,6 +201,41 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     /* CSS custom properties for accent color theming */
     --accent-color: var(--accentColor);
     --accent-color-rgb: var(--accentColorRgb);
+    /* Derived roles */
+    --accent-bg-weak: rgba(var(--accent-color-rgb), 0.10);
+    --accent-bg-weak-hover: rgba(var(--accent-color-rgb), 0.16);
+    --accent-border: rgba(var(--accent-color-rgb), 0.28);
+    --on-accent: #000000; /* default readable on both yellow/orange */
+  }
+
+  /* Hero Glass Panel */
+  .hero-glass {
+    position: relative;
+    display: inline-block;
+    padding: calc(var(--glass-padding, 16px));
+    border-radius: var(--glass-radius, 16px);
+    background: rgba(255,255,255, var(--glass-bg-alpha, 0.18));
+    box-shadow: var(--glass-shadow, 0 10px 30px rgba(0,0,0,0.15));
+    -webkit-backdrop-filter: saturate(var(--glass-saturate, 140%)) blur(var(--glass-blur, 16px));
+    backdrop-filter: saturate(var(--glass-saturate, 140%)) blur(var(--glass-blur, 16px));
+    border: 1px solid rgba(255,255,255, var(--glass-border-alpha, 0.5));
+    max-width: min(100%, var(--glass-max-width, 640px));
+  }
+
+  .hero-glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(120% 60% at 10% 0%, rgba(255,255,255,0.25), transparent 60%);
+    mix-blend-mode: screen;
+  }
+
+  /* No refraction layer in simplified design */
+
+  @supports not ((backdrop-filter: blur(0))) {
+    .hero-glass { background: rgba(255,255,255, 0.7); }
   }
 
   .bento-container {
@@ -291,8 +343,11 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .hero-subtitle {
     font-size: 1.2rem;
     color: var(--heroSubtitleColor);
-    font-weight: 500;
-    margin-bottom: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block; /* ensure full-width alignment */
+    padding-bottom: 2px;
+    border-bottom: 2px solid var(--accent-color); /* modern accent underline */
   }
 
   .hero-description {
@@ -301,6 +356,9 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     max-width: 600px;
     line-height: 1.6;
   }
+
+  /* spacing between subtitle and glass panel */
+  .hero-glass { display: block; margin-top: 0.5rem; }
 
   /* Quick Stats Card */
   .stats-card {
@@ -318,15 +376,15 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .stat-item {
     text-align: center;
     padding: 1rem;
-    background: rgba(var(--accent-color-rgb), 0.05);
+    background: var(--accent-bg-weak);
     border-radius: 12px;
-    border: 1px solid rgba(var(--accent-color-rgb), 0.15);
+    border: 1px solid var(--accent-border);
   }
 
   .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--accent-color);
+    color: #000000; /* readable across accents */
     display: block;
   }
 
@@ -359,7 +417,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   .action-btn.primary {
     background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color) 100%);
-    color: white;
+    color: var(--on-accent);
+    border: 1px solid rgba(0,0,0,0.12);
   }
 
   .action-btn.primary:hover {
@@ -368,9 +427,9 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   }
 
   .action-btn.secondary {
-    background: rgba(var(--accent-color-rgb), 0.1);
-    color: var(--accent-color);
-    border: 2px solid rgba(var(--accent-color-rgb), 0.3);
+    background: var(--accent-bg-weak);
+    color: #000000;
+    border: 2px solid var(--accent-border);
   }
 
   .action-btn.secondary:hover {
@@ -393,17 +452,17 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   .tech-pill {
     padding: 0.6rem 1.2rem;
-    background: rgba(var(--accent-color-rgb), 0.08);
-    color: var(--accent-color);
+    background: var(--accent-bg-weak);
+    color: #000000;
     border-radius: 25px;
-    border: 1px solid rgba(var(--accent-color-rgb), 0.2);
+    border: 1px solid var(--accent-border);
     font-size: 0.9rem;
     font-weight: 500;
     transition: all 0.3s ease;
   }
 
   .tech-pill:hover {
-    background: rgba(var(--accent-color-rgb), 0.15);
+    background: var(--accent-bg-weak-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(var(--accent-color-rgb), 0.2);
   }
@@ -565,7 +624,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   }
 
   .challenge-title {
-    color: var(--accent-color);
+    color: #000000;
     font-weight: 600;
     margin-bottom: 0.5rem;
     font-size: 1rem;
@@ -862,21 +921,27 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     
     <!-- Hero Card - Main banner with project info -->
     {cards.hero && (
-      <div class="bento-card hero-card" style={finalHeroUrl ? `background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url('${finalHeroUrl}')` : undefined}>
+      <div class="bento-card hero-card" style={finalHeroUrl ? `background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35)), url('${finalHeroUrl}')` : undefined}>
         <div class="hero-content">
           {(heroLogoUrl) && (
             <img src={heroLogoUrl} alt={`${data.title} Logo`} class="hero-logo">
           )}
           <h1 class="hero-title">{data.title}</h1>
           {bento.hero?.subtitle && (
-            <p class="hero-subtitle" style={`color:${heroSubtitleColor}`}>{bento.hero.subtitle}</p>
+            <p class="hero-subtitle">{bento.hero.subtitle}</p>
           )}
-          <p class="hero-description">
-            {data.description}
-          </p>
+          {(((atomConfig as any).bentoGlass?.enabled) ?? true) ? (
+            <div class="hero-glass" style={`--glass-blur:${(atomConfig as any).bentoGlass?.blurPx || 16}px; --glass-saturate:${(atomConfig as any).bentoGlass?.saturatePct || 140}%; --glass-bg-alpha:${(atomConfig as any).bentoGlass?.bgAlpha || 0.18}; --glass-border-alpha:${(atomConfig as any).bentoGlass?.borderAlpha || 0.5}; --glass-radius:${(atomConfig as any).bentoGlass?.radiusPx || 16}px; --glass-padding:${(atomConfig as any).bentoGlass?.paddingPx || 16}px; --glass-max-width:${(atomConfig as any).bentoGlass?.maxWidthPx || 640}px;`}>
+              <p class="hero-description">{data.description}</p>
+            </div>
+          ) : (
+            <p class="hero-description">{data.description}</p>
+          )}
         </div>
       </div>
     )}
+
+    {/* No SVG distortion; keep glass simple and clean */}
 
     <!-- Quick Stats -->
     {cards.stats && bento.stats && (
@@ -1250,4 +1315,6 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       }
     });
   }
+
+  // No shimmer animation — simplified glass for clarity
 </script>

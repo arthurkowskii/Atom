@@ -307,6 +307,31 @@ export const userTweaks = {
     }
   },
 
+  // 🧊 BENTO HERO LIQUID GLASS OVERLAY
+  // Frosted glass panel behind hero text with optional edge refraction
+  bentoGlass: {
+    enabled: true,          // Master toggle for glass overlay
+    blurPx: 16,             // Backdrop blur amount
+    saturatePct: 140,       // Backdrop saturation percent
+    bgAlpha: 0.18,          // Translucent white background alpha (0–1)
+    borderAlpha: 0.5,       // Inner border alpha (white)
+    radiusPx: 16,           // Border radius
+    paddingPx: 16,          // Inner padding
+    maxWidthPx: 640,        // Max width for the glass panel
+    shadow: '0 10px 30px rgba(0,0,0,0.15)',
+
+    distortion: {
+      enabled: true,        // Enable edge refraction effect
+      edgeWidthPx: 16,      // Width of the edge band that refracts
+      baseFrequencyMin: 0.008, // feTurbulence base frequency range (min)
+      baseFrequencyMax: 0.010, // feTurbulence base frequency range (max)
+      numOctaves: 1,        // Noise detail
+      scale: 4,             // Displacement map scale in px
+      animate: true,        // Animate subtle liquid shimmer
+      durationSec: 16       // Loop duration in seconds
+    }
+  },
+
 
 };
 
