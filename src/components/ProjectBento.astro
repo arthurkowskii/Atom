@@ -317,15 +317,6 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     text-shadow: 0 2px 10px rgba(0,0,0,0.8);
   }
 
-  .hero-subtitle {
-    font-size: 1.2rem;
-    color: var(--heroSubtitleColor);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: block; /* ensure full-width alignment */
-    padding-bottom: 2px;
-    border-bottom: 2px solid var(--accent-color); /* modern accent underline */
-  }
 
   .hero-description {
     font-size: 1.1rem;
@@ -903,9 +894,6 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
             <img src={heroLogoUrl} alt={`${data.title} Logo`} class="hero-logo">
           )}
           <h1 class="hero-title">{data.title}</h1>
-          {bento.hero?.subtitle && (
-            <p class="hero-subtitle">{bento.hero.subtitle}</p>
-          )}
           <p class="hero-description">{data.description}</p>
         </div>
       </div>
