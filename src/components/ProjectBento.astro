@@ -24,6 +24,9 @@ export interface Props {
           subtitle?: string;
           subtitleColor?: string;
           backgroundImage?: string;
+          backgroundPosition?: string;
+          backgroundSize?: string;
+          backgroundScale?: number;
           logo?: string;
           showLogo?: boolean;
         };
@@ -183,6 +186,17 @@ const galleryImages: Img[] = (configuredImages && configuredImages.length > 0)
 
 // Fallback: if no explicit or auto hero image, use first gallery image
 const finalHeroUrl = heroBackgroundUrl || (galleryImages[0]?.src);
+
+// Hero background styling with customizable positioning and sizing
+const heroBackgroundPosition = bento.hero?.backgroundPosition || 'center';
+const heroBackgroundScale = bento.hero?.backgroundScale;
+const heroBackgroundSize = heroBackgroundScale ? 
+  `${heroBackgroundScale * 100}% ${heroBackgroundScale * 100}%` : 
+  (bento.hero?.backgroundSize || 'cover');
+
+const heroStyle = finalHeroUrl ? 
+  `background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35)), url('${finalHeroUrl}'); background-position: ${heroBackgroundPosition}; background-size: ${heroBackgroundSize};` : 
+  '';
 
 // Generate CSS custom properties for the accent color
 // Handle both 6-char (#ff6b00) and 8-char (#dfdb00ff) hex colors
@@ -432,8 +446,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     min-height: 400px;
     display: flex;
     align-items: flex-end;
-    background-size: cover;
-    background-position: center;
+    background-repeat: no-repeat;
     border: none;
     box-shadow: none;
   }
@@ -1027,7 +1040,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     
     <!-- Hero Card - Main banner with project info -->
     {cards.hero && (
-      <div class="bento-card hero-card" style={finalHeroUrl ? `background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35)), url('${finalHeroUrl}')` : undefined}>
+      <div class="bento-card hero-card" style={heroStyle}>
         <div class="hero-content">
           {(heroLogoUrl && (bento.hero?.showLogo ?? true)) && (
             <img src={heroLogoUrl} alt={`${data.title} Logo`} class="hero-logo">

@@ -43,6 +43,9 @@ bento:
   hero:
     subtitle: "Project Category or Type"
     backgroundImage: "/path/to/your/hero-image.jpg" # Optional
+    backgroundPosition: "center" # Optional - CSS background-position (default: "center")
+    backgroundSize: "cover" # Optional - CSS background-size (default: "cover")
+    backgroundScale: 1.2 # Optional - numerical scaling (1.0 = 100%, 1.2 = 120%, 0.8 = 80%)
     logo: "/path/to/your/logo.png" # Optional
     showLogo: true # Optional - controls logo visibility (default: true)
   
@@ -188,7 +191,47 @@ src/content/projects/3_YourDomain/
 - **Hide Logo**: Set `bento.hero.showLogo: false` to hide the logo completely
 - Works with both explicit logo paths and auto-detected logo files
 
-### 8. Assets Folder Pattern (auto gallery)
+### 8. Hero Image Positioning
+Fine-tune how your hero background image is displayed:
+
+- **backgroundPosition**: Controls image positioning (default: "center")
+  - `"center"` - Center the image (default)
+  - `"top"` - Show top of image  
+  - `"bottom"` - Show bottom of image
+  - `"left"` - Show left side of image
+  - `"right"` - Show right side of image
+  - `"top left"`, `"bottom right"`, etc. - Combine positions
+  - `"50% 30%"` - Use percentages for precise control
+
+- **backgroundSize**: Controls how image scales (default: "cover")
+  - `"cover"` - Scale to fill card, may crop image (default)
+  - `"contain"` - Scale to fit entirely within card
+  - `"100% 100%"` - Stretch to exact card dimensions
+  - `"auto"` - Use image's natural size
+
+- **backgroundScale**: Numerical scaling (overrides backgroundSize when used)
+  - `1.0` - Normal size (100%)
+  - `1.2` - 20% larger (120%)
+  - `0.8` - 20% smaller (80%)
+  - `1.5` - 50% larger (150%)
+  - Easy to fine-tune with small increments like `1.1`, `0.9`, etc.
+
+Examples:
+```yaml
+# Image positioned higher
+hero:
+  subtitle: "Game Audio Project"
+  backgroundPosition: "center top"
+  backgroundSize: "cover"
+
+# Image scaled larger for better crop
+hero:
+  subtitle: "Visual Project"  
+  backgroundScale: 1.3
+  backgroundPosition: "center"
+```
+
+### 9. Assets Folder Pattern (auto gallery)
 
 To simplify image management, you can let the Bento template auto-build the hero and gallery from a single folder.
 

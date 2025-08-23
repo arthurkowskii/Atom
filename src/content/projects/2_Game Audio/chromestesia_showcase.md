@@ -32,6 +32,8 @@ bento:
   hero:
     subtitle: "Musicien, Sound-Designer et Intégrateur Audio"
     subtitleColor: "#faf525"
+    backgroundPosition: "center"
+    backgroundSize: "100% 100%" #COVER/CONTAIN/100% 100%
     showLogo: false
 
   # Optional stats
