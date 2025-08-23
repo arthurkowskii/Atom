@@ -5,6 +5,9 @@
 
 import { userTweaks } from './user-tweaks.js';
 
+// Debug: Check if userTweaks.liquidGlass is loading
+console.log('🔧 atom.config.js - userTweaks.liquidGlass:', userTweaks.liquidGlass);
+
 export default {
   // Central nucleus (bio/about section)
   nucleus: {
@@ -276,6 +279,35 @@ export default {
     volume: 0.2,
     events: {},
     synthesis: {}
-  }
+  },
+
+  // Liquid Glass configuration (Apple-style with SVG refraction)
+  liquidGlass: (() => {
+    console.log('🔧 atom.config.js - Building liquidGlass config with:', {
+      blurAmount: userTweaks.liquidGlass?.blurAmount,
+      displacementScale: userTweaks.liquidGlass?.displacementScale,
+      elasticity: userTweaks.liquidGlass?.elasticity
+    });
+    return {
+    enabled: userTweaks.liquidGlass?.enabled ?? true,
+    displacementScale: userTweaks.liquidGlass?.displacementScale ?? 70,
+    blurAmount: userTweaks.liquidGlass?.blurAmount ?? 0.0625,
+    saturation: userTweaks.liquidGlass?.saturation ?? 140,
+    aberrationIntensity: userTweaks.liquidGlass?.aberrationIntensity ?? 2,
+    elasticity: userTweaks.liquidGlass?.elasticity ?? 0.15,
+    mouseActivationZone: userTweaks.liquidGlass?.mouseActivationZone ?? 200,
+    cornerRadius: userTweaks.liquidGlass?.cornerRadius ?? 16,
+    padding: userTweaks.liquidGlass?.padding ?? '16px',
+    overLight: userTweaks.liquidGlass?.overLight ?? false,
+    noBorders: userTweaks.liquidGlass?.noBorders ?? false,
+    mode: userTweaks.liquidGlass?.mode ?? 'standard',
+    enableShaderMode: userTweaks.liquidGlass?.enableShaderMode ?? false,
+    fallbackToBackdrop: userTweaks.liquidGlass?.fallbackToBackdrop ?? true,
+    respectReducedMotion: userTweaks.liquidGlass?.respectReducedMotion ?? true,
+    initializeOnHover: userTweaks.liquidGlass?.initializeOnHover ?? false,
+    destroyOnLeave: userTweaks.liquidGlass?.destroyOnLeave ?? false,
+    showFallbackIndicator: userTweaks.liquidGlass?.showFallbackIndicator ?? false
+    };
+  })()
 
 };

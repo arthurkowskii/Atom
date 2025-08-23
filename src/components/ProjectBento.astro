@@ -56,6 +56,7 @@ export interface Props {
 }
 
 import atomConfig from '../atom.config.js';
+import LiquidGlass from './LiquidGlass.astro';
 
 const { project } = Astro.props;
 
@@ -208,34 +209,15 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     --on-accent: #000000; /* default readable on both yellow/orange */
   }
 
-  /* Hero Glass Panel */
-  .hero-glass {
-    position: relative;
-    display: inline-block;
-    padding: calc(var(--glass-padding, 16px));
-    border-radius: var(--glass-radius, 16px);
-    background: rgba(255,255,255, var(--glass-bg-alpha, 0.18));
-    box-shadow: var(--glass-shadow, 0 10px 30px rgba(0,0,0,0.15));
-    -webkit-backdrop-filter: saturate(var(--glass-saturate, 140%)) blur(var(--glass-blur, 16px));
-    backdrop-filter: saturate(var(--glass-saturate, 140%)) blur(var(--glass-blur, 16px));
-    border: 1px solid rgba(255,255,255, var(--glass-border-alpha, 0.5));
-    max-width: min(100%, var(--glass-max-width, 640px));
+  /* Hero Liquid Glass Panel */
+  .hero-liquid-glass {
+    display: block;
+    margin-top: 0.5rem;
+    max-width: min(100%, 640px);
   }
-
-  .hero-glass::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: radial-gradient(120% 60% at 10% 0%, rgba(255,255,255,0.25), transparent 60%);
-    mix-blend-mode: screen;
-  }
-
-  /* No refraction layer in simplified design */
-
-  @supports not ((backdrop-filter: blur(0))) {
-    .hero-glass { background: rgba(255,255,255, 0.7); }
+  
+  .hero-liquid-glass .hero-description {
+    margin: 0; /* Remove default paragraph margins inside liquid glass */
   }
 
   .bento-container {
@@ -357,8 +339,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     line-height: 1.6;
   }
 
-  /* spacing between subtitle and glass panel */
-  .hero-glass { display: block; margin-top: 0.5rem; }
+  /* spacing between subtitle and liquid glass panel */
 
   /* Quick Stats Card */
   .stats-card {
@@ -930,10 +911,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
           {bento.hero?.subtitle && (
             <p class="hero-subtitle">{bento.hero.subtitle}</p>
           )}
-          {(((atomConfig as any).bentoGlass?.enabled) ?? true) ? (
-            <div class="hero-glass" style={`--glass-blur:${(atomConfig as any).bentoGlass?.blurPx || 16}px; --glass-saturate:${(atomConfig as any).bentoGlass?.saturatePct || 140}%; --glass-bg-alpha:${(atomConfig as any).bentoGlass?.bgAlpha || 0.18}; --glass-border-alpha:${(atomConfig as any).bentoGlass?.borderAlpha || 0.5}; --glass-radius:${(atomConfig as any).bentoGlass?.radiusPx || 16}px; --glass-padding:${(atomConfig as any).bentoGlass?.paddingPx || 16}px; --glass-max-width:${(atomConfig as any).bentoGlass?.maxWidthPx || 640}px;`}>
+          {(((atomConfig as any).liquidGlass?.enabled) ?? true) ? (
+            <LiquidGlass class="hero-liquid-glass">
               <p class="hero-description">{data.description}</p>
-            </div>
+            </LiquidGlass>
           ) : (
             <p class="hero-description">{data.description}</p>
           )}

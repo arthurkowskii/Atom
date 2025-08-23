@@ -307,10 +307,10 @@ export const userTweaks = {
     }
   },
 
-  // 🧊 BENTO HERO LIQUID GLASS OVERLAY
+  // 🧊 BENTO HERO LIQUID GLASS OVERLAY (Legacy - to be replaced)
   // Frosted glass panel behind hero text with optional edge refraction
   bentoGlass: {
-    enabled: true,          // Master toggle for glass overlay
+    enabled: false,         // Disabled in favor of liquidGlass
     blurPx: 16,             // Backdrop blur amount
     saturatePct: 140,       // Backdrop saturation percent
     bgAlpha: 0.18,          // Translucent white background alpha (0–1)
@@ -330,6 +330,43 @@ export const userTweaks = {
       animate: true,        // Animate subtle liquid shimmer
       durationSec: 16       // Loop duration in seconds
     }
+  },
+
+  // 🌊 LIQUID GLASS (Apple-style with refraction)
+  // Advanced glass effect with SVG displacement filters and mouse interaction
+  liquidGlass: {
+    enabled: true,                // Master toggle
+    
+    // Core visual parameters
+    displacementScale: 400,       // High refraction intensity for very visible effect
+    blurAmount: 0.15,             // Moderate glass frosting for visibility
+    saturation: 120,             // Color saturation percent  
+    aberrationIntensity: 12,     // Strong chromatic aberration (color separation)
+    
+    // Interactive behavior
+    elasticity: 0.3,              // Moderate mouse-following "liquid" elasticity
+    mouseActivationZone: 150,    // Distance in pixels where effect activates
+    
+    // Visual styling
+    cornerRadius: 16,            // Border radius in pixels
+    padding: '16px',             // CSS padding string
+    overLight: false,            // Whether glass is over light background (changes shadows)
+    noBorders: true,             // Disable white border layers for cleaner look
+    
+    // Effect mode and fallbacks
+    mode: 'standard',           // 'standard' | 'polar' | 'prominent' | 'shader' - refraction patterns
+    enableShaderMode: false,    // Enable dynamic shader generation (most accurate but expensive)
+    
+    // Browser compatibility
+    fallbackToBackdrop: false,  // Force SVG filters, no fallback
+    respectReducedMotion: false, // Keep effects even with reduced motion
+    
+    // Performance
+    initializeOnHover: false,   // Lazy-load expensive effects until first interaction
+    destroyOnLeave: false,      // Clean up resources when not in use
+    
+    // Debug
+    showFallbackIndicator: false // Visual indicator when fallback is active
   },
 
 
