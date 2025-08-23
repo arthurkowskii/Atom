@@ -56,7 +56,6 @@ export interface Props {
 }
 
 import atomConfig from '../atom.config.js';
-import LiquidGlass from './LiquidGlass.astro';
 
 const { project } = Astro.props;
 
@@ -215,16 +214,6 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     color: #ffffff;
   }
 
-  /* Hero Liquid Glass Panel */
-  .hero-liquid-glass {
-    display: block;
-    margin-top: 0.5rem;
-    max-width: min(100%, 640px);
-  }
-  
-  .hero-liquid-glass .hero-description {
-    margin: 0; /* Remove default paragraph margins inside liquid glass */
-  }
 
   .bento-container {
     max-width: 1400px;
@@ -917,13 +906,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
           {bento.hero?.subtitle && (
             <p class="hero-subtitle">{bento.hero.subtitle}</p>
           )}
-          {(((atomConfig as any).liquidGlass?.enabled) ?? true) ? (
-            <LiquidGlass class="hero-liquid-glass">
-              <p class="hero-description">{data.description}</p>
-            </LiquidGlass>
-          ) : (
-            <p class="hero-description">{data.description}</p>
-          )}
+          <p class="hero-description">{data.description}</p>
         </div>
       </div>
     )}
