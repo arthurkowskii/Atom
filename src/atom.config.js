@@ -13,7 +13,12 @@ export default {
     hoverRadius: (userTweaks.nucleusHoverSize ?? userTweaks.nucleusSize * 1.3) * userTweaks.atomScale,
     fontSize: 24 * userTweaks.atomScale,        // Text size inside nucleus (scaled)
     color: "#000",       // Black for minimal design
-    strokeWidth: 2 * userTweaks.atomScale
+    strokeWidth: 2 * userTweaks.atomScale,
+    logo: {
+      size: userTweaks.nucleusLogo?.size ?? 1.4,
+      offsetX: userTweaks.nucleusLogo?.offsetX ?? 0,
+      offsetY: userTweaks.nucleusLogo?.offsetY ?? 0
+    }
   },
 
   // Orbital shells (domains of work)

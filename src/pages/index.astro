@@ -14,6 +14,7 @@ import LogoGit from '../Assets/software_logos/Git.webp';
 import LogoDavinci from '../Assets/software_logos/Davinci_Resolve.webp';
 import LogoCinema4D from '../Assets/software_logos/Cinema_4D.webp';
 import LogoPhotoshop from '../Assets/software_logos/photoshop.webp';
+import AtomCenterLogo from '../Assets/atom_center_logo.png';
 import atomConfig from '../atom.config.js';
 import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
@@ -367,8 +368,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 -webkit-font-smoothing: antialiased;     /* Chrome/WebKit */
                 -moz-osx-font-smoothing: grayscale;      /* Firefox on macOS */
             }
-            /* Ensure nucleus label does not intercept pointer events */
-            .nucleus-label { pointer-events: none; }
+            /* Ensure nucleus logo does not intercept pointer events */
+            .nucleus-logo { pointer-events: none; }
             
             /* Pruned old bio styles (legacy) */
 
@@ -502,18 +503,14 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					stroke={atomConfig.nucleus.color}
 					stroke-width={atomConfig.nucleus.strokeWidth}
 				/>
-				<text 
-					class="nucleus-label"
-					x={cfg.viewport.centerX}
-					y={cfg.viewport.centerY}
-					text-anchor="middle"
-					dominant-baseline="middle"
-					font-size={atomConfig.nucleus.fontSize}
-					font-weight="bold"
-					fill="#fff"
-				>
-					{atomConfig.nucleus.text}
-				</text>
+				<image 
+					class="nucleus-logo"
+					x={cfg.viewport.centerX - atomConfig.nucleus.radius * (atomConfig.nucleus.logo.size / 2) + atomConfig.nucleus.logo.offsetX}
+					y={cfg.viewport.centerY - atomConfig.nucleus.radius * (atomConfig.nucleus.logo.size / 2) + atomConfig.nucleus.logo.offsetY}
+					width={atomConfig.nucleus.radius * atomConfig.nucleus.logo.size}
+					height={atomConfig.nucleus.radius * atomConfig.nucleus.logo.size}
+					href={AtomCenterLogo.src}
+				/>
 
 				<!-- Orbital Shells -->
 				{domains.map((domain, shellIndex) => {

@@ -23,6 +23,13 @@ export const userTweaks = {
   nucleusSize: 40,        // Center "A" circle size
   nucleusHoverSize: 52,   // Nucleus size on hover (clickable, not draggable)
 
+  // 🖼️ NUCLEUS LOGO
+  nucleusLogo: {
+    size: 1.35,             // Logo size as percentage of nucleus radius (1.0 = same as nucleus)
+    offsetX: -1,            // Horizontal offset in pixels (+ = right, - = left)
+    offsetY: -1.1             // Vertical offset in pixels (+ = down, - = up)
+  },
+
   // ⏱️ TIMING
   hoverAnimationSpeed: 0.15,  // How fast electrons grow/shrink on hover (seconds)
   baselineResetAnimationSpeed: 0.15, // Duration for resetting to baseline (none state)
