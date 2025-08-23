@@ -282,8 +282,11 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 user-select: none; /* avoid text selection while dragging */
             }
 
-            /* Dark mode base (applies site-wide) */
-            html[data-theme="dark"] body { background: #000; color: #fff; }
+            /* Professional dark mode base (applies site-wide) */
+            html[data-theme="dark"] body { 
+                background: #0a0a0a; 
+                color: #e4e4e7; 
+            }
             
             .atom-container {
                 display: flex;
@@ -299,12 +302,22 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 height: 100vmin;
             }
 
-            /* Dark mode overrides for atom visuals */
-            html[data-theme="dark"] #atom-svg .shell { stroke: #fff !important; }
-            html[data-theme="dark"] #atom-svg .electron { fill: #fff !important; stroke: #fff !important; }
+            /* Professional dark mode overrides for atom visuals */
+            html[data-theme="dark"] #atom-svg .shell { 
+                stroke: #d4d4d8 !important; 
+            }
+            html[data-theme="dark"] #atom-svg .electron { 
+                fill: #f4f4f5 !important; 
+                stroke: #e4e4e7 !important; 
+            }
             html[data-theme="dark"] #atom-svg .shell-label,
-            html[data-theme="dark"] #atom-svg .orbit-label { fill: #fff !important; }
-            html[data-theme="dark"] #atom-svg .nucleus { fill: #fff !important; stroke: #fff !important; }
+            html[data-theme="dark"] #atom-svg .orbit-label { 
+                fill: #a1a1aa !important; 
+            }
+            html[data-theme="dark"] #atom-svg .nucleus { 
+                fill: #f4f4f5 !important; 
+                stroke: #e4e4e7 !important; 
+            }
 			
 			.electron {
 				cursor: pointer;
@@ -336,11 +349,21 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 will-change: clip-path, -webkit-mask-image, mask-image;
             }
             #project-overlay.open { display: block; }
-            /* Dark theme for overlay */
-            html[data-theme="dark"] #project-overlay { background: #000; color: #fff; }
+            /* Professional dark theme for overlay */
+            html[data-theme="dark"] #project-overlay { 
+                background: #0f0f0f; 
+                color: #e4e4e7; 
+            }
             html[data-theme="dark"] #project-overlay .close-btn {
-                background: #000; color: #fff; border-color: #fff;
-                box-shadow: 0 2px 12px rgba(255,255,255,0.15);
+                background: #1a1a1a; 
+                color: #f4f4f5; 
+                border-color: #3a3a3a;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            }
+            html[data-theme="dark"] #project-overlay .close-btn:hover {
+                background: #2a2a2a;
+                border-color: #5a5a5a;
+                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
             }
             #project-overlay .inner {
                 max-width: 900px;
@@ -386,7 +409,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             }
             /* Ensure nucleus logo does not intercept pointer events */
             .nucleus-logo { pointer-events: none; }
-            html[data-theme="dark"] .nucleus-logo { filter: invert(1); }
+            html[data-theme="dark"] .nucleus-logo { 
+                filter: invert(1) brightness(0.9); 
+            }
             
             /* Pruned old bio styles (legacy) */
 
@@ -419,6 +444,26 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 border: 1px solid rgba(0, 0, 0, 0.1);
                 transform-origin: top left;
                 container-type: size; /* Enable container queries */
+            }
+
+            /* Professional dark mode for electron preview */
+            html[data-theme="dark"] .electron-preview {
+                background: #1a1a1a;
+                border: 1px solid #3a3a3a;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+                color: #e4e4e7;
+            }
+
+            html[data-theme="dark"] .preview-hero {
+                background: #262626;
+            }
+
+            html[data-theme="dark"] .preview-title {
+                color: #f4f4f5;
+            }
+
+            html[data-theme="dark"] .preview-subtitle {
+                color: #a1a1aa;
             }
             
             .preview-content {

@@ -45,8 +45,56 @@ const useBentoLayout = entry.data.useBentoLayout || false;
         background: #fff;
         line-height: 1.6;
       }
-      /* Dark mode on project pages: black bg and white text */
-      html[data-theme="dark"] body { background: #000; color: #fff; }
+      /* Professional dark mode on project pages */
+      html[data-theme="dark"] body { 
+        background: #0f0f0f; 
+        color: #e4e4e7; 
+      }
+
+      /* Dark mode for back link and text elements */
+      html[data-theme="dark"] .back {
+        color: #a1a1aa;
+        border-bottom-color: #3a3a3a;
+      }
+
+      html[data-theme="dark"] .back:hover {
+        color: #f4f4f5;
+        border-bottom-color: #5a5a5a;
+      }
+
+      html[data-theme="dark"] h1,
+      html[data-theme="dark"] h2,
+      html[data-theme="dark"] h3,
+      html[data-theme="dark"] h4,
+      html[data-theme="dark"] h5,
+      html[data-theme="dark"] h6 {
+        color: #f4f4f5;
+      }
+
+      html[data-theme="dark"] p {
+        color: #d4d4d8;
+      }
+
+      html[data-theme="dark"] a {
+        color: #a1a1aa;
+      }
+
+      html[data-theme="dark"] a:hover {
+        color: #f4f4f5;
+      }
+
+      html[data-theme="dark"] code {
+        background: #1a1a1a;
+        color: #f4f4f5;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      html[data-theme="dark"] blockquote {
+        border-left: 4px solid #3a3a3a;
+        background: #1a1a1a;
+        color: #d4d4d8;
+      }
       .wrap {
         max-width: 840px;
         margin: 0 auto;

@@ -202,11 +202,13 @@ Tracking
 
 - Dynamic text wrapping: Preview text content adapts to available space, calculating max-width based on hero image size and margins. Supports natural line breaks with word wrapping and hyphenation for responsive content display within constrained preview boxes.
 
+- Hero logo toggle: Added `bento.hero.showLogo` boolean parameter to control logo visibility in project bento layouts. Defaults to `true` (show logo) when omitted, can be set to `false` to hide. Required updates to both the content collection schema (`src/content/config.ts`) and ProjectBento component logic for proper frontmatter parsing.
+
 ### Key Files (Bento)
 
 - `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; responsive grid; auto-scans `bento.assetsFolder` for hero/logo and gallery; includes musical animation system with Tone.js audio.
 - `src/pages/preview-templates.astro` — Testing environment for both template components.
-- `src/content/config.ts` — Added `useBentoLayout` boolean field and `bento.assetsFolder` to project schema.
+- `src/content/config.ts` — Added `useBentoLayout` boolean field, `bento.assetsFolder`, and `bento.hero.showLogo` to project schema.
 - `templates/bento-project.template.md` — Copy-paste template for new Bento projects.
 - Projects with `useBentoLayout: true` bypass normal overlay routing and use bento display.
 

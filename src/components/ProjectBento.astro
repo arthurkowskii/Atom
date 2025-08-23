@@ -210,10 +210,146 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     --on-accent: #000000; /* default readable on both yellow/orange */
   }
 
-  /* Dark theme wrapper for project pages */
+  /* Professional dark theme for project pages */
   html[data-theme="dark"] .project-bento {
-    background: #000000 !important;
+    background: #0f0f0f !important;
+    color: #e4e4e7;
+  }
+
+  /* Dark theme bento cards */
+  html[data-theme="dark"] .bento-card {
+    background: #1a1a1a;
+    border: 2px solid #2a2a2a;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    color: #e4e4e7;
+  }
+
+  html[data-theme="dark"] .bento-card:hover,
+  html[data-theme="dark"] .bento-card:focus {
+    border-color: rgba(var(--accent-color-rgb), 0.6);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Dark theme card titles and text */
+  html[data-theme="dark"] .card-title {
+    color: #f4f4f5;
+  }
+
+  html[data-theme="dark"] .card-subtitle {
+    color: #a1a1aa;
+  }
+
+  html[data-theme="dark"] .hero-title {
     color: #ffffff;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.9);
+  }
+
+  html[data-theme="dark"] .hero-description {
+    color: #f4f4f5;
+  }
+
+  /* Dark theme stats */
+  html[data-theme="dark"] .stat-item {
+    background: rgba(var(--accent-color-rgb), 0.15);
+    border: 1px solid rgba(var(--accent-color-rgb), 0.3);
+  }
+
+  html[data-theme="dark"] .stat-value {
+    color: #f4f4f5;
+  }
+
+  html[data-theme="dark"] .stat-label {
+    color: #a1a1aa;
+  }
+
+  /* Dark theme action buttons */
+  html[data-theme="dark"] .action-btn.primary {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-color) 100%);
+    color: var(--on-accent);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  html[data-theme="dark"] .action-btn.secondary {
+    background: rgba(var(--accent-color-rgb), 0.15);
+    color: #f4f4f5;
+    border: 2px solid rgba(var(--accent-color-rgb), 0.3);
+  }
+
+  html[data-theme="dark"] .action-btn.secondary:hover {
+    background: rgba(var(--accent-color-rgb), 0.25);
+    border-color: rgba(var(--accent-color-rgb), 0.5);
+  }
+
+  /* Dark theme tech pills */
+  html[data-theme="dark"] .tech-pill {
+    background: rgba(var(--accent-color-rgb), 0.15);
+    color: #f4f4f5;
+    border: 1px solid rgba(var(--accent-color-rgb), 0.3);
+  }
+
+  html[data-theme="dark"] .tech-pill:hover {
+    background: rgba(var(--accent-color-rgb), 0.25);
+    box-shadow: 0 4px 12px rgba(var(--accent-color-rgb), 0.3);
+  }
+
+  /* Dark theme process */
+  html[data-theme="dark"] .process-item {
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  html[data-theme="dark"] .process-text {
+    color: #d4d4d8;
+  }
+
+  html[data-theme="dark"] .process-number {
+    background: var(--accent-color);
+    color: var(--on-accent);
+  }
+
+  /* Dark theme gallery */
+  html[data-theme="dark"] .gallery-hero {
+    background: #262626;
+    border: 1px solid #3a3a3a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+
+  html[data-theme="dark"] .gallery-hero:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
+  }
+
+  html[data-theme="dark"] .gallery-thumb {
+    background: #262626;
+    border: 1px solid #3a3a3a;
+  }
+
+  html[data-theme="dark"] .gallery-thumb:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  html[data-theme="dark"] .gallery-counter {
+    background: rgba(0, 0, 0, 0.8);
+    color: #f4f4f5;
+  }
+
+  /* Dark theme challenges and results */
+  html[data-theme="dark"] .challenge-item {
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  html[data-theme="dark"] .challenge-title {
+    color: #f4f4f5;
+  }
+
+  html[data-theme="dark"] .challenge-text {
+    color: #d4d4d8;
+  }
+
+  html[data-theme="dark"] .results-text {
+    color: #d4d4d8;
+  }
+
+  html[data-theme="dark"] .results-icon {
+    color: var(--accent-color);
   }
 
 
