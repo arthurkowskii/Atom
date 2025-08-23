@@ -209,6 +209,12 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     --on-accent: #000000; /* default readable on both yellow/orange */
   }
 
+  /* Dark theme wrapper for project pages */
+  html[data-theme="dark"] .project-bento {
+    background: #000000 !important;
+    color: #ffffff;
+  }
+
   /* Hero Liquid Glass Panel */
   .hero-liquid-glass {
     display: block;

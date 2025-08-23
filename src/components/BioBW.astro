@@ -70,6 +70,20 @@ function logoSrcFor(label: string): string | null {
   .email { border-bottom: 2px solid #000; padding-bottom: 2px; color: #000; text-decoration: none; }
   .email:hover { background: #000; color: #fff; padding: 2px 6px; border-bottom-color: transparent; }
   @media (max-width: 980px) { .row { grid-template-columns: 1fr; } .portrait { justify-self: start; max-width: 340px; } .skills { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+  /* Dark theme overrides */
+  html[data-theme="dark"] .name,
+  html[data-theme="dark"] .subtitle,
+  html[data-theme="dark"] .lead,
+  html[data-theme="dark"] .label,
+  html[data-theme="dark"] .skill h3 { color: #fff; }
+  html[data-theme="dark"] .portrait { border-color: #fff; }
+  html[data-theme="dark"] .divider { background: #fff; }
+  html[data-theme="dark"] .chip { background: transparent; color: #fff; border-color: #fff; }
+  html[data-theme="dark"] .skills .chip img { filter: invert(1) brightness(1.2); }
+  html[data-theme="dark"] .skill { background: #000; color: #fff; border-color: #fff; }
+  html[data-theme="dark"] .email { color: #fff; border-bottom-color: #fff; }
+  html[data-theme="dark"] .email:hover { background: #fff; color: #000; }
 </style>
 
 <section class="frame" aria-label="Bio">

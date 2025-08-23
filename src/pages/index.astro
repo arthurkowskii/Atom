@@ -281,6 +281,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 overflow: hidden; /* prevent page scroll white borders during drag */
                 user-select: none; /* avoid text selection while dragging */
             }
+
+            /* Dark mode base (applies site-wide) */
+            html[data-theme="dark"] body { background: #000; color: #fff; }
             
             .atom-container {
                 display: flex;
@@ -295,6 +298,13 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 width: 100vmin;
                 height: 100vmin;
             }
+
+            /* Dark mode overrides for atom visuals */
+            html[data-theme="dark"] #atom-svg .shell { stroke: #fff !important; }
+            html[data-theme="dark"] #atom-svg .electron { fill: #fff !important; stroke: #fff !important; }
+            html[data-theme="dark"] #atom-svg .shell-label,
+            html[data-theme="dark"] #atom-svg .orbit-label { fill: #fff !important; }
+            html[data-theme="dark"] #atom-svg .nucleus { fill: #fff !important; stroke: #fff !important; }
 			
 			.electron {
 				cursor: pointer;
@@ -326,6 +336,12 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 will-change: clip-path, -webkit-mask-image, mask-image;
             }
             #project-overlay.open { display: block; }
+            /* Dark theme for overlay */
+            html[data-theme="dark"] #project-overlay { background: #000; color: #fff; }
+            html[data-theme="dark"] #project-overlay .close-btn {
+                background: #000; color: #fff; border-color: #fff;
+                box-shadow: 0 2px 12px rgba(255,255,255,0.15);
+            }
             #project-overlay .inner {
                 max-width: 900px;
                 margin: 0 auto;
@@ -370,6 +386,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             }
             /* Ensure nucleus logo does not intercept pointer events */
             .nucleus-logo { pointer-events: none; }
+            html[data-theme="dark"] .nucleus-logo { filter: invert(1); }
             
             /* Pruned old bio styles (legacy) */
 
@@ -482,8 +499,25 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 font-size: 11px !important;
             }
 		</style>
+
+        <!-- Theme init (before paint) -->
+        <script>
+          (function(){
+            try {
+              const saved = localStorage.getItem('theme');
+              const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+              const theme = saved || (prefersDark ? 'dark' : 'light');
+              document.documentElement.setAttribute('data-theme', theme);
+            } catch {}
+          })();
+        </script>
 	</head>
 	<body>
+		<!-- Theme toggle button -->
+		<button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme"
+			style="position:fixed;top:16px;left:16px;z-index:10001;border:1px solid currentColor;border-radius:999px;padding:8px 12px;cursor:pointer;backdrop-filter:saturate(140%) blur(6px);">
+			<span id="theme-toggle-label">Dark</span>
+		</button>
 		<div class="atom-container">
 				<svg 
 					id="atom-svg"
@@ -704,6 +738,31 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
         <script type="application/json" id="bio-data" set:html={JSON.stringify(bioPayload)}></script>
         <script type="application/json" id="logos-map" set:html={JSON.stringify(logosMap)}></script>
         <script type="application/json" id="cfg-data" set:html={JSON.stringify(cfg)}></script>
+
+        <!-- Theme toggle wiring -->
+        <script>
+          (function(){
+            const btn = document.getElementById('theme-toggle');
+            const label = document.getElementById('theme-toggle-label');
+            function applyLabel() {
+              const t = document.documentElement.getAttribute('data-theme') || 'light';
+              label.textContent = t === 'dark' ? 'Light' : 'Dark';
+              // Ensure button color contrasts background
+              const fg = t === 'dark' ? '#fff' : '#000';
+              const bg = t === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+              btn.style.color = fg;
+              btn.style.borderColor = fg;
+              btn.style.background = bg;
+            }
+            applyLabel();
+            btn.addEventListener('click', () => {
+              const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+              document.documentElement.setAttribute('data-theme', cur);
+              try { localStorage.setItem('theme', cur); } catch {}
+              applyLabel();
+            });
+          })();
+        </script>
 
         <!-- Overlay (handles both projects and bio) -->
         <div id="project-overlay" aria-hidden="true">

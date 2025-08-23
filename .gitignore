@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# docs large example projects (ignored)
+docs/Frontend-Projects/
+docs/liquid-glass-react/

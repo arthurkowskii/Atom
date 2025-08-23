@@ -16,10 +16,23 @@ const data = entry?.data || {};
       * { box-sizing: border-box; }
       body { margin:0; background:#fff; color:#000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, system-ui, sans-serif; }
       a { color: inherit; text-decoration: none; }
+
+      /* Dark theme base for bio page */
+      html[data-theme="dark"] body { background:#000; color:#fff; }
     </style>
+    <!-- Theme init (before paint) -->
+    <script>
+      (function(){
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = saved || (prefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
     <BioBW data={data} />
   </body>
   </html>
-
