@@ -209,6 +209,24 @@ export default {
     }
   },
 
+  // Electron preview card configuration
+  electronPreview: {
+    enabled: userTweaks.electronPreview?.enabled ?? true,
+    width: userTweaks.electronPreview?.width ?? 320,
+    height: userTweaks.electronPreview?.height ?? 120,
+    offsetX: userTweaks.electronPreview?.offsetX ?? 20,
+    offsetY: userTweaks.electronPreview?.offsetY ?? -20,
+    borderRadius: userTweaks.electronPreview?.borderRadius ?? 8,
+    heroSize: userTweaks.electronPreview?.heroSize ?? 88,
+    heroRadius: userTweaks.electronPreview?.heroRadius ?? 8,
+    heroMargin: userTweaks.electronPreview?.heroMargin ?? 16,
+    contentPadding: userTweaks.electronPreview?.contentPadding ?? 16,
+    titleSize: userTweaks.electronPreview?.titleSize ?? 16,
+    subtitleSize: userTweaks.electronPreview?.subtitleSize ?? 13,
+    animationDuration: userTweaks.electronPreview?.animationDuration ?? 0.2,
+    animationEase: userTweaks.electronPreview?.animationEase ?? 'back.out(1.7)'
+  },
+
   // Bento animations configuration
   bentoAnimations: userTweaks.bentoAnimations || {
     enabled: false,

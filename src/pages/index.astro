@@ -69,17 +69,85 @@ const electronsByDomain = projectsWithDomains.reduce((acc, project) => {
   acc[project.data.domain].push(project);
   return acc;
 }, {});
-// Minimal project payload for the client overlay
-const projectSummaries = projectsWithDomains.map(p => ({
-  slug: p.slug,
-  title: p.data.title,
-  description: p.data.description,
-  domain: p.data.domain,
-  tech: p.data.tech,
-  link: p.data.link,
-  github: p.data.github,
-  useBentoLayout: p.data.useBentoLayout,
-}));
+
+// Asset resolution logic (borrowed from ProjectBento)
+const ALL_ASSET_URLS = import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif}', {
+  eager: true,
+  query: '?url',
+  import: 'default'
+});
+
+function resolveAssetUrl(path: string | undefined): string | undefined {
+  if (!path) return undefined;
+  const url = ALL_ASSET_URLS[path as keyof typeof ALL_ASSET_URLS];
+  return typeof url === 'string' ? url : undefined;
+}
+
+function scanAssetsFolder(folder: string | undefined, explicitHeroBg?: string, explicitLogo?: string): {
+  heroBg?: string,
+  heroLogo?: string
+} {
+  if (!folder) return {};
+  
+  const norm = folder.replace(/\/+$/, '');
+  const entries = Object.entries(ALL_ASSET_URLS)
+    .filter(([p]) => p.startsWith(norm + '/'))
+    .map(([p, url]) => ({ path: p, url }));
+
+  const parts = entries.map(({ path, url }) => {
+    const base = path.split('/').pop() || '';
+    const name = base.replace(/\.[^.]+$/, '');
+    const nameLC = name.toLowerCase();
+    return { base, name, nameLC, url };
+  });
+
+  const heroFile = parts.find(p => p.nameLC === 'hero');
+  const logoFile = parts.find(p => p.nameLC === 'logo');
+  const heroBg = resolveAssetUrl(explicitHeroBg) || heroFile?.url;
+  const heroLogo = resolveAssetUrl(explicitLogo) || logoFile?.url;
+
+  return { heroBg, heroLogo };
+}
+
+// Enhanced project payload with preview data for electron hover
+const projectSummaries = projectsWithDomains.map(p => {
+  const bento = p.data.bento;
+  let heroImage = '';
+  let subtitle = '';
+  
+  if (p.data.useBentoLayout && bento) {
+    // Bento projects: use asset resolution
+    const assets = scanAssetsFolder(bento.assetsFolder, bento.hero?.backgroundImage, bento.hero?.logo);
+    heroImage = bento.hero?.backgroundImage || assets.heroBg || '';
+    subtitle = bento.hero?.subtitle || '';
+  } else {
+    // Atomic projects: use image field
+    heroImage = p.data.image || '';
+  }
+  
+  // Fallback subtitle logic
+  if (!subtitle) {
+    subtitle = p.data.description.length > 60 
+      ? p.data.description.slice(0, 60) + '...'
+      : p.data.description;
+  }
+  
+  return {
+    slug: p.slug,
+    title: p.data.title,
+    description: p.data.description,
+    domain: p.data.domain,
+    tech: p.data.tech,
+    link: p.data.link,
+    github: p.data.github,
+    useBentoLayout: p.data.useBentoLayout,
+    // NEW: Preview data for electron hover
+    preview: {
+      heroImage: heroImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Qcm9qZWN0IEltYWdlPC90ZXh0Pjwvc3ZnPg==',
+      subtitle: subtitle
+    }
+  };
+});
 
 // Prepare Bio payload from content collection (bio/about)
 let bioPayload = {};
@@ -189,7 +257,7 @@ function computeShellsAndViewport() {
 }
 
 const { shells: dynamicShells, viewport: dynamicViewport } = computeShellsAndViewport();
-const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicViewport } as any;
+const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicViewport, domains } as any;
 ---
 
 <html lang="en">
@@ -317,6 +385,71 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             }
             /* Orbiting word mode */
             .orbit-label { fill: #000; letter-spacing: 2px; text-transform: uppercase; }
+            
+            /* Electron Preview Component */
+            .electron-preview {
+                position: fixed;
+                z-index: 10000; /* Above everything */
+                background: #fff;
+                border-radius: var(--preview-border-radius, 8px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+                width: var(--preview-width, 320px);
+                height: var(--preview-height, 120px);
+                display: flex;
+                overflow: hidden;
+                pointer-events: none; /* Don't interfere with mouse events */
+                border: 1px solid rgba(0, 0, 0, 0.1);
+                transform-origin: top left;
+            }
+            
+            .preview-content {
+                padding: var(--preview-content-padding, 16px);
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .preview-hero {
+                width: var(--preview-hero-size, 88px);
+                height: var(--preview-hero-size, 88px);
+                position: relative;
+                overflow: hidden;
+                background: #f5f5f5;
+                flex-shrink: 0;
+                margin: var(--preview-hero-margin, 16px);
+                border-radius: var(--preview-hero-radius, 8px);
+            }
+            
+            .preview-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+            
+            .preview-title {
+                font-size: var(--preview-title-size, 16px);
+                font-weight: 700;
+                margin: 0 0 8px 0;
+                line-height: 1.2;
+                color: #000;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            
+            .preview-subtitle {
+                font-size: var(--preview-subtitle-size, 13px);
+                color: #666;
+                margin: 0;
+                line-height: 1.3;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
 		</style>
 	</head>
 	<body>
@@ -514,6 +647,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 										stroke-width={atomConfig.electrons.strokeWidth}
 										data-project={project.slug}
 										data-shell={shellIndex}
+										data-shell-index={shellIndex}
+										data-electron-index={electronIndex}
 										data-angle={angleDegrees}
 									>
 										<title>{project.data.title}</title>
@@ -524,6 +659,17 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					);
 				})}
 			</svg>
+			
+			<!-- Electron Hover Preview -->
+			<div id="electron-preview" class="electron-preview" style="display: none;">
+				<div class="preview-content">
+					<h3 id="preview-title" class="preview-title"></h3>
+					<p id="preview-subtitle" class="preview-subtitle"></p>
+				</div>
+				<div class="preview-hero">
+					<img id="preview-image" src="" alt="" class="preview-img">
+				</div>
+			</div>
 		</div>
 
         <!-- Client data payload for overlay -->
@@ -580,6 +726,20 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				let cfg = null;
 				try { cfg = cfgDataNode ? JSON.parse(cfgDataNode.textContent) : null; } catch {}
 				if (!cfg) cfg = atomConfig;
+
+				// Set CSS custom properties for electron preview on page load
+				if (cfg.electronPreview) {
+					const root = document.documentElement;
+					root.style.setProperty('--preview-width', cfg.electronPreview.width + 'px');
+					root.style.setProperty('--preview-height', cfg.electronPreview.height + 'px');
+					root.style.setProperty('--preview-border-radius', cfg.electronPreview.borderRadius + 'px');
+					root.style.setProperty('--preview-content-padding', cfg.electronPreview.contentPadding + 'px');
+					root.style.setProperty('--preview-hero-size', cfg.electronPreview.heroSize + 'px');
+					root.style.setProperty('--preview-hero-radius', cfg.electronPreview.heroRadius + 'px');
+					root.style.setProperty('--preview-hero-margin', cfg.electronPreview.heroMargin + 'px');
+					root.style.setProperty('--preview-title-size', cfg.electronPreview.titleSize + 'px');
+					root.style.setProperty('--preview-subtitle-size', cfg.electronPreview.subtitleSize + 'px');
+				}
 
 				// Create and start orbit system
 				const orbitSystem = new OrbitSystem(cfg);
@@ -1040,6 +1200,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					currentState: 'none', // 'none' | 'shell-N' | electron reference
 					previousState: 'none',
 					currentElectron: null, // Store actual electron element reference
+					previewElement: null, // Lazy-loaded
+					previewActive: false, // Track if preview should be shown
 					
 					setState(newState, electronElement = null) {
 						if (this.currentState === newState) return; // No change needed
@@ -1067,6 +1229,11 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 if (this.previousState.startsWith('shell-')) {
                   const shellIndex = parseInt(this.previousState.split('-')[1]);
                   this.resetShellEffects(shellIndex);
+                  // Don't hide preview if we're going to another electron state
+                  if (!this.currentState.startsWith('electron-')) {
+                    this.previewActive = false;
+                    this.hidePreview();
+                  }
                 } else if (this.previousState.startsWith('electron-')) {
                   const shellIndex = parseInt(this.previousState.split('-')[1]);
                   this.resetElectronEffects(shellIndex);
@@ -1075,6 +1242,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               
               enterCurrentState() {
               if (this.currentState === 'none') {
+                // Hide preview immediately for 'none' state
+                this.previewActive = false;
+                this.hidePreview();
                 // Reset opacity for all; radius only for non-nucleus electrons
                 gsap.to(document.querySelectorAll('.electron'), {
                   opacity: 1.0,
@@ -1133,6 +1303,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 } else if (this.currentState.startsWith('electron-')) {
                   const shellIndex = parseInt(this.currentState.split('-')[1]);
                   this.applyElectronEffects(shellIndex, this.currentElectron);
+                  // Show preview for electron hover (with state tracking)
+                  this.previewActive = true;
+                  this.showPreview(this.currentElectron);
                   // Brighten label for this shell
                   if (atomConfig.labels?.enabled) {
                     const rotor = document.querySelector(`.shell-label-rotor[data-shell-index="${shellIndex}"]`);
@@ -1224,6 +1397,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               resetElectronEffects(shellIndex) {
                 console.log(`🔄 Resetting electron effects for shell ${shellIndex}`);
                 
+                // Hide preview (will be overridden immediately if going to another electron)
+                this.previewActive = false;
+                this.hidePreview();
+                
                 // Reset shell
                 this.resetShellEffects(shellIndex);
                 
@@ -1263,6 +1440,102 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     });
                   }
                 }
+              },
+              
+              // PREVIEW SYSTEM
+              showPreview(electron) {
+                if (!cfg.electronPreview?.enabled || !electron || !this.previewActive) return;
+                
+                // Lazy-load preview element
+                if (!this.previewElement) {
+                  this.previewElement = document.getElementById('electron-preview');
+                }
+                if (!this.previewElement) return;
+                
+                // Get project data for this electron
+                const project = this.getProjectForElectron(electron);
+                if (!project) return;
+                
+                // Populate preview content
+                const img = document.getElementById('preview-image');
+                const title = document.getElementById('preview-title');
+                const subtitle = document.getElementById('preview-subtitle');
+                
+                if (img) img.src = project.preview.heroImage;
+                if (title) title.textContent = project.title;
+                if (subtitle) subtitle.textContent = project.preview.subtitle;
+                
+                // Position preview (configurable offset from electron with viewport edge detection)
+                const electronRect = electron.getBoundingClientRect();
+                const previewWidth = cfg.electronPreview.width;
+                const previewHeight = cfg.electronPreview.height;
+                const offsetX = cfg.electronPreview.offsetX;
+                const offsetY = cfg.electronPreview.offsetY;
+                
+                let x = electronRect.right + offsetX;
+                let y = electronRect.top + offsetY;
+                
+                // Check right edge of viewport
+                if (x + previewWidth > window.innerWidth) {
+                  x = electronRect.left - previewWidth - offsetX;
+                }
+                
+                // Check top edge of viewport
+                if (y < 0) {
+                  y = electronRect.bottom - offsetY;
+                }
+                
+                // Apply position
+                this.previewElement.style.left = x + 'px';
+                this.previewElement.style.top = y + 'px';
+                this.previewElement.style.display = 'flex';
+                
+                // Kill any existing preview animations to prevent conflicts
+                gsap.killTweensOf(this.previewElement);
+                
+                // Animate with configurable timing and easing
+                gsap.fromTo(this.previewElement, 
+                  { scale: 0, opacity: 0 },
+                  { 
+                    scale: 1, 
+                    opacity: 1, 
+                    duration: cfg.electronPreview.animationDuration, 
+                    ease: cfg.electronPreview.animationEase 
+                  }
+                );
+              },
+              
+              hidePreview() {
+                if (!this.previewElement) {
+                  this.previewElement = document.getElementById('electron-preview');
+                }
+                if (!this.previewElement) return;
+                
+                // Kill any existing animations
+                gsap.killTweensOf(this.previewElement);
+                
+                gsap.to(this.previewElement, {
+                  scale: 0.8,
+                  opacity: 0,
+                  duration: 0.15,
+                  ease: 'power2.in',
+                  onComplete: () => {
+                    this.previewElement.style.display = 'none';
+                  }
+                });
+              },
+              
+              getProjectForElectron(electron) {
+                // Extract shell and electron indices from the electron's attributes
+                const shellIndex = parseInt(electron.getAttribute('data-shell-index') || '0');
+                const electronIndex = parseInt(electron.getAttribute('data-electron-index') || '0');
+                
+                // Find the project from PROJECTS data using shell/electron indices
+                // Projects are organized by domain in the same order as shells
+                const domainSlug = cfg.domains[shellIndex];
+                const domainProjects = PROJECTS.filter(p => p.domain === domainSlug);
+                
+                return domainProjects[electronIndex] || null;
               }
 				};
 				

@@ -225,6 +225,30 @@ export const userTweaks = {
     }
   },
 
+  // 👁️ ELECTRON PREVIEW CARD
+  electronPreview: {
+    enabled: true,
+    width: 250,                    // Preview card width (px)
+    height: 110,                   // Preview card height (px)
+    offsetX: 20,                   // Distance from electron (px)
+    offsetY: -40,                  // Vertical offset from electron (px)
+    borderRadius: 8,               // Preview card corner radius (px)
+    
+    // Hero image (square on the right)
+    heroSize: 88,                  // Hero image width/height (px)
+    heroRadius: 8,                 // Hero image corner radius (px)
+    heroMargin: 16,                // Hero image margin from preview edges (px)
+    
+    // Content styling
+    contentPadding: 16,            // Text content padding (px)
+    titleSize: 16,                 // Title font size (px)
+    subtitleSize: 13,              // Subtitle font size (px)
+    
+    // Animation
+    animationDuration: 0.2,        // Scale-up duration (seconds)
+    animationEase: 'back.out(1.7)' // GSAP easing function
+  },
+
   // 🔊 ATOM INTERFACE SOUNDS (Tone.js Placeholders)
   atomSounds: {
     enabled: true,
