@@ -231,13 +231,13 @@ export const userTweaks = {
     width: 250,                    // Preview card width (px)
     height: 110,                   // Preview card height (px)
     offsetX: 20,                   // Distance from electron (px)
-    offsetY: -40,                  // Vertical offset from electron (px)
+    offsetY: -100,                  // Vertical offset from electron (px)
     borderRadius: 8,               // Preview card corner radius (px)
     
     // Hero image (square on the right)
     heroSize: 88,                  // Hero image width/height (px)
     heroRadius: 8,                 // Hero image corner radius (px)
-    heroMargin: 16,                // Hero image margin from preview edges (px)
+    heroMargin: 10,                // Hero image margin from preview edges (px)
     
     // Content styling
     contentPadding: 16,            // Text content padding (px)
