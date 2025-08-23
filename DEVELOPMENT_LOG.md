@@ -4,7 +4,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color; starter template; asset glob fix; musical bento animations)
+Last updated: 2025-08-23 (Electron preview cards with multi-stage emergence animation)
 
 ## Project Snapshot
 
@@ -71,6 +71,14 @@ Last updated: 2025-08-22 (Bento assetsFolder + auto-gallery; hero subtitle color
   - enabled|volume (master controls)
   - events.{electronHover|electronClick|shellHover|nucleusHover|nucleusClick|ripple|shellPulse|electronDragStart|electronDragSnap|electronDragRelease} (pitch mappings)
   - synthesis.{attack|decay|sustain|release} (Tone.js envelope)
+- electronPreview:
+  - enabled|width|height|offsetX|offsetY|borderRadius (basic card configuration)
+  - heroSize|heroRadius|heroMargin (hero image styling)
+  - contentPadding|titleSize|subtitleSize (text content styling) 
+  - animationDuration|animationEase (legacy timing)
+  - multiStage.{stage1Duration|stage2Duration|stage3Duration|settleDebounce} (3-stage timing as fractions)
+  - multiStage.{birthScale|travelScale|preExpandScale|overshootScale|finalScale} (scale progression)
+  - multiStage.{birthOpacity|travelOpacity|preExpandOpacity|finalOpacity} (opacity progression)
 
 ## Recent Changes (Phase 3A)
 
@@ -183,6 +191,16 @@ Tracking
 - Musical bento animations: Added Tone.js-powered scale-up animations for bento cards with configurable timing and audio. Each card animates with staggered delays and plays a unique musical note. Fully configurable via `user-tweaks.js` with individual card toggles, pitch mappings, and timing controls. Proper AudioContext handling prevents browser warnings; scoped card selection fixes duplicate animation sequences.
 
 - Atom interface sounds: Added comprehensive Tone.js placeholder sounds for all atom interactions. Includes electron hover/click, shell hover, nucleus hover/click, micro-interactions (ripple, shell pulse), and simplified electron drag sequence (detach + drop sounds only). State tracking prevents annoying sound repetition during hover states. All sounds configured via `user-tweaks.js` with placeholder comments for future OGG file replacement.
+
+## Recent Changes (2025‑08‑23)
+
+- Electron preview cards: Added hover preview system that displays project hero image and subtitle in a positioned card when hovering electrons. Provides visual project identification before clicking. Preview cards are fully configurable via `user-tweaks.js` including dimensions, positioning, content styling, and hero image parameters.
+
+- Multi-stage emergence animation: Implemented sophisticated 3-stage animation for preview cards: Stage 1 (birth at electron center), Stage 2 (travel to final position), Stage 3 (expansion with overshoot + settle). Creates organic "emerging from electron" feel with precise positioning calculations and configurable timing/scale/opacity progressions.
+
+- Preview interaction choreography: Added scale-down animation on electron click to prevent visual overlap with project overlay opening. Integrated with existing hover state management and click handlers for smooth transitions between preview and overlay states.
+
+- Dynamic text wrapping: Preview text content adapts to available space, calculating max-width based on hero image size and margins. Supports natural line breaks with word wrapping and hyphenation for responsive content display within constrained preview boxes.
 
 ### Key Files (Bento)
 

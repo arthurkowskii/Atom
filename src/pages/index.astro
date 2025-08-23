@@ -1536,20 +1536,65 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 // Kill any existing preview animations to prevent conflicts
                 gsap.killTweensOf(this.previewElement);
                 
-                // Set transform-origin to scale from electron position
-                // Since preview is above the electron (negative offsetY), origin should be bottom center
-                this.previewElement.style.transformOrigin = 'center bottom';
+                // Calculate electron center position relative to preview's final position
+                const electronCenterX = electronRect.left + electronRect.width / 2;
+                const electronCenterY = electronRect.top + electronRect.height / 2;
+                const previewCenterX = x + previewWidth / 2;
+                const previewCenterY = y + previewHeight / 2;
                 
-                // Animate with configurable timing and easing
-                gsap.fromTo(this.previewElement, 
-                  { scale: 0, opacity: 0 },
+                // Calculate offset needed to start at electron center
+                const startOffsetX = electronCenterX - previewCenterX;
+                const startOffsetY = electronCenterY - previewCenterY;
+                
+                // Set transform-origin to center for multi-stage scaling
+                this.previewElement.style.transformOrigin = 'center center';
+                
+                // Multi-stage animation: birth → travel → expand (configurable)
+                const timeline = gsap.timeline();
+                const multiStage = cfg.electronPreview.multiStage || {};
+                
+                // Stage 1: Birth at electron center
+                timeline.fromTo(this.previewElement, 
                   { 
-                    scale: 1, 
-                    opacity: 1, 
-                    duration: cfg.electronPreview.animationDuration, 
-                    ease: cfg.electronPreview.animationEase 
+                    scale: multiStage.birthScale || 0.1, 
+                    opacity: multiStage.birthOpacity || 0.3,
+                    x: startOffsetX,
+                    y: startOffsetY
+                  },
+                  { 
+                    scale: multiStage.travelScale || 0.3, 
+                    opacity: multiStage.travelOpacity || 0.7,
+                    x: startOffsetX * 0.7, // Start moving toward final position
+                    y: startOffsetY * 0.7,
+                    duration: cfg.electronPreview.animationDuration * (multiStage.stage1Duration || 0.3), 
+                    ease: 'power2.out'
                   }
-                );
+                )
+                
+                // Stage 2: Travel to final position while growing
+                .to(this.previewElement, {
+                  scale: multiStage.preExpandScale || 0.8,
+                  opacity: multiStage.preExpandOpacity || 0.9,
+                  x: 0, // Final position (no offset)
+                  y: 0,
+                  duration: cfg.electronPreview.animationDuration * (multiStage.stage2Duration || 0.4),
+                  ease: 'power2.inOut'
+                })
+                
+                // Stage 3: Final expansion with overshoot
+                .to(this.previewElement, {
+                  scale: multiStage.overshootScale || 1.05,
+                  opacity: multiStage.finalOpacity || 1,
+                  duration: cfg.electronPreview.animationDuration * (multiStage.stage3Duration || 0.2),
+                  ease: 'back.out(2)'
+                })
+                
+                // Settle to final scale
+                .to(this.previewElement, {
+                  scale: multiStage.finalScale || 1,
+                  duration: cfg.electronPreview.animationDuration * (multiStage.settleDebounce || 0.1),
+                  ease: 'power2.out'
+                });
               },
               
               hidePreview() {

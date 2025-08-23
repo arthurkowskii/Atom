@@ -224,7 +224,22 @@ export default {
     titleSize: userTweaks.electronPreview?.titleSize ?? 16,
     subtitleSize: userTweaks.electronPreview?.subtitleSize ?? 13,
     animationDuration: userTweaks.electronPreview?.animationDuration ?? 0.2,
-    animationEase: userTweaks.electronPreview?.animationEase ?? 'back.out(1.7)'
+    animationEase: userTweaks.electronPreview?.animationEase ?? 'back.out(1.7)',
+    multiStage: userTweaks.electronPreview?.multiStage ?? {
+      stage1Duration: 0.3,
+      stage2Duration: 0.4,  
+      stage3Duration: 0.2,
+      settleDebounce: 0.1,
+      birthScale: 0.1,
+      travelScale: 0.3,
+      preExpandScale: 0.8,
+      overshootScale: 1.05,
+      finalScale: 1.0,
+      birthOpacity: 0.3,
+      travelOpacity: 0.7,
+      preExpandOpacity: 0.9,
+      finalOpacity: 1.0
+    }
   },
 
   // Bento animations configuration

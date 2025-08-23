@@ -245,8 +245,29 @@ export const userTweaks = {
     subtitleSize: 13,              // Subtitle font size (px)
     
     // Animation
-    animationDuration: 0.2,        // Scale-up duration (seconds)
-    animationEase: 'back.out(1.7)' // GSAP easing function
+    animationDuration: 0.2,        // Total animation duration (seconds)
+    animationEase: 'back.out(1.7)', // GSAP easing function (legacy, used for settle phase)
+    
+    // Multi-stage animation timing (percentages of total duration)
+    multiStage: {
+      stage1Duration: 0.7,         // Birth phase (0 to this %) - emergence from electron
+      stage2Duration: 0.4,         // Travel phase (stage1 to stage1+stage2 %) - movement to position  
+      stage3Duration: 0.2,         // Expansion phase (remaining %) - final growth with overshoot
+      settleDebounce: 0.1,         // Final settle phase (overshoot correction)
+      
+      // Scale progression
+      birthScale: 0.1,             // Starting scale at electron center
+      travelScale: 0.3,            // Scale at end of stage 1 (beginning travel)
+      preExpandScale: 0.8,         // Scale at end of stage 2 (before final expansion)
+      overshootScale: 1.05,        // Peak scale during overshoot
+      finalScale: 1.0,             // Final settled scale
+      
+      // Opacity progression  
+      birthOpacity: 0.3,           // Starting opacity
+      travelOpacity: 0.7,          // Opacity during travel
+      preExpandOpacity: 0.9,       // Opacity before final expansion
+      finalOpacity: 1.0            // Final opacity
+    }
   },
 
   // 🔊 ATOM INTERFACE SOUNDS (Tone.js Placeholders)
