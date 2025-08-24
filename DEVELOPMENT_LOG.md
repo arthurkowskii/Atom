@@ -151,6 +151,7 @@ Last updated: 2025-08-23 (Electron preview cards with multi-stage emergence anim
 
 ## Near-Term Ideas
 
+- **Light Mode Bento Card Hover Fix**: Bento card accent color hover border works in dark mode but not light mode. Issue with CSS specificity or custom property application. Cards should show visible gray border (`#e5e5e5`) that changes to project accent color on hover, matching dark mode behavior.
 - Domain accent + electron→overlay chip continuity.
 - Soft/squircle mask and optional gooey tether during open.
 - Optional backdrop close, atom scale/blur choreography, deep-link auto-open behind flags.
@@ -203,6 +204,22 @@ Tracking
 - Dynamic text wrapping: Preview text content adapts to available space, calculating max-width based on hero image size and margins. Supports natural line breaks with word wrapping and hyphenation for responsive content display within constrained preview boxes.
 
 - Hero logo toggle: Added `bento.hero.showLogo` boolean parameter to control logo visibility in project bento layouts. Defaults to `true` (show logo) when omitted, can be set to `false` to hide. Required updates to both the content collection schema (`src/content/config.ts`) and ProjectBento component logic for proper frontmatter parsing.
+
+## Recent Changes (2025‑08‑24) - UI Design System Overhaul
+
+- **UI Design System Implementation**: Comprehensive light mode design system overhaul following successful dark mode improvements. Implemented professional-grade design tokens, typography, and visual hierarchy to eliminate harsh black-on-white contrasts and achieve modern web application polish.
+
+- **Design Token System**: Added complete `lightMode` configuration in `user-tweaks.js` with sophisticated gray palette (`#171717`, `#525252`, `#e5e5e5`), Inter font family, modern shadow system, border radius scale, and refined transition curves. Replaces harsh pure black with readable refined grays throughout the interface.
+
+- **Bio Component Enhancement**: Complete visual overhaul of `/bio` page with refined colors, enhanced typography (Inter font), improved skill chip hover states, gradient dividers, and card-like styling with subtle shadows. Maintains accessibility while achieving professional polish.
+
+- **Atom Interface Polish**: Updated nucleus, shells, electrons, tether, and ripple effects from pure black to refined color hierarchy. Nucleus uses `#171717`, shells use `#525252`, maintaining visual hierarchy while softening harsh contrasts. Preserved all orbital motion and interaction functionality.
+
+- **Bento Card Refinements**: Enhanced project card typography with Inter font family, refined color scheme, improved hover states, and modern shadow system. Updated card titles, subtitles, tech pills, action buttons, and gallery elements for consistency with design system.
+
+- **Cross-Component Consistency**: Applied refined design tokens systematically across Bio, Atom interface, and Bento layouts ensuring consistent visual language. All components now use the same color palette, typography scale, shadow system, and transition curves.
+
+- **Accessibility Improvements**: Enhanced focus states with proper `focus-visible` outlines, comprehensive `prefers-reduced-motion` support, improved color contrast ratios, and keyboard navigation enhancements throughout the interface.
 
 ### Key Files (Bento)
 

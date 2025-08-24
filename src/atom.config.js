@@ -15,7 +15,7 @@ export default {
     radius: userTweaks.nucleusSize * userTweaks.atomScale,
     hoverRadius: (userTweaks.nucleusHoverSize ?? userTweaks.nucleusSize * 1.3) * userTweaks.atomScale,
     fontSize: 24 * userTweaks.atomScale,        // Text size inside nucleus (scaled)
-    color: "#000",       // Black for minimal design
+    color: "#171717",    // Refined dark gray for better readability
     strokeWidth: 2 * userTweaks.atomScale,
     logo: {
       size: userTweaks.nucleusLogo?.size ?? 1.4,
@@ -35,7 +35,7 @@ export default {
       defaultOpacity: userTweaks.shell.default.opacity,
       hoverOpacity: userTweaks.shell.hover.opacity,
       electronHoverOpacity: userTweaks.shell.hover.electronOpacity,
-      color: "#000"
+      color: "#525252"
     },
     {
       radius: userTweaks.shellDistances.middle * userTweaks.atomScale,
@@ -46,7 +46,7 @@ export default {
       defaultOpacity: userTweaks.shell.default.opacity,
       hoverOpacity: userTweaks.shell.hover.opacity,
       electronHoverOpacity: userTweaks.shell.hover.electronOpacity,
-      color: "#000"
+      color: "#525252"
     },
     {
       radius: userTweaks.shellDistances.outer * userTweaks.atomScale,
@@ -57,7 +57,7 @@ export default {
       defaultOpacity: userTweaks.shell.default.opacity,
       hoverOpacity: userTweaks.shell.hover.opacity,
       electronHoverOpacity: userTweaks.shell.hover.electronOpacity,
-      color: "#000"
+      color: "#525252"
     }
   ],
 
@@ -65,8 +65,8 @@ export default {
   electrons: {
     radius: userTweaks.electronSize * userTweaks.atomScale,
     hoverRadius: userTweaks.electronHoverSize * userTweaks.atomScale,
-    color: "#000",
-    hoverColor: "#000",
+    color: "#171717",
+    hoverColor: "#171717",
     strokeWidth: 2 * userTweaks.atomScale
   },
 
@@ -97,7 +97,7 @@ export default {
   tether: {
     maxStretch: 100,     // Max distance before breaking visually
     thickness: 4,        // Line thickness
-    color: "#000",
+    color: "#525252",
     opacity: 0.6,
     springiness: 0.8     // How elastic the connection looks
   },
@@ -160,7 +160,7 @@ export default {
     hoverRingDurationMs: userTweaks.micro?.hoverRingDurationMs ?? 160,
     ripple: userTweaks.micro?.ripple ?? true,
     rippleDurationMs: userTweaks.micro?.rippleDurationMs ?? 360,
-    rippleColor: userTweaks.micro?.rippleColor ?? '#000',
+    rippleColor: userTweaks.micro?.rippleColor ?? '#171717',
     rippleStrokeWidth: userTweaks.micro?.rippleStrokeWidth ?? 2,
     rippleExpandPx: userTweaks.micro?.rippleExpandPx ?? 56,
     shellPulse: userTweaks.micro?.shellPulse ?? true,

@@ -210,7 +210,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     min-height: 100vh;
     background: #ffffff !important;
     color: #000000;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     padding-top: 4rem; /* Space for close button */
     padding-bottom: 2rem; /* Ensure space for scrolling */
     
@@ -382,7 +382,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     background: #ffffff;
     border-radius: 16px;
     padding: 1.5rem;
-    border: 2px solid rgba(0, 0, 0, 0.08);
+    border: 2px solid #e5e5e5;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     overflow: hidden;
@@ -404,7 +404,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   .bento-card:hover,
   .bento-card:focus {
-    border-color: rgba(var(--accent-color-rgb), 0.3);
+    border-color: #ff6b00 !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
     outline: none; /* Remove any browser default outline */
   }
@@ -503,13 +503,15 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .stat-value {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #000000; /* readable across accents */
+    color: #171717; /* readable across accents */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     display: block;
   }
 
   .stat-label {
     font-size: 0.85rem;
-    color: #666;
+    color: #525252;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     margin-top: 0.3rem;
   }
 
@@ -528,6 +530,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     text-decoration: none;
     text-align: center;
     font-weight: 600;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
@@ -572,11 +575,12 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .tech-pill {
     padding: 0.6rem 1.2rem;
     background: var(--accent-bg-weak);
-    color: #000000;
+    color: #171717;
     border-radius: 25px;
     border: 1px solid var(--accent-border);
     font-size: 0.9rem;
     font-weight: 500;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     transition: all 0.3s ease;
   }
 
@@ -664,8 +668,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   }
 
   .gallery-hero:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 
   .gallery-hero img {
@@ -701,8 +705,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   .gallery-thumb:hover {
     opacity: 1;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .gallery-thumb img {
@@ -789,15 +793,17 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   /* Card Titles */
   .card-title {
     font-size: 1.4rem;
-    color: #1a1a1a;
+    color: #171717;
     margin-bottom: 0.5rem;
     font-weight: 600;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
 
   .card-subtitle {
-    color: #666;
+    color: #525252;
     font-size: 0.9rem;
     margin-bottom: 1rem;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
 
   /* Responsive Design - Mobile First Approach */
