@@ -33,7 +33,8 @@ bento:
     subtitle: "Musicien, Sound-Designer et Intégrateur Audio"
     subtitleColor: "#faf525"
     backgroundPosition: "center"
-    backgroundSize: "100% 100%" #COVER/CONTAIN/100% 100%
+    backgroundSize: "cover"
+    backgroundScale: 1.4  # Alternative to backgroundSize - use 1.1, 0.9, etc.
     showLogo: false
 
   # Optional stats
