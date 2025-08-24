@@ -35,7 +35,7 @@ bento:
     subtitleColor: "#faf525"
     backgroundPosition: "top"
     backgroundSize: "cover"
-    backgroundScale: 1.2  # Alternative to backgroundSize - use 1.1, 0.9, etc.
+    backgroundScale: 1.1  # Alternative to backgroundSize - use 1.1, 0.9, etc.
     showLogo: false
 
   # Optional stats

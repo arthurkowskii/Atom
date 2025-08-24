@@ -258,7 +258,14 @@ Tracking
   - Bandcamp sizing: Per-platform override scales Bandcamp icon 2× using CSS `transform` to avoid changing row height; buttons use `overflow: hidden` to preserve layout.
   - Styling: Music Links buttons align visually with Stats (min-height ~72px, hover/elevation, dark mode text colors). Icon size set to 48px base.
 - Templates/docs: Updated `BENTO_TEMPLATE.md` and `templates/bento-project.template.md` to include `cards.musicLinks` and a 4-link example payload.
-- Content updates: Added `cards.musicLinks: false` and `musicLinks` blocks to:
-  - `src/content/projects/1_Music/lesupermegashow.md` (filled with real YouTube/Spotify + placeholders)
-  - `src/content/projects/2_Game Audio/kubika-showcase.md` (placeholders)
-  - `src/content/projects/2_Game Audio/chromestesia_showcase.md` (YouTube trailer + placeholders)
+  - Content updates: Added `cards.musicLinks: false` and `musicLinks` blocks to:
+    - `src/content/projects/1_Music/lesupermegashow.md` (filled with real YouTube/Spotify + placeholders)
+    - `src/content/projects/2_Game Audio/kubika-showcase.md` (placeholders)
+    - `src/content/projects/2_Game Audio/chromestesia_showcase.md` (YouTube trailer + placeholders)
+
+### Visual Polish & Fixes (2025‑08‑24)
+
+- Accent-aware hover: Replaced fixed orange hover outline on bento cards with per-project accent via `var(--accent-color)`.
+- Music Links icons: Switched icon imports to URL form (`?url`) for reliable loading; added platform inference by text/domain; dark-mode-only invert for Bandcamp icon.
+- Bandcamp sizing: Increased only Bandcamp icon visually (2×) via `transform: scale(2)` with `overflow: hidden` to keep row height consistent.
+- Hero hover zoom: Implemented dedicated `.hero-bg` image layer that scales on hover (default scale 1.04, 280ms cubic-bezier). Reduced-motion path uses 1.02 @ 160ms. Removed conflicting static background and ensured the effect is visible on all pages.

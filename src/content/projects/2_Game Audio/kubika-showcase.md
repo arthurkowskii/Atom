@@ -31,9 +31,9 @@ bento:
   hero:
     subtitle: "Technical Sound Design"
     subtitleColor: "#ff6b00"
-    backgroundPosition: "top"
+    backgroundPosition: "center"
     backgroundSize: "cover"
-    backgroundScale: 1.8  # Alternative to backgroundSize - use 1.1, 0.9, etc.
+    backgroundScale: 1.1  # Alternative to backgroundSize - use 1.1, 0.9, etc.
     showLogo: false
   
   # Project stats

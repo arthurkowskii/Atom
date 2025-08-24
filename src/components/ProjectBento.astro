@@ -114,6 +114,16 @@ const isLightAccent = accentLum > 0.7; // high-luminance accents (e.g., neon yel
 // Subtitle text color: prefer black when accent is too light to ensure readability
 const heroSubtitleColor = isLightAccent ? '#000000' : (bento.hero?.subtitleColor || accentColor);
 
+// Compute readable on-accent text color (white or black) based on contrast
+function contrastRatio(l1, l2) {
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+const contrastWithWhite = contrastRatio(1, accentLum);
+const contrastWithBlack = contrastRatio(0, accentLum);
+const onAccentColor = contrastWithWhite >= contrastWithBlack ? '#ffffff' : '#000000';
+
 // Music Links availability: only render when exactly 4 links provided
 const hasMusicLinks = !!(cards.musicLinks && bento.musicLinks && Array.isArray(bento.musicLinks.items) && bento.musicLinks.items.length === 4);
 if (cards.musicLinks && !hasMusicLinks) {
@@ -237,7 +247,11 @@ const heroBackgroundSize = heroBackgroundScale ?
   `${heroBackgroundScale * 100}%` : 
   (bento.hero?.backgroundSize || 'cover');
 
-const heroStyle = finalHeroUrl ? 
+// Use a dedicated .hero-bg layer for the image so hover scale is visible.
+// Keep hero card background empty to avoid a second static image behind it.
+const heroStyle = '';
+
+const heroBgStyle = finalHeroUrl ? 
   `background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35)), url('${finalHeroUrl}'); background-position: ${heroBackgroundPosition}; background-size: ${heroBackgroundSize};` : 
   '';
 
@@ -248,7 +262,7 @@ const hexRgb = cleanHex.length === 8 ? cleanHex.slice(0, 6) : cleanHex; // Remov
 const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join(', ') || '255, 107, 0';
 ---
 
-<style define:vars={{ accentColor, accentColorRgb, heroSubtitleColor }}>
+<style define:vars={{ accentColor, accentColorRgb, heroSubtitleColor, onAccentColor }}>
   .project-bento {
     min-height: 100vh;
     background: #ffffff !important;
@@ -264,7 +278,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     --accent-bg-weak: rgba(var(--accent-color-rgb), 0.10);
     --accent-bg-weak-hover: rgba(var(--accent-color-rgb), 0.16);
     --accent-border: rgba(var(--accent-color-rgb), 0.28);
-    --on-accent: #000000; /* default readable on both yellow/orange */
+    --on-accent: var(--onAccentColor);
   }
 
   /* Professional dark theme for project pages */
@@ -513,6 +527,40 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     background-repeat: no-repeat;
     border: none;
     box-shadow: none;
+    overflow: hidden; /* clip hover scale */
+  }
+
+  /* Hero background element (wrapper scales on hover) */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    transform-origin: center;
+    pointer-events: none; /* ensure clicks pass to content */
+  }
+
+  .hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35));
+  }
+
+  .hero-card:hover .hero-bg {
+    transform: scale(1.04);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-card .hero-bg { transition: transform 160ms ease-out; }
+    .hero-card:hover .hero-bg { transform: scale(1.02); }
   }
 
   .hero-content {
@@ -1182,6 +1230,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     <!-- Hero Card - Main banner with project info -->
     {cards.hero && (
       <div class="bento-card hero-card" style={heroStyle}>
+        <div class="hero-bg">
+          <img class="hero-bg-img" src={finalHeroUrl} alt="" aria-hidden="true" style={`object-position: ${heroBackgroundPosition}; transform: scale(${heroBackgroundScale || 1});`} />
+          <div class="hero-overlay"></div>
+        </div>
         <div class="hero-content">
           {(heroLogoUrl && (bento.hero?.showLogo ?? true)) && (
             <img src={heroLogoUrl} alt={`${data.title} Logo`} class="hero-logo">
