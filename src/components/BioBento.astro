@@ -1,0 +1,634 @@
+---
+export interface Props { data: any }
+const { data } = Astro.props;
+import LogoAbleton from '../Assets/software_logos/Ableton.webp';
+import LogoReaper from '../Assets/software_logos/Reaper.webp';
+import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
+import LogoProTools from '../Assets/software_logos/Pro_Tools.webp';
+import LogoFMOD from '../Assets/software_logos/Fmod.webp';
+import LogoWwise from '../Assets/software_logos/Wwise.webp';
+import LogoUnity from '../Assets/software_logos/Unity.webp';
+import LogoCsharp from '../Assets/software_logos/Csharp.webp';
+import LogoGit from '../Assets/software_logos/Git.webp';
+import LogoDavinci from '../Assets/software_logos/Davinci_Resolve.webp';
+import LogoCinema4D from '../Assets/software_logos/Cinema_4D.webp';
+import LogoPhotoshop from '../Assets/software_logos/photoshop.webp';
+
+// In Astro, importing images returns an object with a `src` property.
+// Use `any` and normalize to a string at render time.
+const RAW_LOGOS: Record<string, any> = {
+  ableton: LogoAbleton,
+  reaper: LogoReaper,
+  logicpro: LogoLogicPro,
+  protools: LogoProTools,
+  fmod: LogoFMOD,
+  wwise: LogoWwise,
+  unity: LogoUnity,
+  csharp: LogoCsharp,
+  git: LogoGit,
+  davinciresolve: LogoDavinci,
+  cinema4d: LogoCinema4D,
+  photoshop: LogoPhotoshop,
+};
+
+function normLabel(label: string): string {
+  const s = (label || '').toLowerCase().replace(/#/g, 'sharp').replace(/[^a-z0-9]+/g, '');
+  return s;
+}
+
+function logoSrcFor(label: string): string | null {
+  const key = normLabel(label);
+  const val = RAW_LOGOS[key];
+  if (!val) return null;
+  return typeof val === 'string' ? val : (val?.src ?? null);
+}
+---
+
+<style>
+  :root { color-scheme: light; }
+  
+  /* Layout Structure */
+  .bio-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    background: #ffffff;
+  }
+
+  /* Override for overlay context - remove min-height and center alignment */
+  #bio-content .bio-container {
+    min-height: auto;
+    align-items: flex-start;
+    padding: 24px;
+    background: transparent;
+  }
+
+  .bio-bento {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto auto auto;
+    gap: 24px;
+    grid-template-areas:
+      "hero hero status"
+      "bio portrait skill1"
+      "contact portrait skill2"
+      "social social skill3";
+  }
+
+  /* Accentuate bio and contact height difference */
+  .bio-card {
+    min-height: 220px;
+  }
+
+  .contact-card {
+    min-height: 60px;
+    max-height: 60px;
+    padding: 12px 24px;
+  }
+
+  /* Base Card Styling */
+  .bento-card {
+    background: #ffffff;
+    border: 2px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .bento-card.animated {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .bento-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #171717;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .bento-card:hover {
+    border-color: #171717;
+    transform: translateY(-2px) scale(1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .bento-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Grid Area Assignments */
+  .hero-card { grid-area: hero; }
+  .status-card { grid-area: status; }
+  .bio-card { grid-area: bio; }
+  .portrait-card { grid-area: portrait; }
+  .contact-card { grid-area: contact; }
+  .social-card { grid-area: social; }
+  .skill-card-1 { grid-area: skill1; }
+  .skill-card-2 { grid-area: skill2; }
+  .skill-card-3 { grid-area: skill3; }
+
+  /* Hero Card */
+  .hero-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  }
+
+  .hero-name {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: 4px;
+    line-height: 1.1;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    color: #171717;
+  }
+
+  .hero-subtitle {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #525252;
+    margin: 0;
+  }
+
+  /* Status Card */
+  .status-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  }
+
+  .status-emoji {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .status-label {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #525252;
+    margin: 0 0 8px;
+  }
+
+  .status-text {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #171717;
+    margin: 0;
+  }
+
+  /* Bio Text Card */
+  .bio-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .bio-text {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #171717;
+    margin: 0;
+  }
+
+  .bio-text p {
+    margin: 0 0 16px;
+  }
+
+  .bio-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Portrait Card */
+  .portrait-card {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portrait-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .portrait-card:hover .portrait-image {
+    transform: scale(1.05);
+  }
+
+  /* Contact Card */
+  .contact-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card-label {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #525252;
+    margin: 0 0 12px;
+  }
+
+  .contact-email {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #171717;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .contact-email:hover {
+    background: #171717;
+    color: #ffffff;
+    border-color: #171717;
+  }
+
+  /* Social Card */
+  .social-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .social-link {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #171717;
+    text-decoration: none;
+    padding: 6px 12px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .social-link:hover {
+    border-color: #171717;
+    background: #f8f9fa;
+    transform: translateY(-1px);
+  }
+
+  /* Skill Cards */
+  .skill-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .skill-title {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #171717;
+    margin: 0 0 16px;
+  }
+
+  .skill-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Logo-only tools for DAW, Dynamic Audio, Engine & Code */
+  .skill-tools.logo-only {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+    gap: 12px;
+  }
+
+  .skill-tool {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #171717;
+    padding: 6px 8px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+
+  .skill-tool.logo-only {
+    padding: 12px;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+  }
+
+  .skill-tool:hover {
+    border-color: #171717;
+    background: #f8f9fa;
+  }
+
+  .skill-tool img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    filter: grayscale(1) brightness(0) contrast(100%);
+  }
+
+  .skill-tool.logo-only img {
+    width: 24px;
+    height: 24px;
+    filter: none;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1199px) {
+    .bio-bento {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas:
+        "hero hero"
+        "status portrait"
+        "bio portrait"
+        "contact social"
+        "skill1 skill2"
+        "skill3 skill3";
+    }
+  }
+
+  @media (max-width: 899px) {
+    .bio-bento {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "portrait"
+        "hero"
+        "status"
+        "bio"
+        "contact"
+        "social"
+        "skill1"
+        "skill2"
+        "skill3";
+    }
+
+    .hero-name {
+      font-size: 36px;
+      text-align: center;
+    }
+
+    .hero-subtitle {
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 699px) {
+    .bio-container {
+      padding: 24px 16px;
+    }
+
+    .bio-bento {
+      gap: 16px;
+    }
+
+    .bento-card {
+      padding: 20px;
+    }
+
+    .hero-name {
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+  }
+
+  /* Dark Theme Support */
+  html[data-theme="dark"] .bio-container {
+    background: #0f0f0f;
+  }
+
+  html[data-theme="dark"] #bio-content .bio-container {
+    background: transparent;
+  }
+
+  html[data-theme="dark"] .bento-card {
+    background: #1a1a1a;
+    border-color: #333333;
+  }
+
+  html[data-theme="dark"] .hero-card,
+  html[data-theme="dark"] .status-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  }
+
+  html[data-theme="dark"] .bento-card::before {
+    background: #ffffff;
+  }
+
+  html[data-theme="dark"] .bento-card:hover {
+    border-color: #ffffff;
+  }
+
+  html[data-theme="dark"] .hero-name,
+  html[data-theme="dark"] .bio-text,
+  html[data-theme="dark"] .skill-title,
+  html[data-theme="dark"] .status-text {
+    color: #ffffff;
+  }
+
+  html[data-theme="dark"] .hero-subtitle,
+  html[data-theme="dark"] .card-label,
+  html[data-theme="dark"] .status-label {
+    color: #cccccc;
+  }
+
+  html[data-theme="dark"] .contact-email,
+  html[data-theme="dark"] .social-link,
+  html[data-theme="dark"] .skill-tool {
+    color: #ffffff;
+    border-color: #333333;
+  }
+
+  html[data-theme="dark"] .contact-email:hover {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+  }
+
+  html[data-theme="dark"] .social-link:hover,
+  html[data-theme="dark"] .skill-tool:hover {
+    border-color: #ffffff;
+    background: #2a2a2a;
+  }
+
+  html[data-theme="dark"] .skill-tool img {
+    filter: invert(1) brightness(1.2);
+  }
+
+  html[data-theme="dark"] .skill-tool.logo-only img {
+    filter: none;
+  }
+</style>
+
+<section class="bio-container" aria-label="Bio">
+  <div class="bio-bento">
+    <!-- Hero Card -->
+    <div class="bento-card hero-card" data-animation-delay="0">
+      <h1 class="hero-name">{String(data?.title || '').toUpperCase()}</h1>
+      <p class="hero-subtitle">{String(data?.subtitle || '').toUpperCase()}</p>
+    </div>
+
+    <!-- Status Card -->
+    <div class="bento-card status-card" data-animation-delay="100">
+      <div class="status-emoji">🎵</div>
+      <div class="status-label">Currently</div>
+      <p class="status-text">Studying Sound Design at ISART Digital Paris</p>
+    </div>
+
+    <!-- Bio Text Card -->
+    <div class="bento-card bio-card" data-animation-delay="200">
+      <div class="bio-text" set:html={data?.bio || ''}></div>
+    </div>
+
+    <!-- Portrait Card -->
+    {data?.portrait ? (
+      <div class="bento-card portrait-card" data-animation-delay="300">
+        <img class="portrait-image" src={data.portrait} alt={data.title || 'Portrait'} />
+      </div>
+    ) : null}
+
+    <!-- Contact Card -->
+    <div class="bento-card contact-card" data-animation-delay="400">
+      <div class="card-label">Contact</div>
+      {data?.email ? (
+        <a class="contact-email" href={`mailto:${data.email}`}>{data.email}</a>
+      ) : null}
+    </div>
+
+    <!-- Social Card -->
+    <div class="bento-card social-card" data-animation-delay="500">
+      <div class="card-label">Social</div>
+      <div class="social-links">
+        {(data?.social || []).map((s: any) => (
+          <a class="social-link" href={s.url} target="_blank" rel="noreferrer noopener">{s.platform}</a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Skill Cards -->
+    {(data?.skills || []).slice(0, 3).map((cat: any, index: number) => {
+      const logoOnlyCategories = ['DAW', 'Dynamic Audio', 'Engine & Code'];
+      const isLogoOnly = logoOnlyCategories.includes(cat.category);
+      
+      return (
+        <div class={`bento-card skill-card skill-card-${index + 1}`} data-animation-delay={600 + index * 100}>
+          <h3 class="skill-title">{cat.category}</h3>
+          <div class={`skill-tools ${isLogoOnly ? 'logo-only' : ''}`}>
+            {(cat.tools || []).map((t: string) => {
+              const src = logoSrcFor(t);
+              return (
+                <div class={`skill-tool ${isLogoOnly ? 'logo-only' : ''}`}>
+                  {src ? <img src={src} alt={isLogoOnly ? t : ""} aria-hidden={!isLogoOnly} /> : null}
+                  {isLogoOnly ? '' : t}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</section>
+
+<script>
+  // Bio Bento Animation System
+  function initBioBentoAnimations() {
+    const cards = document.querySelectorAll('.bento-card[data-animation-delay]');
+    
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      cards.forEach(card => {
+        card.classList.add('animated');
+      });
+      return;
+    }
+
+    // Animate cards with staggered timing
+    cards.forEach((card, index) => {
+      const delay = parseInt(card.getAttribute('data-animation-delay') || '0');
+      
+      setTimeout(() => {
+        card.classList.add('animated');
+      }, delay);
+    });
+  }
+
+  // Re-trigger animations when bio content becomes visible (for overlay context)
+  function restartBioBentoAnimations() {
+    const cards = document.querySelectorAll('.bento-card[data-animation-delay]');
+    
+    // Reset animation state
+    cards.forEach(card => {
+      card.classList.remove('animated');
+    });
+    
+    // Re-trigger animations after a brief delay
+    setTimeout(() => {
+      initBioBentoAnimations();
+    }, 100);
+  }
+
+  // Expose restart function globally for overlay system
+  window.restartBioBentoAnimations = restartBioBentoAnimations;
+
+  // Initialize animations when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBioBentoAnimations);
+  } else {
+    initBioBentoAnimations();
+  }
+</script>

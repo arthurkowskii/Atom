@@ -1,6 +1,6 @@
 ---
 import { getEntryBySlug } from 'astro:content';
-import BioBW from '../components/BioBW.astro';
+import BioBento from '../components/BioBento.astro';
 
 const entry = await getEntryBySlug('bio', 'about');
 const data = entry?.data || {};
@@ -36,6 +36,6 @@ const data = entry?.data || {};
     </script>
   </head>
   <body>
-    <BioBW data={data} />
+    <BioBento data={data} />
   </body>
   </html>

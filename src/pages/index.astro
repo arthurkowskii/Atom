@@ -1,6 +1,6 @@
 ---
 import { getCollection, getEntryBySlug } from 'astro:content';
-import BioBW from '../components/BioBW.astro';
+import BioBento from '../components/BioBento.astro';
 import ProjectBento from '../components/ProjectBento.astro';
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
@@ -415,7 +415,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             
             /* Pruned old bio styles (legacy) */
 
-				/* BioBW component owns its own styles; no duplicates here */
+				/* BioBento component owns its own styles; no duplicates here */
 
             /* Shell labels (curved text on rings) */
             .shell-label { fill: #000; letter-spacing: 2px; text-transform: uppercase; }
@@ -830,9 +830,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             ))}
           </div>
           
-          <!-- Bio content template (BW Pro, shared component) -->
+          <!-- Bio content template (Bento style, shared component) -->
           <div id="bio-content" role="dialog" aria-modal="true" aria-label="Bio" style="display:none;">
-            <BioBW data={bioPayload} />
+            <BioBento data={bioPayload} />
           </div>
         </div>
 
@@ -1053,15 +1053,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             const techEl = document.getElementById('overlay-tech');
             const actionsEl = document.getElementById('overlay-actions');
             
-            // Bio overlay elements (BW Pro)
+            // Bio overlay elements (Bento style)
             const bioContent = document.getElementById('bio-content');
-            const bioNameEl = document.getElementById('bio-bw-name');
-            const bioTitleEl = document.getElementById('bio-bw-subtitle');
-            const bioLeadEl = document.getElementById('bio-bw-lead');
-            const bioPortraitEl = document.getElementById('bio-bw-portrait');
-            const bioSkillsGrid = document.getElementById('bio-bw-skills');
-            const bioEmailEl = document.getElementById('bio-bw-email');
-            const bioSocialEl = document.getElementById('bio-bw-social');
             
             // Data
             const projectDataEl = document.getElementById('project-data');
@@ -1109,16 +1102,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               }
             }
 
-            function fillBioOverlay(bio) {
-              // Only update text and image fields to avoid DOM drift vs /bio component
-              bioNameEl.textContent = (bio?.title ? String(bio.title) : '').toUpperCase();
-              bioTitleEl.textContent = (bio?.subtitle ? String(bio.subtitle) : '').toUpperCase();
-              bioLeadEl.innerHTML = bio?.bio || '';
-              bioPortraitEl.src = bio?.portrait || '';
-              bioPortraitEl.alt = bio?.title || 'Portrait';
-              bioEmailEl.href = bio?.email ? `mailto:${bio.email}` : '#';
-              bioEmailEl.textContent = bio?.email || '';
-            }
+            // fillBioOverlay removed - BioBento component is self-contained and server-hydrated
 
             function openProjectOverlay(slug, cx, cy, electronEl) {
               const p = projectBySlug.get(slug);
@@ -1226,13 +1210,14 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               projectContent.style.display = 'none';
               bioContent.style.display = 'block';
               
-              // Fetch freshest bio data from API (fallback to inlined)
-              let fresh = null;
-              try {
-                const res = await fetch('/api/bio.json?ts=' + Date.now(), { cache: 'no-store' });
-                if (res.ok) fresh = await res.json();
-              } catch {}
-              fillBioOverlay(fresh || BIO_DATA || {});
+              // BioBento is already hydrated with fresh data from server-side bioPayload
+              // No need to dynamically update since the component is self-contained
+              
+              // Restart bento animations for overlay context
+              if (typeof window.restartBioBentoAnimations === 'function') {
+                window.restartBioBentoAnimations();
+              }
+              
               overlay.style.setProperty('--x', `${cx}px`);
               overlay.style.setProperty('--y', `${cy}px`);
               overlay.style.setProperty('--r', `0px`);
