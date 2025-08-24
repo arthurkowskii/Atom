@@ -21,6 +21,7 @@ bento:
   cards:
     hero: true
     stats: true
+    musicLinks: false
     actions: true
     tech: true
     process: true
@@ -41,6 +42,19 @@ bento:
       label: "Months"
     - value: "12"
       label: "Features"
+
+  # Optional Music Links (enable with cards.musicLinks: true)
+  # musicLinks:
+  #   title: "Music Links"
+  #   items:
+  #     - text: "Spotify"
+  #       url: "https://open.spotify.com/track/..."
+  #     - text: "Apple Music"
+  #       url: "https://music.apple.com/..."
+  #     - text: "Bandcamp"
+  #       url: "https://yourname.bandcamp.com/track/..."
+  #     - text: "YouTube"
+  #       url: "https://youtube.com/watch?v=..."
 
   # Optional actions
   actions:

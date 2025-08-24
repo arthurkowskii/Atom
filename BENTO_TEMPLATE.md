@@ -30,14 +30,15 @@ bento:
   
   # Card visibility toggles - set to false to hide cards
   cards:
-    hero: true      # Main banner with title/description
-    stats: true     # Project statistics
-    actions: true   # Action buttons (play, demo, etc.)
-    tech: true      # Technology stack pills
-    process: true   # Development process steps
-    gallery: true   # Image gallery
+    hero: true       # Main banner with title/description
+    stats: true      # Project statistics
+    musicLinks: false # Music links grid (enable to show)
+    actions: true    # Action buttons (play, demo, etc.)
+    tech: true       # Technology stack pills
+    process: true    # Development process steps
+    gallery: true    # Image gallery
     challenges: true # Technical challenges faced
-    results: true   # Results and impact
+    results: true    # Results and impact
   
   # Hero card configuration
   hero:
@@ -116,6 +117,19 @@ bento:
         text: "Won 'Best Innovation' award at Tech Conference"
       - icon: "💡"
         text: "Featured in 5+ industry publications"
+
+  # Music links (exactly 4). Enable with cards.musicLinks: true
+  # musicLinks:
+  #   title: "Music Links" # Optional (defaults to "Music Links")
+  #   items:
+  #     - text: "Spotify"
+  #       url: "https://open.spotify.com/track/..."
+  #     - text: "Apple Music"
+  #       url: "https://music.apple.com/..."
+  #     - text: "Bandcamp"
+  #       url: "https://yourname.bandcamp.com/track/..."
+  #     - text: "YouTube"
+  #       url: "https://youtube.com/watch?v=..."
 ---
 
 # Your Project Title

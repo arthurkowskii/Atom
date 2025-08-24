@@ -21,6 +21,7 @@ bento:
   cards:
     hero: true
     stats: true
+    musicLinks: false
     actions: true
     tech: true
     process: true
@@ -57,6 +58,19 @@ bento:
     secondary:
       text: "🕹️ Gameplay Demo"
       url: "https://youtu.be/COJwYCqv5dw?si=PmIhmJSQem6hF6Ha"
+
+  # Music links (exactly 4 items). Enable with cards.musicLinks: true
+  musicLinks:
+    title: "Music Links"
+    items:
+      - text: "Spotify"
+        url: "https://open.spotify.com/"
+      - text: "Apple Music"
+        url: "https://music.apple.com/"
+      - text: "Bandcamp"
+        url: "https://bandcamp.com/"
+      - text: "YouTube"
+        url: "https://youtu.be/6aKB7nFtJQo?si=a0XfJuEDsXJyw6F2"
 
   # Optional process
   process:

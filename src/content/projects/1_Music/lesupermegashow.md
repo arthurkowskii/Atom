@@ -20,7 +20,8 @@ bento:
   # Toggle cards
   cards:
     hero: true
-    stats: true
+    stats: false
+    musicLinks: true
     actions: true
     tech: true
     process: true
@@ -32,7 +33,7 @@ bento:
   hero:
     subtitle: "Composition, Mixage, Mastering et Réalisation d'un court métrage"
     subtitleColor: "#faf525"
-    backgroundPosition: "bottom"
+    backgroundPosition: "top"
     backgroundSize: "cover"
     backgroundScale: 1.2  # Alternative to backgroundSize - use 1.1, 0.9, etc.
     showLogo: false
@@ -57,6 +58,19 @@ bento:
     secondary:
       text: "💽 Écouter l'Album"
       url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
+
+  # Music links (exactly 4 items). Enable with cards.musicLinks: true
+  musicLinks:
+    title: "Music Links"
+    items:
+      - text: "Spotify"
+        url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
+      - text: "Apple Music"
+        url: "https://music.apple.com/"
+      - text: "Bandcamp"
+        url: "https://bandcamp.com/"
+      - text: "YouTube"
+        url: "https://youtu.be/GtoGUcY1K1Y?si=YQXis7RFPEgLKbPy"
 
   # Optional process
   process:

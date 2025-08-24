@@ -19,6 +19,7 @@ bento:
   cards:
     hero: true
     stats: true
+    musicLinks: false
     actions: true
     tech: true
     process: true
@@ -55,6 +56,19 @@ bento:
     secondary:
       text: "Follow us on itch.io"
       url: "https://kubika.itch.io/kubika-a-cube-story"
+
+  # Music links (exactly 4 items). Enable with cards.musicLinks: true
+  musicLinks:
+    title: "Music Links"
+    items:
+      - text: "Spotify"
+        url: "https://open.spotify.com/"
+      - text: "Apple Music"
+        url: "https://music.apple.com/"
+      - text: "Bandcamp"
+        url: "https://bandcamp.com/"
+      - text: "YouTube"
+        url: "https://youtube.com/"
   
   # Development process
   process:

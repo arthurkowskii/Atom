@@ -55,12 +55,22 @@ export interface Props {
           subtitle?: string;
           items: Array<{ icon: string; text: string; }>;
         };
+        musicLinks?: {
+          title?: string;
+          items: Array<{ text: string; url: string; }>;
+        };
       };
     };
   };
 }
 
 import atomConfig from '../atom.config.js';
+// Music links icons (static imports). Folder name contains a space; keep as-is.
+import spotifyIcon from '../Assets/music_links assets/spotify.png?url';
+import appleMusicIcon from '../Assets/music_links assets/apple_music.png?url';
+import bandcampIcon from '../Assets/music_links assets/bandcamp-logo.png?url';
+import youtubeIcon from '../Assets/music_links assets/youtube.png?url';
+import soundcloudIcon from '../Assets/music_links assets/soundcloud.png?url';
 
 const { project } = Astro.props;
 
@@ -76,6 +86,7 @@ const bento = data.bento || {};
 const cards = { 
   hero: true, 
   stats: true, 
+  musicLinks: false,
   actions: true, 
   tech: true, 
   process: true, 
@@ -102,6 +113,38 @@ const accentLum = relativeLuminance(accentRgbObj);
 const isLightAccent = accentLum > 0.7; // high-luminance accents (e.g., neon yellows)
 // Subtitle text color: prefer black when accent is too light to ensure readability
 const heroSubtitleColor = isLightAccent ? '#000000' : (bento.hero?.subtitleColor || accentColor);
+
+// Music Links availability: only render when exactly 4 links provided
+const hasMusicLinks = !!(cards.musicLinks && bento.musicLinks && Array.isArray(bento.musicLinks.items) && bento.musicLinks.items.length === 4);
+if (cards.musicLinks && !hasMusicLinks) {
+  console.warn('[ProjectBento] musicLinks card enabled but missing 4 items; falling back to Stats card.');
+}
+
+// Icon mapping and platform inference for Music Links
+const MUSIC_ICONS: Record<string, any> = {
+  spotify: spotifyIcon,
+  applemusic: appleMusicIcon,
+  apple: appleMusicIcon,
+  bandcamp: bandcampIcon,
+  youtube: youtubeIcon,
+  soundcloud: soundcloudIcon,
+};
+
+function normalizeKey(s?: string): string {
+  return (s || '').toLowerCase().replace(/[^a-z]/g, '');
+}
+
+function inferPlatform(text?: string, url?: string): string {
+  const t = normalizeKey(text);
+  if (t && MUSIC_ICONS[t]) return t;
+  const u = (url || '').toLowerCase();
+  if (u.includes('spotify')) return 'spotify';
+  if (u.includes('apple') || u.includes('music.apple')) return 'applemusic';
+  if (u.includes('bandcamp')) return 'bandcamp';
+  if (u.includes('youtube') || u.includes('youtu.be')) return 'youtube';
+  if (u.includes('soundcloud')) return 'soundcloud';
+  return '';
+}
 
 // Build gallery and hero assets automatically from a folder when provided
 type Img = { src: string; alt: string };
@@ -266,6 +309,22 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   html[data-theme="dark"] .stat-item {
     background: rgba(var(--accent-color-rgb), 0.15);
     border: 1px solid rgba(var(--accent-color-rgb), 0.3);
+  }
+
+  /* Dark theme music link buttons */
+  html[data-theme="dark"] .music-link-btn {
+    background: rgba(var(--accent-color-rgb), 0.15);
+    border: 1px solid rgba(var(--accent-color-rgb), 0.3);
+    color: #f4f4f5;
+  }
+
+  html[data-theme="dark"] .music-link-btn:hover {
+    background: rgba(var(--accent-color-rgb), 0.25);
+    box-shadow: 0 4px 12px rgba(var(--accent-color-rgb), 0.3);
+  }
+
+  html[data-theme="dark"] .music-link-text {
+    color: #f4f4f5;
   }
 
   html[data-theme="dark"] .stat-value {
@@ -485,7 +544,21 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     grid-row: 1;
   }
 
+  /* Music Links Card (mirrors Stats placement) */
+  .music-links-card {
+    grid-column: 1 / 5;
+    grid-row: 1;
+  }
+
   .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Music Links grid mirrors stats grid */
+  .music-links-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
@@ -498,6 +571,51 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     background: var(--accent-bg-weak);
     border-radius: 12px;
     border: 1px solid var(--accent-border);
+  }
+
+  /* Music link button styled similar to stat-item but clickable */
+  .music-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    min-height: 72px; /* Slightly smaller for closer match */
+    background: var(--accent-bg-weak);
+    border-radius: 12px;
+    border: 1px solid var(--accent-border);
+    font-weight: 600;
+    color: #171717;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden; /* Prevent oversized icons from changing row height */
+  }
+
+  .music-link-btn:hover {
+    background: var(--accent-bg-weak-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--accent-color-rgb), 0.2);
+    border-color: rgba(var(--accent-color-rgb), 0.5);
+  }
+
+  .music-link-btn img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Bandcamp logo tends to have extra padding; scale it slightly larger */
+  .music-link-btn[data-platform="bandcamp"] img {
+    /* Visually 2x without affecting layout */
+    transform: scale(2);
+    transform-origin: center;
+  }
+
+  .music-link-text {
+    font-size: 0.95rem;
+    color: #171717;
   }
 
   .stat-value {
@@ -832,6 +950,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       grid-column: 1 / 5; 
       grid-row: 1; 
     }
+    .music-links-card {
+      grid-column: 1 / 5;
+      grid-row: 1;
+    }
     .actions-card { 
       grid-column: 1 / 5; 
       grid-row: 2; 
@@ -879,6 +1001,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     .stats-card { 
       grid-column: 1 / 4; 
       grid-row: 1; 
+    }
+    .music-links-card {
+      grid-column: 1 / 4;
+      grid-row: 1;
     }
     .actions-card { 
       grid-column: 1 / 4; 
@@ -940,6 +1066,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     .stats-card { 
       grid-column: 1 / 4; 
       grid-row: 2; 
+    }
+    .music-links-card {
+      grid-column: 1 / 4;
+      grid-row: 2;
     }
     .actions-card { 
       grid-column: 4 / 7; 
@@ -1059,8 +1189,31 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
     {/* No SVG distortion; keep glass simple and clean */}
 
+    <!-- Music Links (takes first slot; hides Stats when enabled) -->
+    {hasMusicLinks && (
+      <div class="bento-card music-links-card">
+        <h3 class="card-title">{bento.musicLinks.title || 'Music Links'}</h3>
+        <div class="music-links-grid">
+          {bento.musicLinks.items.map(link => {
+            const key = inferPlatform(link.text, link.url);
+            const icon = key ? MUSIC_ICONS[key] : undefined;
+            const label = link.text || key || 'Open link';
+            return (
+              <a class="music-link-btn" data-platform={key || 'generic'} href={link.url} target="_blank" rel="noopener noreferrer" aria-label={label} title={label}>
+                {icon ? (
+                  <img src={icon} alt={`${label} logo`} />
+                ) : (
+                  <span class="music-link-text">{label}</span>
+                )}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    )}
+
     <!-- Quick Stats -->
-    {cards.stats && bento.stats && (
+    {!hasMusicLinks && cards.stats && bento.stats && (
       <div class="bento-card stats-card">
         <h3 class="card-title">Project Stats</h3>
         <div class="stats-grid">
@@ -1275,6 +1428,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     getCardType(card) {
       // Determine card type from classes
       if (card.classList.contains('hero-card')) return 'hero';
+      if (card.classList.contains('music-links-card')) return 'stats';
       if (card.classList.contains('stats-card')) return 'stats';
       if (card.classList.contains('actions-card')) return 'actions';
       if (card.classList.contains('tech-card')) return 'tech';

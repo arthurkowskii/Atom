@@ -22,6 +22,7 @@ const projectsCollection = defineCollection({
       cards: z.object({
         hero: z.boolean().default(true),
         stats: z.boolean().default(true),
+        musicLinks: z.boolean().default(false),
         actions: z.boolean().default(true),
         tech: z.boolean().default(true),
         process: z.boolean().default(true),
@@ -50,6 +51,15 @@ const projectsCollection = defineCollection({
         value: z.string(),
         label: z.string(),
       })).optional(),
+
+      // Music Links configuration
+      musicLinks: z.object({
+        title: z.string().default('Music Links'),
+        items: z.array(z.object({
+          text: z.string(),
+          url: z.string().url(),
+        })).length(4),
+      }).optional(),
       
       // Actions configuration
       actions: z.object({
