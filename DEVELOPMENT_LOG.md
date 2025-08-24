@@ -241,9 +241,24 @@ Tracking
 ### Key Files (Bento)
 
 - `src/components/ProjectBento.astro` — Rich layout with gallery, results, tech sections; responsive grid; auto-scans `bento.assetsFolder` for hero/logo and gallery; includes musical animation system with Tone.js audio.
-- `src/pages/preview-templates.astro` — Testing environment for both template components.
-- `src/content/config.ts` — Added `useBentoLayout` boolean field, `bento.assetsFolder`, and `bento.hero.showLogo` to project schema.
-- `templates/bento-project.template.md` — Copy-paste template for new Bento projects.
-- Projects with `useBentoLayout: true` bypass normal overlay routing and use bento display.
+  - `src/pages/preview-templates.astro` — Testing environment for both template components.
+  - `src/content/config.ts` — Added `useBentoLayout` boolean field, `bento.assetsFolder`, and `bento.hero.showLogo` to project schema.
+  - `templates/bento-project.template.md` — Copy-paste template for new Bento projects.
+  - Projects with `useBentoLayout: true` bypass normal overlay routing and use bento display.
+  
+  Notes for agents: Keep this file concise. If you need rationale, code snippets, or the blow-by-blow history, follow the links above. Prefer editing user-tweaks.js and atom.config.js for behavior; index.astro wires interactions and overlay. For Bento, see `BENTO_TEMPLATE.md` for the `assetsFolder` pattern (reserved `hero.*`, `logo.*`) and `bento.hero.subtitleColor`. The starter file is at `templates/bento-project.template.md`.
 
-Notes for agents: Keep this file concise. If you need rationale, code snippets, or the blow-by-blow history, follow the links above. Prefer editing user-tweaks.js and atom.config.js for behavior; index.astro wires interactions and overlay. For Bento, see `BENTO_TEMPLATE.md` for the `assetsFolder` pattern (reserved `hero.*`, `logo.*`) and `bento.hero.subtitleColor`. The starter file is at `templates/bento-project.template.md`.
+## Recent Changes (2025‑08‑24) - ProjectBento Music Links Card
+
+- Hero description width: Increased `.hero-description` `max-width` from 600px to 700px for improved single-line length before wrap.
+- New card: Added “Music Links” card (2×2 grid) visually matching “Project Stats”. Displays four clickable buttons opening external links.
+  - Schema: `src/content/config.ts` now supports `bento.cards.musicLinks` (default false) and `bento.musicLinks` with exactly 4 `{ text, url }` items and optional `title` (defaults to “Music Links”).
+  - Component: `src/components/ProjectBento.astro` renders Music Links in the first slot when enabled; falls back to Stats if 4 links are not provided. Buttons open with `target="_blank"` + `rel="noopener noreferrer"`.
+  - Icons: Platform logo detection via link text/domain (Spotify, Apple Music, Bandcamp, YouTube, SoundCloud). Icons imported as URLs from `src/Assets/music_links assets/`. Graceful fallback to text when no match.
+  - Bandcamp sizing: Per-platform override scales Bandcamp icon 2× using CSS `transform` to avoid changing row height; buttons use `overflow: hidden` to preserve layout.
+  - Styling: Music Links buttons align visually with Stats (min-height ~72px, hover/elevation, dark mode text colors). Icon size set to 48px base.
+- Templates/docs: Updated `BENTO_TEMPLATE.md` and `templates/bento-project.template.md` to include `cards.musicLinks` and a 4-link example payload.
+- Content updates: Added `cards.musicLinks: false` and `musicLinks` blocks to:
+  - `src/content/projects/1_Music/lesupermegashow.md` (filled with real YouTube/Spotify + placeholders)
+  - `src/content/projects/2_Game Audio/kubika-showcase.md` (placeholders)
+  - `src/content/projects/2_Game Audio/chromestesia_showcase.md` (YouTube trailer + placeholders)

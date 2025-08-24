@@ -31,7 +31,7 @@ bento:
 
   # Hero subtitle only; hero/background/logo auto from assetsFolder
   hero:
-    subtitle: "Composition, Mixage, Mastering et Réalisation d'un court métrage"
+    subtitle: "Composition, Mixage, Réalisation"
     subtitleColor: "#faf525"
     backgroundPosition: "top"
     backgroundSize: "cover"
@@ -66,9 +66,9 @@ bento:
       - text: "Spotify"
         url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
       - text: "Apple Music"
-        url: "https://music.apple.com/"
+        url: "https://music.apple.com/fr/album/le-super-mega-show/1768698755"
       - text: "Bandcamp"
-        url: "https://bandcamp.com/"
+        url: "https://kowskii.bandcamp.com/album/le-super-mega-show-album"
       - text: "YouTube"
         url: "https://youtu.be/GtoGUcY1K1Y?si=YQXis7RFPEgLKbPy"
 
