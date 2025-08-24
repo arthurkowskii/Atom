@@ -52,20 +52,21 @@ bento:
   actions:
     title: "Experience"
     primary:
-      text: "View Live"
-      url: "https://example.com"
+      text: "📽️ Watch the trailer"
+      url: "https://youtu.be/6aKB7nFtJQo?si=a0XfJuEDsXJyw6F2"
     secondary:
-      text: "Source Code"
-      url: "https://github.com/you/repo"
+      text: "🕹️ Gameplay Demo"
+      url: "https://youtu.be/COJwYCqv5dw?si=PmIhmJSQem6hF6Ha"
 
   # Optional process
   process:
     title: "Process"
     steps:
-      - "Research"
-      - "Build"
-      - "Test"
-      - "Ship"
+      - "Création et conception de l'intégralité des SFX pour constituer une banque de son propre au projet."
+      - "Création des musiques ainsi que de leurs variantes (chaque musique à deux versions dans ce jeu)"
+      - "Intégration des musiques, SFX et mixage dans FMOD"
+      - "Spatialisation et intégration dans UNITY"
+      - "Extra : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
 
   # Gallery images auto from assetsFolder; title optional
   gallery:
@@ -75,8 +76,8 @@ bento:
   challenges:
     title: "Key Challenges"
     items:
-      - title: "Integration"
-        description: "Brief description of what was hard and how you solved it."
+      - title: "Réactivité du système de music-switch"
+        description: "Dans ce jeu le joueur peut changer les pistes musicales à volonté grâce au système de switch. Pour une expérience fluide, un système de synchornisation musicale associé a un système de cooldown a permi de rendre cette expérience très satisfaisant pour le joueur."
 
   # Optional results
   results:

@@ -1,6 +1,6 @@
 ---
 title: "Kubika: A Cube Story"
-description: "Mind-bending, gravity-shifting 3D Sokoban puzzle game. Created immersive spatial audio that adapts to gravity changes, featuring dynamic music layers and 3D positional sound systems."
+description: "Kubika est un jeu de Sokoban en 3D où la gravité devient votre meilleur allié… ou votre pire ennemi ! Actuellement en développement, j’assure le Sound-Design  et l’Intégration Audio du projet"
 tech: ["Unity", "FMOD", "Wwise", "Pro Tools", "C#", "Unity Mixer"]
 status: "completed"
 link: "https://kubika.itch.io/kubika-a-cube-story"
@@ -48,23 +48,22 @@ bento:
   
   # Action buttons
   actions:
-    title: "Experience"
+    title: "Links"
     primary:
-      text: "Play on itch.io"
-      url: "https://kubika.itch.io/kubika-a-cube-story"
+      text: "Download the Alpha here ! ⬇️"
+      url: "https://kubika.itch.io/kubika-a-cube-story/purchase"
     secondary:
-      text: "View Audio Demo"
-      # url: Optional URL for demo
+      text: "Follow us on itch.io"
+      url: "https://kubika.itch.io/kubika-a-cube-story"
   
   # Development process
   process:
     title: "Process"
     subtitle: "From concept to shipping"
     steps:
-      - "Audio system architecture & pipeline setup"
-      - "Gravity-responsive 3D audio development"
-      - "Adaptive music system & sound library"
-      - "Integration testing & performance optimization"
+      - "Enregistrement et conception de l'intégralité des SFX présents dans le jeu"
+      - "Conception d'une banque unique et propre au jeu et réutilisable pour le studio KubiTeam"
+      - "Intégration des sons avec FMOD et UNITY"
   
   # Gallery images
   # Gallery now auto-populates from assetsFolder (excluding hero/logo files)
@@ -76,11 +75,11 @@ bento:
     title: "Key Challenges"
     subtitle: "Technical problems solved during development"
     items:
-      - title: "Gravity-Responsive Audio"
+      - title: "Détection des différents type de cube"
         description: "Developed custom 3D audio listener system that maintains spatial relationships regardless of world orientation"
-      - title: "Performance Optimization"
+      - title: "Concevoir un son joué plus d'une cinquantaine de fois par minute et le rendre plaisant"
         description: "Implemented audio pooling and LOD systems to handle complex 3D audio without performance impact"
-      - title: "Adaptive Music System"
+      - title: "Optimisation des performances"
         description: "Created parametric music system with vertical remixing for seamless emotional transitions"
   
   # Results and impact

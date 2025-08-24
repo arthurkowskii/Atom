@@ -75,8 +75,8 @@ function logoSrcFor(label: string): string | null {
     grid-template-areas:
       "hero hero status"
       "bio portrait skill1"
-      "contact portrait skill2"
-      "social social skill3";
+      "contact social skill2"
+      ". . skill3";
   }
 
   /* Accentuate bio and contact height difference */
@@ -84,7 +84,8 @@ function logoSrcFor(label: string): string | null {
     min-height: 220px;
   }
 
-  .contact-card {
+  .contact-card,
+  .social-card {
     min-height: 60px;
     max-height: 60px;
     padding: 12px 24px;

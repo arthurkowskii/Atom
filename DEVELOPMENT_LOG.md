@@ -4,7 +4,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
-Last updated: 2025-08-23 (Electron preview cards with multi-stage emergence animation)
+Last updated: 2025-08-24 (BioBento layout redesign with logo-only skill cards)
 
 ## Project Snapshot
 
@@ -111,16 +111,16 @@ Last updated: 2025-08-23 (Electron preview cards with multi-stage emergence anim
 
 ## Bio Page Snapshot
 
-- Route: `/bio` via `src/pages/bio.astro` rendering `src/components/BioBW.astro`.
+- Route: `/bio` via `src/pages/bio.astro` rendering `src/components/BioBento.astro`.
 - Content: `src/content/bio/about.md` validated by `src/content/config.ts` (collection: `bio`).
 - API (internal): `GET /api/bio.json` returns `{ title, subtitle, bio, portrait, email, social[], skills[] }` with safe defaults.
 - Admin: Decap CMS at `/admin` (`public/admin/config.yml` + `src/pages/admin/index.astro`) using proxy backend for local-only editing.
-- Style: Canonical black & white layout; accessible, responsive; skill chips auto-map logos.
+- Style: Modern bento-style grid layout; portrait centered with cards around; logo-only skill displays; responsive design.
 
 ### Key Files (Bio)
 
 - `src/pages/bio.astro` — route wrapper and head.
-- `src/components/BioBW.astro` — layout, chips, logo normalization.
+- `src/components/BioBento.astro` — modern bento grid layout with logo-only skills, portrait centering, and optimized card proportions.
 - `src/content/bio/about.md` — editable content (title, subtitle, bio, portrait, skills, email, social).
 - `src/content/config.ts` — bio collection schema.
 - `src/pages/api/bio.json.ts` — internal JSON endpoint.
@@ -128,9 +128,12 @@ Last updated: 2025-08-23 (Electron preview cards with multi-stage emergence anim
 
 ### How It Works (Bio)
 
-- Content-driven Astro route; markdown fields populate the layout.
-- Logo mapping normalizes labels (e.g., “C#” → “csharp”) to `.webp` assets.
-- Progressive reveal on nucleus→bio transition (page paints during circle animation).
+- **Bento Grid Layout**: 3-column responsive grid with portrait centered and cards arranged around it.
+- **Logo-only Skills**: DAW, Dynamic Audio, and Engine & Code categories display colorful software logos in grid format (no text labels).
+- **Card Proportions**: Bio card optimized for longer content (220px), contact/social cards compact (60px) for clean layout.
+- **Overlay Integration**: BioBento works in both direct `/bio` route and nucleus→bio overlay transition with staggered card animations.
+- **Logo Mapping**: Normalizes labels (e.g., "C#" → "csharp") to `.webp` assets with full-color display for logo-only cards.
+- **Progressive Reveal**: Nucleus→bio transition paints bento cards during circle animation with restart animation system.
 
 ### Debug Notes (Bio)
 
@@ -220,6 +223,20 @@ Tracking
 - **Cross-Component Consistency**: Applied refined design tokens systematically across Bio, Atom interface, and Bento layouts ensuring consistent visual language. All components now use the same color palette, typography scale, shadow system, and transition curves.
 
 - **Accessibility Improvements**: Enhanced focus states with proper `focus-visible` outlines, comprehensive `prefers-reduced-motion` support, improved color contrast ratios, and keyboard navigation enhancements throughout the interface.
+
+## Recent Changes (2025‑08‑24) - BioBento Layout Redesign
+
+- **BioBento Component**: Complete bio page redesign from linear BioBW layout to modern bento-style grid. Portrait now centered with cards arranged around it in a 3-column responsive layout for better visual hierarchy and engagement.
+
+- **Logo-Only Skill Cards**: DAW, Dynamic Audio, and Engine & Code categories now display pure colorful software logos in grid format (no text labels). Creates cleaner, more professional appearance with better brand recognition. Other categories retain text+logo format.
+
+- **Optimized Card Proportions**: Bio description card enlarged (220px height) for better content display; contact and social cards made compact (60px height) for efficient space usage. Creates clear visual hierarchy between content types.
+
+- **Overlay System Integration**: BioBento seamlessly works in both direct `/bio` route and nucleus→bio overlay transition. Includes animation restart system for staggered card reveals when overlay opens. Removed legacy fillBioOverlay function in favor of server-side hydration.
+
+- **Responsive Grid Layout**: Desktop 3-column with centered portrait spanning two rows; tablet 2-column with portrait on right; mobile single-column with portrait at top. Maintains visual balance across all screen sizes.
+
+- **Enhanced Animations**: Staggered card entrance animations (100ms delays) with cubic-bezier easing. Respects `prefers-reduced-motion` and includes proper cleanup. Global restart function for overlay context.
 
 ### Key Files (Bento)
 
