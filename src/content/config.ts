@@ -123,7 +123,6 @@ const projectsCollection = defineCollection({
 const bioCollection = defineCollection({
   type: 'content',
   schema: z.object({
-    layout: z.string().optional(),
     title: z.string(), // Display name
     subtitle: z.string(),
     bio: z.string(), // Markdown string

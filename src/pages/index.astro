@@ -18,6 +18,7 @@ import AtomCenterLogo from '../Assets/atom_center_logo.png';
 import atomConfig from '../atom.config.js';
 import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
+import { sanitizeMarkdown, sanitizeText } from '../utils/sanitize.js';
 
 // Get all projects and compute domains from folder structure (prefix-ordered)
 const projects = await getCollection('projects');
@@ -152,21 +153,26 @@ const projectSummaries = projectsWithDomains.map(p => {
 
 // Prepare Bio payload from content collection (bio/about)
 let bioPayload = {};
+let bioEntry = null;
 try {
-  const bioEntry = await getEntryBySlug('bio', 'about');
+  bioEntry = await getEntryBySlug('bio', 'about');
   if (bioEntry?.data) {
     const d = bioEntry.data as any;
     bioPayload = {
-      title: d.title || '',
-      subtitle: d.subtitle || '',
-      bio: d.bio || '',
-      portrait: d.portrait || '/images/bio/arthur-portfolio.jpg',
-      email: d.email || '',
+      title: sanitizeText(d.title) || '',
+      subtitle: sanitizeText(d.subtitle) || '',
+      bio: d.bio ? await sanitizeMarkdown(d.bio) : '',
+      portrait: sanitizeText(d.portrait) || '/images/bio/arthur-portfolio.jpg',
+      email: sanitizeText(d.email) || '',
       social: d.social || [],
       skills: d.skills || [],
     };
   }
-} catch {}
+} catch (error) {
+  console.error('Failed to load bio data:', error);
+}
+
+// Bio payload successfully loaded
 
 // Map of tool name -> logo URL for overlay rendering
 const logosMap = {
@@ -266,8 +272,41 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
-			<meta name="generator" content={Astro.generator} />
-			<title>Atom Portfolio</title>
+		<meta name="generator" content={Astro.generator} />
+		
+		<!-- PWA Manifest -->
+		<link rel="manifest" href="/manifest.json" />
+		<meta name="theme-color" content="#00b3b0" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="apple-mobile-web-app-title" content="Atom Portfolio" />
+		
+		<!-- Build Metadata for Performance Monitoring -->
+		<meta name="build-version" content={`${Date.now()}`} />
+		<meta name="build-commit" content={import.meta.env.BUILD_COMMIT || 'local'} />
+		<meta name="build-date" content={new Date().toISOString()} />
+		
+		<!-- Enhanced Content Security Policy -->
+		<meta http-equiv="Content-Security-Policy" content="
+			default-src 'self';
+			script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;
+			style-src 'self' 'unsafe-inline';
+			img-src 'self' data: https: blob: https://*.arthurkowskii.com;
+			media-src 'self' data: blob: https://*.arthurkowskii.com;
+			font-src 'self' data: https://fonts.gstatic.com;
+			connect-src 'self' https://*.github.com https://api.github.com;
+			worker-src 'self' blob:;
+			child-src 'none';
+			frame-src 'none';
+			object-src 'none';
+			base-uri 'self';
+			form-action 'self' https://*.github.com;
+			frame-ancestors 'none';
+			upgrade-insecure-requests;
+		">
+		
+		<title>Atom Portfolio</title>
 			<style>
             body {
                 margin: 0;
@@ -543,6 +582,52 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             .electron-preview.preview-small .preview-subtitle {
                 font-size: 11px !important;
             }
+
+            /* Focus styles for keyboard navigation accessibility */
+            .electron:focus {
+                outline: 2px solid var(--accent-color, #00b3b0);
+                outline-offset: 2px;
+                border-radius: 50%;
+            }
+
+            .nucleus:focus {
+                outline: 3px solid var(--accent-color, #00b3b0);
+                outline-offset: 4px;
+                border-radius: 50%;
+            }
+
+            /* Enhanced focus visibility in dark mode */
+            html[data-theme="dark"] .electron:focus {
+                outline-color: #4ade80;
+                box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+            }
+
+            html[data-theme="dark"] .nucleus:focus {
+                outline-color: #4ade80;
+                box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+            }
+
+            /* Focus-visible for modern browsers (removes outline on mouse clicks) */
+            .electron:focus:not(:focus-visible) {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .nucleus:focus:not(:focus-visible) {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            /* Enhanced focus-visible support with JS fallback */
+            .electron:focus:not(.focus-visible) {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .nucleus:focus:not(.focus-visible) {
+                outline: none !important;
+                box-shadow: none !important;
+            }
 		</style>
 
         <!-- Theme init (before paint) -->
@@ -581,6 +666,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					fill={atomConfig.electrons.color}
 					stroke={atomConfig.nucleus.color}
 					stroke-width={atomConfig.nucleus.strokeWidth}
+					role="button"
+					aria-label="View bio and portfolio information"
+					tabindex="0"
 				/>
 				<image 
 					class="nucleus-logo"
@@ -756,6 +844,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 										data-shell-index={shellIndex}
 										data-electron-index={electronIndex}
 										data-angle={angleDegrees}
+										role="button"
+										aria-label={`View project: ${project.data.title} - ${project.data.description.slice(0, 60)}...`}
+										tabindex="0"
 									>
 										<title>{project.data.title}</title>
 									</circle>
@@ -832,16 +923,15 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
           
           <!-- Bio content template (Bento style, shared component) -->
           <div id="bio-content" role="dialog" aria-modal="true" aria-label="Bio" style="display:none;">
-            <BioBento data={bioPayload} />
+            <BioBento data={bioEntry?.data || {}} />
           </div>
         </div>
 
 		<script>
 			// PLACEHOLDER: Tone.js is temporary - will be replaced with custom OGG audio files
 			// See docs/history/PHASE_LOGS.md Phase 3C for audio architecture plan
-			import * as Tone from 'tone';
-			import { gsap } from 'gsap';
-			import { Draggable } from 'gsap/Draggable';
+			import { Synth, start, now, gainToDb, context } from 'tone';
+			import { gsap, Draggable } from 'gsap/all';
 			import { OrbitSystem } from '../atom/core/OrbitSystem.js';
 			import atomConfig from '../atom.config.js';
 			
@@ -881,6 +971,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				const orbitSystem = new OrbitSystem(cfg);
 				orbitSystem.init();
 				orbitSystem.start();
+				
+				// Store reference globally immediately for event handlers
+				window.orbitSystem = orbitSystem;
 
 				// PLACEHOLDER: Atom Sound System - replace with OGG file system
 				class AtomSoundSystem {
@@ -896,7 +989,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 						
 						try {
 							// PLACEHOLDER: Replace with Web Audio API and OGG file loading
-							this.synth = new Tone.Synth({
+							this.synth = new Synth({
 								oscillator: { type: 'sine' },
 								envelope: {
 									attack: this.config.synthesis?.attack || 0.02,
@@ -906,7 +999,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 								}
 							}).toDestination();
 
-							this.synth.volume.value = Tone.gainToDb(this.config.volume || 0.2);
+							this.synth.volume.value = gainToDb(this.config.volume || 0.2);
 							this.isInitialized = true;
 							console.log('🔊 Atom Sound System initialized (Tone.js placeholder)');
 						} catch (error) {
@@ -927,13 +1020,13 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 
 						try {
 							// Ensure audio context is started
-							if (Tone.context.state !== 'running') {
-								await Tone.start();
+							if (context.state !== 'running') {
+								await start();
 							}
 
 							// PLACEHOLDER: Replace with Web Audio API buffer source playback
 							// Play the sound with slight timing offset to prevent conflicts
-							const when = Tone.now() + 0.005;
+							const when = now() + 0.005;
 							this.synth.triggerAttackRelease(pitch, '8n', when);
 							
 							// Track this state to prevent repetition
@@ -1112,7 +1205,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               overlayOpen = true;
               lastFocused = document.activeElement;
               currentElectron = electronEl;
-              if (currentElectron) orbitSystem.pauseElectron(currentElectron);
+              if (currentElectron && window.orbitSystem) window.orbitSystem.pauseElectron(currentElectron);
               pauseLabelRotation();
 
               // Check if project uses bento layout
@@ -1286,7 +1379,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                   }
                   
                   
-                  if (currentElectron) { orbitSystem.resumeElectron(currentElectron); currentElectron = null; }
+                  if (currentElectron && window.orbitSystem) { window.orbitSystem.resumeElectron(currentElectron); currentElectron = null; }
                   resumeLabelRotation();
                   if (lastFocused) { try { lastFocused.focus({ preventScroll: true }); } catch {} }
                   try { history.replaceState(null, '', '/'); } catch {}
@@ -1475,7 +1568,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 });
                 
                 // Motion pause
-                orbitSystem.pauseShell(shellIndex);
+                if (window.orbitSystem) window.orbitSystem.pauseShell(shellIndex);
                 try { const t = labelTweenByShell.get(shellIndex); t && t.pause(); } catch {}
                 
                 // Global spotlight
@@ -1526,7 +1619,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 this.resetShellEffects(shellIndex);
                 
                 // Resume motion
-                orbitSystem.resumeShell(shellIndex);
+                if (window.orbitSystem) window.orbitSystem.resumeShell(shellIndex);
                 try {
                   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                   if (!(prefersReduced && atomConfig.motion?.respectReducedMotion)) {
@@ -1750,6 +1843,11 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     // Pass the actual electron element to the state manager
                     hoverStateManager.setState(`electron-${shellIndex}-${electronIndex}`, electron);
                     
+                    // Pause electron orbital motion when hovering
+                    if (window.orbitSystem) {
+                        window.orbitSystem.pauseElectron(electron);
+                    }
+                    
                     // PLACEHOLDER: Play electron hover sound - replace with OGG file playback
                     // Use state key to prevent repetition during same hover
                     atomSounds.playSound('electronHover', `electron-${shellIndex}-${electronIndex}-hover`);
@@ -1789,6 +1887,11 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 electron.addEventListener('mouseleave', () => {
                     if (dragLock) return;
                     
+                    // Resume electron orbital motion when leaving
+                    if (window.orbitSystem) {
+                        window.orbitSystem.resumeElectron(electron);
+                    }
+                    
                     // Reset sound state when leaving electron
                     atomSounds.lastSoundState = null;
                     // Check if we're still in the shell's tolerance zone via distance calculation
@@ -1818,7 +1921,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 							startY = parseFloat(gsap.getProperty(electron, 'y')) || 0;
 							maxTravel = 0;
 							// Pause only this electron's motion
-							orbitSystem.pauseElectron(electron);
+							if (window.orbitSystem) window.orbitSystem.pauseElectron(electron);
 							
 							// PLACEHOLDER: Start creative drag sequence - replace with OGG files
 							const electronId = `${shellIndex}-${electronIndex}`;
@@ -1850,7 +1953,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                             duration: atomConfig.timing.dragSnapDuration ?? atomConfig.timing.hoverDuration,
                             ease: elasticEase,
                             onComplete: () => {
-                                orbitSystem.resumeElectron(electron);
+                                if (window.orbitSystem) window.orbitSystem.resumeElectron(electron);
                                 setTimeout(() => { dragLock = false; }, 80);
                             }
                         });
@@ -1928,6 +2031,45 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     }
 						}
 					});
+
+					// Add keyboard support for electrons
+					electron.addEventListener('keydown', (e) => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							e.preventDefault();
+							// Simulate click behavior
+							const rect = electron.getBoundingClientRect();
+							const cx = rect.left + rect.width / 2;
+							const cy = rect.top + rect.height / 2;
+							
+							const slug = electron.getAttribute('data-project');
+							if (slug) {
+								hoverStateManager.scaleDownPreview();
+								atomSounds.playSound('electronClick');
+								openProjectOverlay(slug, cx, cy, electron);
+							}
+						}
+					});
+				});
+
+				// Add focus management for keyboard navigation
+				const focusableElements = document.querySelectorAll('[tabindex="0"]');
+				focusableElements.forEach((element, index) => {
+					element.addEventListener('keydown', (e) => {
+						if (e.key === 'Tab') {
+							// Let browser handle normal tab navigation
+							return;
+						}
+						
+						if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+							e.preventDefault();
+							const prevIndex = (index - 1 + focusableElements.length) % focusableElements.length;
+							focusableElements[prevIndex].focus();
+						} else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+							e.preventDefault();
+							const nextIndex = (index + 1) % focusableElements.length;
+							focusableElements[nextIndex].focus();
+						}
+					});
 				});
 
 				// Nucleus hover: grow + global spotlight; click placeholder
@@ -2003,6 +2145,14 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 const cx = rect.left + rect.width / 2;
                 const cy = rect.top + rect.height / 2;
                 openBioOverlay(cx, cy);
+              });
+
+              // Add keyboard support for nucleus
+              nucleus.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  nucleus.click();
+                }
               });
 				}
 				
@@ -2101,14 +2251,153 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					rafId = null;
 				}
 				
-				// Store reference globally for debugging
-				window.orbitSystem = orbitSystem;
+				// Reference already stored globally above
 				
 				console.log('🚀 PHASE 1+2 COMPLETE: Immediate State Manager + RAF Throttling');
 				console.log(`Found ${electrons.length} electrons and ${shells.length} visual shells`);
 				console.log(`🎮 Optimized hitbox system: ±${tolerance}px zones, 60fps max, squared distances`);
 				console.log('🎯 Features: Animation interruption, no timeouts, no race conditions');
+				
+				// Focus-visible polyfill for better keyboard navigation UX
+				setupFocusVisible();
 			});
+			
+			// Focus-visible polyfill - only show focus when using keyboard navigation
+			function setupFocusVisible() {
+				let hadKeyboardEvent = true;
+				const keyboardThrottleTimeout = 100;
+				
+				const focusableElements = document.querySelectorAll('.electron, .nucleus');
+				
+				function onPointerDown() {
+					hadKeyboardEvent = false;
+				}
+				
+				function onKeyDown(e) {
+					if (e.metaKey || e.altKey || e.ctrlKey) return;
+					hadKeyboardEvent = true;
+				}
+				
+				function onFocus(e) {
+					if (hadKeyboardEvent || e.target.matches(':focus-visible')) {
+						e.target.classList.add('focus-visible');
+					} else {
+						e.target.classList.remove('focus-visible');
+					}
+				}
+				
+				function onBlur(e) {
+					e.target.classList.remove('focus-visible');
+				}
+				
+				// Add event listeners
+				document.addEventListener('keydown', onKeyDown, true);
+				document.addEventListener('mousedown', onPointerDown, true);
+				document.addEventListener('touchstart', onPointerDown, true);
+				
+				focusableElements.forEach(element => {
+					element.addEventListener('focus', onFocus, true);
+					element.addEventListener('blur', onBlur, true);
+				});
+			}
+		</script>
+
+		<!-- Performance Monitoring and Error Tracking -->
+		<script type="module">
+			import monitor from '../utils/monitoring.js';
+
+			// Track GSAP animation events
+			document.addEventListener('DOMContentLoaded', () => {
+				const originalSet = gsap.set;
+				const originalTo = gsap.to;
+
+				// Track animation starts and completions
+				gsap.set = function(...args) {
+					monitor.track('gsap_set', { timestamp: performance.now() });
+					return originalSet.apply(this, args);
+				};
+
+				gsap.to = function(target, vars) {
+					monitor.track('gsap_animation_start', { 
+						timestamp: performance.now(),
+						target: target?.constructor?.name || 'unknown',
+						duration: vars.duration 
+					});
+					
+					const originalOnComplete = vars.onComplete;
+					vars.onComplete = function(...args) {
+						monitor.track('gsap_animation_complete', { 
+							timestamp: performance.now(),
+							duration: vars.duration 
+						});
+						if (originalOnComplete) originalOnComplete.apply(this, args);
+					};
+
+					return originalTo.apply(this, arguments);
+				};
+
+				// Track orbital system performance
+				if (window.orbitSystem) {
+					const originalStart = window.orbitSystem.start;
+					const originalStop = window.orbitSystem.stop;
+
+					window.orbitSystem.start = function(...args) {
+						monitor.track('orbit_system_start', { timestamp: performance.now() });
+						return originalStart.apply(this, args);
+					};
+
+					window.orbitSystem.stop = function(...args) {
+						monitor.track('orbit_system_stop', { timestamp: performance.now() });
+						return originalStop.apply(this, args);
+					};
+				}
+
+				// Track electron interactions
+				document.addEventListener('click', (e) => {
+					if (e.target.classList.contains('electron')) {
+						monitor.track('electron_click', {
+							timestamp: performance.now(),
+							electronType: e.target.classList.contains('nucleus') ? 'nucleus' : 'electron',
+							shell: e.target.dataset?.shell
+						});
+					}
+				});
+
+				// Debug console commands
+				console.log('📊 Performance monitoring active. Debug commands:');
+				console.log('  window.performanceMonitor.enable() - Force enable monitoring');
+				console.log('  window.performanceMonitor.getMetrics() - View collected metrics');
+				console.log('  window.performanceMonitor.getErrors() - View error log');
+			});
+		</script>
+
+		<!-- Service Worker Registration -->
+		<script>
+			// Register service worker for PWA capabilities and caching
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('/sw.js')
+						.then((registration) => {
+							console.log('🚀 Service Worker registered:', registration.scope);
+							
+							// Listen for updates
+							registration.addEventListener('updatefound', () => {
+								const newWorker = registration.installing;
+								if (newWorker) {
+									newWorker.addEventListener('statechange', () => {
+										if (newWorker.state === 'activated') {
+											console.log('✅ Service Worker updated');
+											// Optionally notify user of updates
+										}
+									});
+								}
+							});
+						})
+						.catch((error) => {
+							console.warn('❌ Service Worker registration failed:', error);
+						});
+				});
+			}
 		</script>
 	</body>
 </html>

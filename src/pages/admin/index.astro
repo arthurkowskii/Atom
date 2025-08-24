@@ -268,11 +268,43 @@ try {
       </div>
     </div>
     
-    <script>
+    <script type="module">
+      import { attachValidation, ValidationRules } from '../utils/validation.js';
+      
+      // Add input validation even for readonly fields
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        if (form) {
+          // Define field validation rules
+          const fieldRules = {
+            title: 'text',
+            subtitle: 'text', 
+            bio: 'bio',
+            email: 'email'
+          };
+          
+          // Attach validation
+          attachValidation(form, fieldRules);
+          
+          // Add CSP violation reporting
+          document.addEventListener('securitypolicyviolation', (e) => {
+            console.warn('CSP Violation:', {
+              directive: e.violatedDirective,
+              blockedURI: e.blockedURI,
+              lineNumber: e.lineNumber,
+              columnNumber: e.columnNumber
+            });
+          });
+        }
+      });
+      
       function openFileLocation() {
         const message = `To edit your bio content, open this file in your code editor:\n\nsrc/content/bio/about.md\n\nAfter making changes, refresh this page to see updated content.`;
         alert(message);
       }
+      
+      // Make function globally available
+      window.openFileLocation = openFileLocation;
     </script>
   </body>
 </html>

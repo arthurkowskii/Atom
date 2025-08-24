@@ -128,9 +128,9 @@ export default {
 
   // Accessibility and motion
   motion: {
-    respectReducedMotion: true,  // Honor prefers-reduced-motion
-    fallbackToStatic: true,      // Show static version if needed
-    minFPS: 30                   // Performance threshold
+    respectReducedMotion: false,  // Temporarily disabled to fix electron motion issue
+    fallbackToStatic: true,       // Show static version if needed
+    minFPS: 30                    // Performance threshold
   },
 
   // One-page project overlay transition

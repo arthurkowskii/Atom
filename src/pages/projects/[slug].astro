@@ -4,12 +4,21 @@ import ProjectBento from '../../components/ProjectBento.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
-  return projects.map((p) => ({ params: { slug: p.slug } }));
+  return projects.map((p) => {
+    // Convert full slug path (e.g., "1_Music/lesupermegashow") to simple filename
+    const slugParts = p.slug.split('/');
+    const filename = slugParts[slugParts.length - 1];
+    return { 
+      params: { slug: filename },
+      props: { fullSlug: p.slug }
+    };
+  });
 }
 
 const { slug } = Astro.params;
+const { fullSlug } = Astro.props;
 const projects = await getCollection('projects');
-const entry = projects.find(p => p.slug === slug);
+const entry = projects.find(p => p.slug === fullSlug);
 
 if (!entry) {
   throw new Error(`Project not found: ${slug}`);
@@ -22,6 +31,26 @@ const useBentoLayout = entry.data.useBentoLayout || false;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    
+    <!-- Enhanced Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https: blob: https://*.arthurkowskii.com;
+      media-src 'self' data: blob: https://*.arthurkowskii.com;
+      font-src 'self' data: https://fonts.gstatic.com;
+      connect-src 'self';
+      worker-src 'self' blob:;
+      child-src 'none';
+      frame-src 'none';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'none';
+      frame-ancestors 'none';
+      upgrade-insecure-requests;
+    ">
+    
     <title>{entry.data.title} — Project</title>
     <style>
       /* View Transition radial mask (progressive enhancement) */

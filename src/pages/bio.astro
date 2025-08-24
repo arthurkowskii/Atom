@@ -10,7 +10,25 @@ const data = entry?.data || {};
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Bio — BW Pro</title>
+    
+    <!-- Enhanced Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https: blob: https://*.arthurkowskii.com;
+      font-src 'self' data: https://fonts.gstatic.com;
+      connect-src 'self';
+      child-src 'none';
+      frame-src 'none';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'none';
+      frame-ancestors 'none';
+      upgrade-insecure-requests;
+    ">
+    
+    <title>Bio — Arthur Kowskii</title>
     <style>
       :root { --bg:#fff; --fg:#000; }
       * { box-sizing: border-box; }

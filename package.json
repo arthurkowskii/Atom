@@ -4,13 +4,20 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && npm run validate-build",
+    "build:only": "astro build",
+    "build:prod": "cross-env NODE_ENV=production astro build && npm run validate-build",
+    "validate-build": "node scripts/validate-build.js",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lighthouse": "npm run build && npx http-server dist -p 3000 -s & sleep 3 && npx lighthouse-ci lhci collect --url=http://localhost:3000",
+    "security-audit": "npm audit --audit-level=high && node scripts/security-check.js"
   },
   "dependencies": {
     "astro": "^5.13.2",
+    "dompurify": "^3.2.6",
     "gsap": "^3.13.0",
+    "jsdom": "^26.1.0",
     "tone": "^15.1.22"
   }
 }

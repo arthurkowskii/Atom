@@ -3,7 +3,7 @@
  * Nucleus and shells remain static, only electrons move
  */
 
-import { gsap } from 'gsap';
+import { gsap } from 'gsap/all';
 
 export class OrbitSystem {
   constructor(config) {
@@ -13,21 +13,54 @@ export class OrbitSystem {
     this.isRunning = false;
     this.centerX = config.viewport.centerX;
     this.centerY = config.viewport.centerY;
+    
+    // Frame throttling for animation performance
+    this.frameThrottled = false;
+    this.pendingUpdates = new Map(); // Track pending updates per electron
+    
+    // Safari-specific optimizations
+    this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    this.safariOptimizations = this.isSafari;
   }
 
   /**
    * Initialize the orbit system with electron elements
    */
   init() {
-    // Find all electrons in the DOM
-    const electronElements = document.querySelectorAll('.electron');
-    
-    electronElements.forEach((electron) => {
+    try {
+      // Find all electrons in the DOM
+      const electronElements = document.querySelectorAll('.electron');
+      
+      if (electronElements.length === 0) {
+        console.warn('No electron elements found - using static fallback');
+        this.useStaticFallback();
+        return;
+      }
+      
+      electronElements.forEach((electron) => {
+        this.initializeElectron(electron);
+      });
+      
+      console.log(`OrbitSystem initialized with ${this.electrons.length} electrons${this.safariOptimizations ? ' (Safari optimizations enabled)' : ''}`);
+    } catch (error) {
+      console.error('OrbitSystem initialization failed:', error);
+      this.useStaticFallback();
+    }
+  }
+
+  /**
+   * Initialize a single electron with error handling
+   */
+  initializeElectron(electron) {
+    try {
       const shellIndex = parseInt(electron.dataset.shell);
       const initialAngle = parseFloat(electron.dataset.angle);
       const shellConfig = this.config.shells[shellIndex];
       
-      if (!shellConfig) return;
+      if (!shellConfig) {
+        console.warn('No shell config found for electron', shellIndex);
+        return;
+      }
       
       // Store electron data
       const electronData = {
@@ -40,10 +73,13 @@ export class OrbitSystem {
         speed: shellConfig.speed
       };
       
-      // Create timeline for this electron
+      // Create timeline for this electron with error handling
       const timeline = gsap.timeline({ 
         repeat: -1,
-        ease: "none"
+        ease: "none",
+        onComplete: () => {
+          console.warn('Timeline completed unexpectedly for electron', shellIndex);
+        }
       });
       
       // Create smooth animation using CSS transforms but for circular motion
@@ -56,28 +92,29 @@ export class OrbitSystem {
         duration: duration,
         ease: "none",
         onUpdate: () => {
-          // Calculate new position based on current angle
-          const radians = (electronData.currentAngle * Math.PI) / 180;
-          const x = this.centerX + electronData.shellRadius * Math.cos(radians);
-          const y = this.centerY + electronData.shellRadius * Math.sin(radians);
-          
-          // Use GSAP's optimized transform instead of SVG attributes
-          gsap.set(electronData.element, {
-            x: x - parseFloat(electronData.element.getAttribute('cx')),
-            y: y - parseFloat(electronData.element.getAttribute('cy'))
-          });
+          // Use frame-throttled update system for better performance
+          this.scheduleElectronUpdate(electronData);
         }
       });
       
-      // Set initial position (no transform needed initially)
+      // Set initial position with Safari optimizations
       const radians = (electronData.currentAngle * Math.PI) / 180;
       const x = this.centerX + electronData.shellRadius * Math.cos(radians);
       const y = this.centerY + electronData.shellRadius * Math.sin(radians);
-      gsap.set(electronData.element, { 
+      
+      const initialSettings = { 
         attr: { cx: x, cy: y },
         x: 0,
         y: 0
-      });
+      };
+      
+      // Safari-specific optimizations: force hardware acceleration
+      if (this.safariOptimizations) {
+        initialSettings.force3D = true;
+        initialSettings.z = 0.01; // Minimal z-transform to trigger 3D acceleration
+      }
+      
+      gsap.set(electronData.element, initialSettings);
       
       // Store electron and timeline
       this.electrons.push(electronData);
@@ -85,9 +122,73 @@ export class OrbitSystem {
         timeline,
         electronData
       });
-    });
+      
+    } catch (error) {
+      console.error('Failed to initialize electron:', error);
+      // Continue with other electrons even if one fails
+    }
+  }
+
+  /**
+   * Frame-throttled electron position update system
+   */
+  scheduleElectronUpdate(electronData) {
+    // Store the update for this electron
+    this.pendingUpdates.set(electronData.element, electronData);
     
-    console.log(`OrbitSystem initialized with ${this.electrons.length} electrons`);
+    // If we're not already waiting for the next frame, schedule an update
+    if (!this.frameThrottled) {
+      this.frameThrottled = true;
+      
+      requestAnimationFrame(() => {
+        try {
+          // Process all pending updates in a single frame
+          this.pendingUpdates.forEach((data) => {
+            this.updateElectronPosition(data);
+          });
+          
+          // Clear pending updates and reset throttle
+          this.pendingUpdates.clear();
+          this.frameThrottled = false;
+          
+        } catch (error) {
+          console.error('Frame update failed:', error);
+          this.frameThrottled = false;
+        }
+      });
+    }
+  }
+
+  /**
+   * Update a single electron's position
+   */
+  updateElectronPosition(electronData) {
+    try {
+      // Calculate new position based on current angle
+      const radians = (electronData.currentAngle * Math.PI) / 180;
+      const x = this.centerX + electronData.shellRadius * Math.cos(radians);
+      const y = this.centerY + electronData.shellRadius * Math.sin(radians);
+      
+      const transform = {
+        x: x - parseFloat(electronData.element.getAttribute('cx')),
+        y: y - parseFloat(electronData.element.getAttribute('cy'))
+      };
+      
+      // Safari-specific optimizations for smoother animations
+      if (this.safariOptimizations) {
+        transform.force3D = true;
+        transform.z = 0.01;
+        // Use rounded values to reduce sub-pixel rendering issues
+        transform.x = Math.round(transform.x * 10) / 10;
+        transform.y = Math.round(transform.y * 10) / 10;
+      }
+      
+      gsap.set(electronData.element, transform);
+      
+    } catch (updateError) {
+      console.error('Electron position update failed:', updateError);
+      // Don't kill timeline here - let the system continue with other electrons
+    }
   }
 
   /**
@@ -96,22 +197,35 @@ export class OrbitSystem {
   start() {
     if (this.isRunning) return;
     
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    // TEMPORARY: Override reduced motion for testing hover effects
-    if (false && prefersReducedMotion && this.config.motion.respectReducedMotion) {
-      console.log('Respecting reduced motion preference - skipping animations');
-      return;
+    try {
+      // Check for reduced motion preference
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      
+      // Respect reduced motion accessibility preference
+      if (prefersReducedMotion && this.config.motion.respectReducedMotion) {
+        console.log('Respecting reduced motion preference - using static fallback');
+        this.useStaticFallback();
+        return;
+      }
+      
+      // Start all electron timelines with error handling
+      this.timelines.forEach((electronInfo) => {
+        try {
+          if (electronInfo.timeline && !electronInfo.timeline.isActive()) {
+            electronInfo.timeline.play();
+          }
+        } catch (timelineError) {
+          console.error('Failed to start timeline:', timelineError);
+        }
+      });
+      
+      this.isRunning = true;
+      console.log('OrbitSystem started');
+      
+    } catch (error) {
+      console.error('OrbitSystem start failed:', error);
+      this.useStaticFallback();
     }
-    
-    // Start all electron timelines
-    this.timelines.forEach((electronInfo) => {
-      electronInfo.timeline.play();
-    });
-    
-    this.isRunning = true;
-    console.log('OrbitSystem started');
   }
 
   /**
@@ -179,11 +293,74 @@ export class OrbitSystem {
    */
   destroy() {
     this.stop();
+    
+    // Enhanced cleanup with explicit memory management
     this.timelines.forEach((electronInfo) => {
+      // Kill timeline and clear all references
       electronInfo.timeline.kill();
+      electronInfo.timeline = null;
+      
+      // Clear element references and GSAP data
+      if (electronInfo.electronData.element) {
+        gsap.killTweensOf(electronInfo.electronData.element);
+        gsap.set(electronInfo.electronData.element, { clearProps: "all" });
+        electronInfo.electronData.element = null;
+      }
+      
+      // Clear electron data references
+      electronInfo.electronData = null;
     });
+    
     this.timelines.clear();
-    this.electrons = [];
-    console.log('OrbitSystem destroyed');
+    
+    // Kill any remaining tweens on electron array and clear it
+    gsap.killTweensOf(this.electrons);
+    this.electrons.length = 0;
+    
+    // Clear any global GSAP references
+    gsap.killTweensOf(this);
+    
+    // Clear frame throttling state
+    this.frameThrottled = false;
+    this.pendingUpdates.clear();
+    
+    console.log('OrbitSystem destroyed with enhanced cleanup');
+  }
+
+  /**
+   * Static fallback when animations fail or are not supported
+   */
+  useStaticFallback() {
+    console.log('Using static fallback mode - electrons will remain in fixed positions');
+    
+    // Find all electrons and ensure they're visible but static
+    const electronElements = document.querySelectorAll('.electron');
+    electronElements.forEach((electron) => {
+      try {
+        // Ensure electron is visible and in its initial position
+        gsap.set(electron, { 
+          opacity: 1,
+          scale: 1,
+          clearProps: "transform"
+        });
+        
+        // Add a subtle pulse effect as fallback interaction
+        electron.addEventListener('mouseenter', () => {
+          gsap.to(electron, { scale: 1.1, duration: 0.2, ease: "power2.out" });
+        });
+        
+        electron.addEventListener('mouseleave', () => {
+          gsap.to(electron, { scale: 1, duration: 0.2, ease: "power2.out" });
+        });
+        
+      } catch (error) {
+        console.error('Static fallback failed for electron:', error);
+        // Ensure electron is at least visible
+        electron.style.opacity = '1';
+      }
+    });
+    
+    this.isRunning = false;
+    this.staticMode = true;
   }
 }

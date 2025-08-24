@@ -1,6 +1,7 @@
 ---
 export interface Props { data: any }
 const { data } = Astro.props;
+import { sanitizeMarkdown } from '../utils/sanitize.js';
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
 import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
@@ -42,6 +43,9 @@ function logoSrcFor(label: string): string | null {
   if (!val) return null;
   return typeof val === 'string' ? val : (val?.src ?? null);
 }
+
+// Sanitize bio content for safe HTML rendering
+const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
 ---
 
 <style>
@@ -530,7 +534,7 @@ function logoSrcFor(label: string): string | null {
 
     <!-- Bio Text Card -->
     <div class="bento-card bio-card" data-animation-delay="200">
-      <div class="bio-text" set:html={data?.bio || ''}></div>
+      <div class="bio-text" set:html={sanitizedBio}></div>
     </div>
 
     <!-- Portrait Card -->
@@ -571,7 +575,7 @@ function logoSrcFor(label: string): string | null {
               const src = logoSrcFor(t);
               return (
                 <div class={`skill-tool ${isLogoOnly ? 'logo-only' : ''}`}>
-                  {src ? <img src={src} alt={isLogoOnly ? t : ""} aria-hidden={!isLogoOnly} /> : null}
+                  {src ? <img src={src} alt={isLogoOnly ? t : ""} aria-hidden={!isLogoOnly} loading="lazy" /> : null}
                   {isLogoOnly ? '' : t}
                 </div>
               );

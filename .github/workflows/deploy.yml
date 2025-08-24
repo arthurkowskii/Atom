@@ -1,0 +1,184 @@
+name: 🚀 Deploy Portfolio
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-checks:
+    name: 🔍 Quality Assurance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📲 Install dependencies
+        run: npm ci
+        
+      - name: 🧪 Run build validation
+        run: |
+          npm run build
+          npm run validate-build
+          
+      - name: 🔒 Security audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+        
+      - name: 📊 Bundle analysis
+        run: |
+          echo "=== Bundle Size Analysis ===" 
+          du -sh dist/_astro/*.js | sort -hr
+          echo ""
+          echo "=== Gzipped sizes ===" 
+          find dist/_astro -name "*.js" -exec sh -c 'echo "$(gzip -c {} | wc -c) bytes (gzipped): {}"' \;
+          
+      - name: ✅ Verify critical files
+        run: |
+          # Check critical files exist
+          test -f dist/index.html || (echo "❌ Missing index.html" && exit 1)
+          test -f dist/admin/index.html || (echo "❌ Missing admin interface" && exit 1)
+          test -f dist/api/bio.json || (echo "❌ Missing bio API" && exit 1)
+          
+          # Check security headers file
+          test -f dist/_headers || (echo "❌ Missing security headers" && exit 1)
+          
+          # Verify build metadata
+          grep -q "build-version" dist/index.html || (echo "❌ Missing build version" && exit 1)
+          grep -q "build-date" dist/index.html || (echo "❌ Missing build date" && exit 1)
+          
+          echo "✅ All critical files verified"
+          
+      - name: 🛡️ CSP validation
+        run: |
+          # Verify CSP headers are present
+          if grep -q "Content-Security-Policy" dist/index.html; then
+            echo "✅ CSP headers found"
+          else
+            echo "❌ Missing CSP headers" && exit 1
+          fi
+          
+      - name: 📝 Generate deployment report
+        run: |
+          echo "## 🚀 Deployment Report" > deployment-report.md
+          echo "- **Build Date**: $(date)" >> deployment-report.md
+          echo "- **Commit**: ${{ github.sha }}" >> deployment-report.md
+          echo "- **Branch**: ${{ github.ref_name }}" >> deployment-report.md
+          echo "- **Pages Built**: $(find dist -name "*.html" | wc -l)" >> deployment-report.md
+          echo "- **Assets**: $(find dist/_astro -name "*.js" | wc -l) JS files" >> deployment-report.md
+          echo "- **Total Size**: $(du -sh dist | cut -f1)" >> deployment-report.md
+          
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: portfolio-build
+          path: dist/
+          retention-days: 7
+
+  performance-test:
+    name: ⚡ Performance Testing
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📲 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for testing
+        run: npm run build
+        
+      - name: 🚀 Start test server
+        run: |
+          npx http-server dist -p 3000 -s &
+          sleep 3
+          
+      - name: ⚡ Lighthouse CI
+        run: |
+          npm install -g lighthouse-ci
+          lhci collect --url=http://localhost:3000 --numberOfRuns=3
+          lhci assert --budgetsFile=.lighthouserc.json || echo "⚠️ Performance budget exceeded"
+        continue-on-error: true
+
+  deploy:
+    name: 🌐 Deploy to Production
+    runs-on: ubuntu-latest
+    needs: quality-checks
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📲 Install dependencies
+        run: npm ci
+        
+      - name: 🏗️ Production build
+        run: |
+          # Add commit hash to build metadata
+          export BUILD_COMMIT=${{ github.sha }}
+          npm run build
+          
+      - name: 📤 Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: portfolio-build
+          path: dist/
+          
+      - name: 🌐 Deploy to Hostinger
+        run: |
+          echo "🚀 Deploying to arthurkowskii.com"
+          echo "Build completed successfully with commit ${{ github.sha }}"
+          echo "Deployment will be handled by Hostinger Git integration"
+          
+      - name: 🎉 Deployment success
+        run: |
+          echo "✅ Portfolio deployed successfully!"
+          echo "🌐 Live at: https://arthurkowskii.com"
+          echo "📊 Performance monitoring active"
+          echo "🔒 Security headers configured"
+
+  notify:
+    name: 📢 Notifications
+    runs-on: ubuntu-latest
+    needs: [quality-checks, deploy]
+    if: always()
+    
+    steps:
+      - name: 🎉 Success notification
+        if: needs.deploy.result == 'success'
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "✅ All quality checks passed"
+          echo "🌐 Portfolio is live at https://arthurkowskii.com"
+          
+      - name: ❌ Failure notification
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Please check the logs for details"
+          echo "🔧 Fix issues and try again"

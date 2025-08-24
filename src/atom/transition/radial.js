@@ -1,7 +1,7 @@
 // Radial reveal helper for navigation transitions
 // Creates a fixed overlay and animates a circular clipPath from a point
 
-import { gsap } from 'gsap';
+import { gsap } from 'gsap/all';
 
 function maxCoverRadius(x, y, vw, vh) {
   const dx = Math.max(x, vw - x);
