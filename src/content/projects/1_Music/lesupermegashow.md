@@ -11,7 +11,7 @@ useBentoLayout: true
 # Bento Layout Configuration
 bento:
   # Theme color
-  accentColor: "#dfdb00ff"
+  accentColor: "#feee5a"
 
   # REQUIRED for auto hero/logo + gallery
   # Put images here and name hero.* and logo.* for the hero card

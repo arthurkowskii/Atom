@@ -327,6 +327,11 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     color: #f4f4f5;
   }
 
+  /* Dark mode: invert Bandcamp icon only (to ensure visibility on dark bg) */
+  html[data-theme="dark"] .music-link-btn[data-platform="bandcamp"] img {
+    filter: brightness(0) invert(1);
+  }
+
   html[data-theme="dark"] .stat-value {
     color: #f4f4f5;
   }
@@ -463,7 +468,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   .bento-card:hover,
   .bento-card:focus {
-    border-color: #ff6b00 !important;
+    border-color: var(--accent-color) !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
     outline: none; /* Remove any browser default outline */
   }
