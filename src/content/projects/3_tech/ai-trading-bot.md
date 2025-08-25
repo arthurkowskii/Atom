@@ -1,5 +1,6 @@
 ---
 title: "AI Trading Bot"
+altTitle: "Trading Bot"
 description: "Automated cryptocurrency trading bot using reinforcement learning"
 tech: ["Python", "TensorFlow", "Binance API", "Docker"]
 status: "completed"

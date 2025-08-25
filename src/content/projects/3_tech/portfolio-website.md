@@ -1,5 +1,6 @@
 ---
 title: "Interactive Portfolio"
+altTitle: "Portfolio"
 domain: "tech"
 description: "This very portfolio - an atom-inspired interactive experience"
 tech: ["Astro", "GSAP", "SVG", "TypeScript"]

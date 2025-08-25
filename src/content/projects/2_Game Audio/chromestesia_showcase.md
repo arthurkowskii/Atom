@@ -1,6 +1,7 @@
 ---
 title: "Chromestesia"
-description: "Plongez dans Chromestesia, platformer-combat à l’énergie punk forgé en moins d’un mois. Incarnez Michèle et basculez les couleurs pour métamorphoser les plateformes… et la musique !"
+altTitle: "Chromestesia"
+description: "Plongez dans Chromestesia, platformer-combat à l'énergie punk forgé en moins d'un mois. Incarnez Michèle et basculez les couleurs pour métamorphoser les plateformes… et la musique !"
 tech: ["FMOD", "Reaper", "Unity"]
 status: "completed" # or "in-progress" | "planned"
 link: "https://example.com"

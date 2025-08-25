@@ -1,6 +1,7 @@
 ---
 title: "Sound ReDesign : Heroes of Might and Magic VI"
-description: "Kubika est un jeu de Sokoban en 3D où la gravité devient votre meilleur allié… ou votre pire ennemi ! Actuellement en développement, j’assure le Sound-Design  et l’Intégration Audio du projet"
+altTitle: "Heroes VI Redesign"
+description: "Kubika est un jeu de Sokoban en 3D où la gravité devient votre meilleur allié… ou votre pire ennemi ! Actuellement en développement, j'assure le Sound-Design  et l'Intégration Audio du projet"
 tech: ["Reaper", "Phase Plant"]
 status: "completed"
 link: "https://kubika.itch.io/kubika-a-cube-story"

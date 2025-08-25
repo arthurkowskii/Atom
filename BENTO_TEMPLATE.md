@@ -15,6 +15,7 @@ Copy this template to create a new project using the Bento layout system.
 ```yaml
 ---
 title: "Your Project Title"
+altTitle: "Short Title" # Optional - shorter title for electron preview cards
 description: "Brief description that appears in the hero card and project listings"
 tech: ["Technology", "Stack", "Used", "In", "Project"]
 status: "completed" # or "in-progress" or "planned"
@@ -174,6 +175,7 @@ but you can also elaborate here.
 
 ### 2. Customize Content
 - **Title & Description**: Update with your project details
+- **Alt Title**: Optional shorter title for electron preview cards (uses main title if not provided)
 - **Tech Stack**: List all technologies used
 - **Accent Color**: Choose a color that matches your project's branding
 - **Assets**: Add your images to the same folder or Assets subfolder
@@ -325,7 +327,25 @@ soundcloud:
 - When `tech: false`: SoundCloud takes the tech position (left side, row 3)
 - When `tech: true`: SoundCloud appears to the right of tech (right side, row 4)
 
-### 11. Assets Folder Pattern (auto gallery)
+### 11. Alt Title for Preview Cards
+
+The `altTitle` field provides a shorter, more concise title for the electron preview cards while keeping the full title for the hero card and project page.
+
+Usage:
+```yaml
+---
+title: "Sound ReDesign : Heroes of Might and Magic VI"
+altTitle: "Heroes VI Redesign"  # Used in electron preview cards
+---
+```
+
+- **When altTitle is provided**: Electron preview cards will display the shorter altTitle
+- **When altTitle is empty/missing**: Electron preview cards will fallback to the main title
+- **Hero card always uses**: The main `title` field regardless of altTitle
+
+This is especially useful for projects with long titles that don't fit well in the compact preview cards.
+
+### 12. Assets Folder Pattern (auto gallery)
 
 To simplify image management, you can let the Bento template auto-build the hero and gallery from a single folder.
 

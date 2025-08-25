@@ -1,6 +1,7 @@
 ---
 title: "Étoiles en Plastiques"
-description: "“ETOILES EN PLASTIQUES, est un album de rap alternatif dont l’univers sonore mêle instrumentales électroniques a des textes sombres et introspectifs. L’album explore des souffrances amoureuses, un contexte de travail éprouvant et des tensions familiales, créant une explosion émotionnelle comparable à une supernova."
+altTitle: "Étoiles en Plastiques"
+description: "\"ETOILES EN PLASTIQUES\" est un album de rap alternatif dont l'univers sonore mêle instrumentales électroniques a des textes sombres et introspectifs. L'album explore des souffrances amoureuses, un contexte de travail éprouvant et des tensions familiales, créant une explosion émotionnelle comparable à une supernova."
 tech: ["Ableton", "Reaper", "Davinci Resolve"]
 status: "completed" # or "in-progress" | "planned"
 link: "https://example.com"

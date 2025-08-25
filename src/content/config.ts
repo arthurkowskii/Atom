@@ -5,6 +5,7 @@ const projectsCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
+    altTitle: z.string().optional(), // Optional - shorter title for electron preview cards
     domain: z.string().optional(), // Optional - will be computed from folder structure if not provided
     description: z.string(),
     tech: z.array(z.string()),

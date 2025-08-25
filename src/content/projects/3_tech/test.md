@@ -1,5 +1,6 @@
 ---
 title: "Task Management App test"
+altTitle: "Test App"
 domain: "tech"
 description: "Full-stack task manager with real-time collaboration teeeeeeeest"
 tech: ["React", "Node.js", "Socket.io", "PostgreSQL"]
