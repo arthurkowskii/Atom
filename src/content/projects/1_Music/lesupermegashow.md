@@ -1,6 +1,6 @@
 ---
 title: "LE SUPER MEGA SHOW !"
-altTitle: "Super Mega Show"
+altTitle: "LE SUPER MEGA SHOW!"
 description: "\"LE SUPER MEGA SHOW!\" est une série audio et un court-métrage conçus, écrits et réalisés par Arthur Kowskii. Talk-show fictif inzpiré des émissions emblématiques des 70s et ruit de la collaboration entre Arthur Kowskii et le comédien belge Benoit Grimmiaux (Bojack Horseman...) qui incarne le présentateur."
 tech: ["Ableton", "Reaper", "Davinci Resolve"]
 status: "completed" # or "in-progress" | "planned"

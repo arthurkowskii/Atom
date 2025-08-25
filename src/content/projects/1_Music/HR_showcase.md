@@ -11,7 +11,7 @@ useBentoLayout: true
 # Bento Layout Configuration
 bento:
   # Accent color theme
-  accentColor: "#000000ff"
+  accentColor: "#f5f5f5ff"
   
   # Centralized assets folder for hero/logo and gallery images
   assetsFolder: "/src/content/projects/1_Music/Assets_hr"
@@ -55,17 +55,17 @@ bento:
   actions:
     title: "Links"
     primary:
-      text: "📽️ Watch the Full Trailer Remake"
-      url: "https://youtu.be/OK9EgEImmZc?si=dzKnXIHsKYrMNpUF"
+      text: "🎧 Listen to Kowskii and HR 2024 collaboration"
+      url: "https://on.soundcloud.com/7WWxaXFKQd7jxrLKm9"
     secondary:
-      text: "Original Trailer from Ubisoft"
-      url: "https://youtu.be/IHwRdqbSQdM?si=GAwNMfhBCVJjL63F"
+      text: "See ealier collaboration with HR (2021, 2022)"
+      url: "https://vimeo.com/1112967801?share=copy"
 
   # Video configuration
   video:
-    title: "Kubika: Gameplay Trailer"
+    title: "Helene Rubinstein"
     url: "https://youtube.com/watch?v=dQw4w9WgXcQ" # Replace with actual Kubika trailer
-    description: "Watch the gravity-defying puzzle mechanics and immersive 3D audio in action"
+    description: "Arthur Kowskii pour Helena Rubinstein 2024"
 
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
   musicLinks:

@@ -362,3 +362,32 @@ The portfolio is now enterprise-grade with comprehensive monitoring, automated q
 - `src/components/ProjectBento.astro` - Extended asset scanning for video support with thumbnail detection
 - All project `.md` files - Added altTitle field with appropriate shortened titles
 - `BENTO_TEMPLATE.md` - Added comprehensive altTitle and hero video documentation
+
+## Recent Changes (2025‑08‑25) - SoundCloud Card System Implementation
+
+### Flexible SoundCloud Card System
+- **Restored SoundCloud Support**: Re-implemented comprehensive SoundCloud card system alongside existing Spotify functionality. SoundCloud cards support both individual tracks and playlists/sets with automatic URL parsing and embed generation.
+- **Size Variants**: Added `large` boolean parameter controlling card positioning - `large: false` (default) positions alongside or replaces tech card, `large: true` takes full gallery position for music-focused projects.
+- **Visual Player Integration**: Implemented SoundCloud visual player with artwork backgrounds using `&visual=true` parameter and customizable accent colors (white `%23ffffff` for clean integration).
+- **Hero Video Scaling Fix**: Extended `backgroundScale` parameter support to hero videos using CSS transform scaling, matching existing image scaling functionality without breaking compatibility.
+
+### Technical Implementation
+- **Schema Updates**: Added `soundcloud` card toggle and configuration object in `src/content/config.ts` with `large`, `title`, `url`, and `description` fields using Zod validation.
+- **Utility Functions**: Created `getSoundCloudEmbedUrl()` with visual player parameters, `generateSoundCloudTitle()` with track/playlist detection, and URL validation for robust embed handling.
+- **Responsive Positioning**: Implemented complete CSS Grid positioning classes for small (`soundcloud-card-small`) and large (`soundcloud-card-large`) variants across all responsive breakpoints with single-row height matching tech/process cards.
+- **CSP Policy Updates**: Enhanced Content Security Policy across all pages to allow SoundCloud iframes (`https://w.soundcloud.com`) while maintaining security for other embed systems.
+
+### Positioning Logic
+- **Small SoundCloud Card**: When `tech: false`, takes tech position (left side, row 3). When `tech: true`, appears to right of tech (right side, row 4).
+- **Large SoundCloud Card**: Takes full gallery position (grid-column: 9/13, grid-row: 3) with zero padding for full-width visual player display. Single row height prevents vertical overflow.
+- **Priority System**: Large SoundCloud replaces gallery when both are enabled, maintaining clean layout without card conflicts.
+
+### Content Integration
+- **HR Showcase Project**: Configured `src/content/projects/1_Music/HR_showcase.md` as test implementation with large SoundCloud card displaying Helena Rubinstein commission playlist and disabled gallery.
+- **Visual Enhancement**: SoundCloud player displays track artwork background with white accent UI controls for professional music presentation matching project aesthetic.
+
+### Key Files Modified
+- `src/content/config.ts` - Added SoundCloud card schema with large parameter
+- `src/components/ProjectBento.astro` - Complete SoundCloud embed system with video scaling fix and responsive CSS positioning
+- `src/pages/{index,projects/[slug],bio}.astro` - CSP policy updates for SoundCloud iframe support
+- `src/content/projects/1_Music/HR_showcase.md` - Implementation example with large SoundCloud configuration
