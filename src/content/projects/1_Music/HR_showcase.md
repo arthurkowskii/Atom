@@ -1,6 +1,6 @@
 ---
-title: "Helene Rubinstein - Commission"
-altTitle: "Helene Rubinstein - Commission"
+title: "Helena Rubinstein - Commission"
+altTitle: "Helena Rubinstein"
 description: "Lors du salon annuel L’Oréal Paris, j'ai eu l'opportunité de collaborer avec Helena Rubinstein pour la présentation exclusive de leurs nouveaux produits. J'ai composé 15 minutes de musique, interprétée tout au long de la journée pour accompagner les différentes sessions de présentation, utilisant FMOD pour une expérience sonore fluide et immersive."
 tech: ["Reaper", "Phase Plant"]
 status: "completed"
@@ -33,7 +33,7 @@ bento:
   
   # Hero card configuration
   hero:
-    subtitle: "Musique et Sound Design"
+    subtitle: "Commision Musicale Freelance"
     subtitleColor: "#e50000"
     backgroundPosition: "center"
     backgroundSize: "cover"

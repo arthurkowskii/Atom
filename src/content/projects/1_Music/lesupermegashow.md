@@ -34,7 +34,7 @@ bento:
 
   # Hero subtitle only; hero/background/logo auto from assetsFolder
   hero:
-    subtitle: "Composition, Mixage, Réalisation"
+    subtitle: "Court-Métrage et Série-Audio"
     subtitleColor: "#faf525"
     backgroundPosition: "top"
     backgroundSize: "cover"
