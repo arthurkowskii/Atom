@@ -78,7 +78,7 @@ bento:
     steps:
       - "Ceci est un test"
       - "encore"
-      - "Intégration des musiques, SFX et mixage dans FMOD"
+      - "un dernier ?"
       - "Spatialisation et intégration dans UNITY"
       - "Extra : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
 
