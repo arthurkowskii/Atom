@@ -76,7 +76,7 @@ bento:
   process:
     title: "Process"
     steps:
-      - "Création et conception de l'intégralité des SFX pour constituer une banque de son propre au projet."
+      - "Ceci est un test"
       - "Création des musiques ainsi que de leurs variantes (chaque musique à deux versions dans ce jeu)"
       - "Intégration des musiques, SFX et mixage dans FMOD"
       - "Spatialisation et intégration dans UNITY"
