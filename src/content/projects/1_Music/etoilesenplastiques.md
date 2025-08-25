@@ -77,7 +77,7 @@ bento:
     title: "Process"
     steps:
       - "Ceci est un test"
-      - "Création des musiques ainsi que de leurs variantes (chaque musique à deux versions dans ce jeu)"
+      - "encore"
       - "Intégration des musiques, SFX et mixage dans FMOD"
       - "Spatialisation et intégration dans UNITY"
       - "Extra : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
