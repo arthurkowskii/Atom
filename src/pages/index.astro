@@ -73,7 +73,7 @@ const electronsByDomain = projectsWithDomains.reduce((acc, project) => {
 }, {});
 
 // Asset resolution logic (borrowed from ProjectBento)
-const ALL_ASSET_URLS = import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif}', {
+const ALL_ASSET_URLS = import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif,mp4,webm,mov}', {
   eager: true,
   query: '?url',
   import: 'default'
@@ -87,7 +87,9 @@ function resolveAssetUrl(path: string | undefined): string | undefined {
 
 function scanAssetsFolder(folder: string | undefined, explicitHeroBg?: string, explicitLogo?: string): {
   heroBg?: string,
-  heroLogo?: string
+  heroLogo?: string,
+  heroIsVideo?: boolean,
+  heroThumbnail?: string
 } {
   if (!folder) return {};
   
@@ -105,10 +107,17 @@ function scanAssetsFolder(folder: string | undefined, explicitHeroBg?: string, e
 
   const heroFile = parts.find(p => p.nameLC === 'hero');
   const logoFile = parts.find(p => p.nameLC === 'logo');
+  const thumbnailFile = parts.find(p => p.nameLC === 'thumbnail');
   const heroBg = resolveAssetUrl(explicitHeroBg) || heroFile?.url;
   const heroLogo = resolveAssetUrl(explicitLogo) || logoFile?.url;
+  
+  // Check if hero is a video file
+  const heroIsVideo = heroFile?.base ? /\.(mp4|webm|mov)$/i.test(heroFile.base) : false;
+  
+  // Get thumbnail for video hero (only when hero is a video and thumbnail exists)
+  const heroThumbnail = (heroIsVideo && thumbnailFile) ? thumbnailFile.url : undefined;
 
-  return { heroBg, heroLogo };
+  return { heroBg, heroLogo, heroIsVideo, heroThumbnail };
 }
 
 // Enhanced project payload with preview data for electron hover
@@ -120,7 +129,10 @@ const projectSummaries = projectsWithDomains.map(p => {
   if (p.data.useBentoLayout && bento) {
     // Bento projects: use asset resolution
     const assets = scanAssetsFolder(bento.assetsFolder, bento.hero?.backgroundImage, bento.hero?.logo);
-    heroImage = bento.hero?.backgroundImage || assets.heroBg || '';
+    // For preview cards, use thumbnail if hero is video, otherwise use hero
+    heroImage = assets.heroIsVideo && assets.heroThumbnail 
+      ? assets.heroThumbnail 
+      : (bento.hero?.backgroundImage || assets.heroBg || '');
     subtitle = bento.hero?.subtitle || '';
   } else {
     // Atomic projects: use image field

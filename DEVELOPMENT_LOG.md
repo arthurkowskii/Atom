@@ -305,3 +305,33 @@ Tracking
 
 ### Infrastructure Ready
 The portfolio is now enterprise-grade with comprehensive monitoring, automated quality assurance, offline capabilities, and production-ready deployment pipeline. All systems include proper error handling, performance optimization, and accessibility compliance while maintaining the interactive atom experience.
+
+## Recent Changes (2025‑08‑25) - Video and Spotify Card System
+
+### Video Card Implementation
+- **Video Embed Card**: Added comprehensive video card system supporting YouTube and Vimeo embeds. Video card takes same positioning logic as process card - appears in process position when process is disabled, or in row 4 when process is enabled.
+- **URL Processing**: Created `extractVideoId()`, `getVideoEmbedUrl()`, and `generateVideoTitle()` utilities supporting both `youtube.com` and `youtu.be` URL formats with automatic embed URL generation.
+- **Visual Design**: Video positioned first with title below embed for cleaner hierarchy. Configurable top margin (0.1rem) for optimal spacing. Video title styled larger (1.2rem) and bolder (700 weight) using project accent color.
+- **Content Security Policy**: Updated CSP across all pages to allow YouTube (`https://www.youtube.com/embed`, `https://www.youtube-nocookie.com/embed`) and comprehensive YouTube domains for scripts, styles, images, and media.
+
+### Spotify Card System (SoundCloud Replacement)
+- **Complete Rework**: Transformed SoundCloud card system into Spotify album/playlist/track embed system. Updated schema, utilities, positioning classes, and HTML rendering throughout.
+- **Spotify Integration**: Created `extractSpotifyId()`, `getSpotifyEmbedUrl()`, and `generateSpotifyTitle()` utilities supporting album, playlist, and track formats with automatic embed URL generation.
+- **Full-Card Layout**: Spotify embeds fill entire card with no padding (352px height expanding to 100%) and no text elements for clean music-focused display.
+- **Project Updates**: Updated lesupermegashow.md and etoilesenplastiques.md with Spotify embeds. All project files migrated from `soundcloud:` to `spotify:` configuration blocks.
+
+### Technical Improvements
+- **Schema Updates**: Modified `src/content/config.ts` to replace `soundcloud` with `spotify` in both card toggles and configuration objects.
+- **CSS Architecture**: Updated all positioning classes from `.soundcloud-*` to `.spotify-*` across responsive breakpoints with zero-padding override for full-card display.
+- **CSP Policy Updates**: Comprehensive CSP updates across index.astro, projects/[slug].astro, and bio.astro to support both YouTube and Spotify embeds while removing SoundCloud domains.
+
+### Content Management
+- **Project Configuration**: All bento layout projects updated with new card system. Video and Spotify cards work independently with smart positioning logic based on existing cards (tech/process).
+- **Template Updates**: Enhanced BENTO_TEMPLATE.md documentation with comprehensive video and Spotify card configuration examples and positioning logic explanations.
+
+### Key Files Modified
+- `src/content/config.ts` - Schema updates for video/spotify cards
+- `src/components/ProjectBento.astro` - Complete video/Spotify embed system with utilities and responsive CSS
+- `src/pages/{index,projects/[slug],bio}.astro` - CSP policy updates for YouTube/Spotify
+- `src/content/projects/1_Music/*.md` - Updated with video/Spotify configurations
+- `BENTO_TEMPLATE.md` - Added comprehensive video/Spotify card documentation

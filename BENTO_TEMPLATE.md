@@ -203,12 +203,19 @@ Recommended folder structure:
 src/content/projects/3_YourDomain/
 ├── your-project.md
 └── Assets_YourProject/
-    ├── hero.jpg        # reserved filename for hero background
+    ├── hero.jpg        # reserved filename for hero background (or hero.mp4 for video)
+    ├── thumbnail.jpg   # reserved filename for video poster (only needed with hero video)
     ├── logo.png        # reserved filename for hero logo
     ├── screenshot-1.jpg
     ├── screenshot-2.jpg
     └── screenshot-3.jpg
 ```
+
+**Hero Video Support**: You can use `hero.mp4`, `hero.webm`, or `hero.mov` instead of an image. The video will automatically loop, be muted, and play inline as a hero background. 
+
+**Video Thumbnails**: When using a hero video, add a `thumbnail.jpg` (or `.png`, `.webp`) file for the poster image. This thumbnail will be displayed while the video loads and serves as a fallback for browsers that don't support video playback. The thumbnail should be a representative frame from your video.
+
+**Gallery Video Support**: Videos in the gallery (`.mp4`, `.webm`, `.mov`) will automatically loop, be muted, and play inline in both the main gallery view and thumbnails. Perfect for showcasing animations, gameplay footage, or process videos alongside static images.
 
 ### 6. Test Your Project
 - Enable `useBentoLayout: true`

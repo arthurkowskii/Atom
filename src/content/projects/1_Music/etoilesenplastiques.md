@@ -55,11 +55,11 @@ bento:
   actions:
     title: "Experience"
     primary:
-      text: "📽️ Regarder le Court-Métrage"
+      text: "💽 Écouter l'Album"
       url: "https://youtu.be/GtoGUcY1K1Y?si=YQXis7RFPEgLKbPy"
     secondary:
-      text: "💽 Écouter l'Album"
-      url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
+      text: "Soutenir à prix libre sur Bandcamp"
+      url: "https://kowskii.bandcamp.com/album/toiles-en-plastique-album"
 
   # Video configuration
   video:

@@ -255,15 +255,15 @@ function inferPlatform(text?: string, url?: string): string {
 }
 
 // Build gallery and hero assets automatically from a folder when provided
-type Img = { src: string; alt: string };
+type Img = { src: string; alt: string; isVideo?: boolean };
 function humanize(name: string): string {
   const base = name.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
   return base.charAt(0).toUpperCase() + base.slice(1);
 }
 
-// Eagerly glob project images and get resolved asset URLs (works in dev/build)
+// Eagerly glob project images and videos and get resolved asset URLs (works in dev/build)
 // Note: use query '?url' + import 'default' (Vite deprecation of `as: 'url'`)
-const ALL_ASSET_URLS = import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif}', {
+const ALL_ASSET_URLS = import.meta.glob('/src/content/projects/**/*.{jpg,jpeg,png,webp,gif,mp4,webm,mov}', {
   eager: true,
   query: '?url',
   import: 'default'
@@ -282,6 +282,8 @@ function resolveAssetUrl(raw?: string): string | undefined {
 function scanAssetsFolder(folder: string | undefined, explicitHeroBg?: string, explicitLogo?: string): {
   heroBg?: string,
   heroLogo?: string,
+  heroIsVideo?: boolean,
+  heroThumbnail?: string,
   images: Img[]
 } {
   if (!folder) return { images: [] };
@@ -305,20 +307,31 @@ function scanAssetsFolder(folder: string | undefined, explicitHeroBg?: string, e
 
   const heroFile = parts.find(p => p.nameLC === 'hero');
   const logoFile = parts.find(p => p.nameLC === 'logo');
+  const thumbnailFile = parts.find(p => p.nameLC === 'thumbnail');
   const heroBg = resolveAssetUrl(explicitHeroBg) || heroFile?.url;
   const heroLogo = resolveAssetUrl(explicitLogo) || logoFile?.url;
+  
+  // Check if hero is a video file
+  const heroIsVideo = heroFile?.base ? /\.(mp4|webm|mov)$/i.test(heroFile.base) : false;
+  
+  // Get thumbnail for video hero (only when hero is a video and thumbnail exists)
+  const heroThumbnail = (heroIsVideo && thumbnailFile) ? thumbnailFile.url : undefined;
 
   // Reserved names to exclude from gallery
-  const reserved = new Set<string>(['hero', 'logo']);
+  const reserved = new Set<string>(['hero', 'logo', 'thumbnail']);
   if (explicitHeroBg) reserved.add((explicitHeroBg.split('/').pop() || '').replace(/\.[^.]+$/, '').toLowerCase());
   if (explicitLogo) reserved.add((explicitLogo.split('/').pop() || '').replace(/\.[^.]+$/, '').toLowerCase());
 
   const images = parts
     .filter(p => !reserved.has(p.nameLC))
     .sort((a, b) => a.base.localeCompare(b.base, undefined, { numeric: true, sensitivity: 'base' }))
-    .map(p => ({ src: p.url, alt: humanize(p.name) }));
+    .map(p => ({ 
+      src: p.url, 
+      alt: humanize(p.name),
+      isVideo: /\.(mp4|webm|mov)$/i.test(p.base)
+    }));
 
-  return { heroBg, heroLogo, images };
+  return { heroBg, heroLogo, heroIsVideo, heroThumbnail, images };
 }
 
 const explicitHeroBg = bento.hero?.backgroundImage;
@@ -332,11 +345,18 @@ const heroLogoUrl = explicitLogo || assets.heroLogo;
 // Final gallery prefers explicit config when present; otherwise auto
 const configuredImages: Img[] | undefined = bento.gallery?.images as any;
 const galleryImages: Img[] = (configuredImages && configuredImages.length > 0)
-  ? configuredImages.map(img => ({ src: resolveAssetUrl(img.src) || img.src, alt: img.alt }))
+  ? configuredImages.map(img => ({ 
+      src: resolveAssetUrl(img.src) || img.src, 
+      alt: img.alt,
+      isVideo: /\.(mp4|webm|mov)$/i.test(img.src)
+    }))
   : assets.images;
 
 // Fallback: if no explicit or auto hero image, use first gallery image
 const finalHeroUrl = heroBackgroundUrl || (galleryImages[0]?.src);
+
+// For video heroes, also provide thumbnail fallback for static contexts
+const heroThumbnailUrl = assets.heroThumbnail;
 
 // Hero background styling with customizable positioning and sizing
 const heroBackgroundPosition = bento.hero?.backgroundPosition || 'center';
@@ -639,7 +659,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     pointer-events: none; /* ensure clicks pass to content */
   }
 
-  .hero-bg-img {
+  .hero-bg-img, .hero-bg-video {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1473,7 +1493,21 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     {cards.hero && (
       <div class="bento-card hero-card" style={heroStyle}>
         <div class="hero-bg">
-          <img class="hero-bg-img" src={finalHeroUrl} alt="" aria-hidden="true" style={`object-position: ${heroBackgroundPosition}; transform: scale(${heroBackgroundScale || 1});`} />
+          {assets.heroIsVideo ? (
+            <video 
+              class="hero-bg-video" 
+              src={finalHeroUrl} 
+              poster={assets.heroThumbnail}
+              autoplay 
+              muted 
+              loop 
+              playsinline 
+              aria-hidden="true"
+              style={`object-position: ${heroBackgroundPosition};`}>
+            </video>
+          ) : (
+            <img class="hero-bg-img" src={finalHeroUrl} alt="" aria-hidden="true" style={`object-position: ${heroBackgroundPosition}; transform: scale(${heroBackgroundScale || 1});`} />
+          )}
           <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
@@ -1623,15 +1657,23 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
         <div class="gallery-grid">
           {galleryImages[0] && (
             <div class="gallery-hero" onclick={galleryImages[0].src ? `window.open('${galleryImages[0].src}', '_blank')` : undefined}>
-              <img src={galleryImages[0].src} alt={galleryImages[0].alt || 'Gallery image'} loading="lazy">
-              <div class="gallery-counter">{galleryImages.length} images</div>
+              {galleryImages[0].isVideo ? (
+                <video src={galleryImages[0].src} muted loop autoplay playsinline loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"></video>
+              ) : (
+                <img src={galleryImages[0].src} alt={galleryImages[0].alt || 'Gallery image'} loading="lazy">
+              )}
+              <div class="gallery-counter">{galleryImages.length} {galleryImages.length === 1 ? (galleryImages[0].isVideo ? 'video' : 'image') : 'items'}</div>
             </div>
           )}
           {galleryImages.length > 1 && (
             <div class="gallery-thumbnails">
               {galleryImages.slice(1).map(image => (
                 <div class="gallery-thumb" onclick={`window.open('${image.src}', '_blank')`}>
-                  <img src={image.src} alt={image.alt || 'Gallery image'} loading="lazy">
+                  {image.isVideo ? (
+                    <video src={image.src} muted loop autoplay playsinline loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                  ) : (
+                    <img src={image.src} alt={image.alt || 'Gallery image'} loading="lazy">
+                  )}
                 </div>
               ))}
             </div>
