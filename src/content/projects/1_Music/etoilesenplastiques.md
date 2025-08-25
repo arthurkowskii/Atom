@@ -80,7 +80,7 @@ bento:
       - "encore"
       - "un dernier ?&"
       - "j'ai menti"
-      - "test synchro : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
+      - "test synchro :  de graphitis"
 
   # Gallery images auto from assetsFolder; title optional
   gallery:
