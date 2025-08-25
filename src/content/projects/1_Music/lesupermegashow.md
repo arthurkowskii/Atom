@@ -22,9 +22,11 @@ bento:
     hero: true
     stats: false
     musicLinks: true
+    video: true
+    spotify: true
     actions: true
-    tech: true
-    process: true
+    tech: false
+    process: false
     gallery: true
     challenges: true
     results: true
@@ -59,6 +61,18 @@ bento:
       text: "💽 Écouter l'Album"
       url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
 
+  # Video configuration
+  video:
+    title: "LE SUPER MEGA SHOW (COURT-METRAGE DE L'ALBUM)"
+    url: "https://youtu.be/GtoGUcY1K1Y?si=XI7niHdCjUYA1L8s"
+    description: "À SUIVRE dans l'album LE SUPER MEGA SHOW !, disponible sur toutes les plateformes. Vous pouvez soutenir et acheter l'album à PRIX LIBRE sur Bandcamp pour soutenir les prochains projets."
+
+  # Spotify configuration
+  spotify:
+    title: "LE SUPER MEGA SHOW - Album"
+    url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=UTvZ7TS4QWqUKtuilpaMpQ"
+    description: "L'album complet disponible sur Spotify avec tous les morceaux et interludes"
+
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
   musicLinks:
     title: "Music Links"
@@ -74,13 +88,24 @@ bento:
 
   # Optional process
   process:
-    title: "Process"
+    title: "Tracklist"
     steps:
-      - "Création et conception de l'intégralité des SFX pour constituer une banque de son propre au projet."
-      - "Création des musiques ainsi que de leurs variantes (chaque musique à deux versions dans ce jeu)"
-      - "Intégration des musiques, SFX et mixage dans FMOD"
-      - "Spatialisation et intégration dans UNITY"
-      - "Extra : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
+      - "LE SUPER MEGA SHOW !"
+      - "PINK CAR RIDE TO YOU (feat. ABAD)"
+      - "Bienvenue"
+      - "THE LAST SHADOW PUPPETS (feat. Theo Goude, ABAD)"
+      - "KINTSUGI (feat. Damon, ABAD)"
+      - "L'interview"
+      - "SHARE A SILENCE"
+      - "Le Public... ?"
+      - "ENFER ET LAPIN BLANC"
+      - "T'es nouveau c'est ça ?"
+      - "XR 300 (feat. MAI)"
+      - "ENFANT"
+      - "C'est toi ?"
+      - "PARIS Z80"
+      - "The End"
+      - "Rolling Credits (feat. Theo Goude, Damon)"
 
   # Gallery images auto from assetsFolder; title optional
   gallery:

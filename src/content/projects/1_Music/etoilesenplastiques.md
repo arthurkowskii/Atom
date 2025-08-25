@@ -22,9 +22,11 @@ bento:
     hero: true
     stats: false
     musicLinks: true
+    video: true
+    spotify: true
     actions: true
-    tech: true
-    process: true
+    tech: false
+    process: false
     gallery: true
     challenges: true
     results: true
@@ -59,28 +61,43 @@ bento:
       text: "💽 Écouter l'Album"
       url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
 
+  # Video configuration
+  video:
+    title: "JE NE VOIS LE CIEL QUE DANS LES FLAQUES (Animation)"
+    url: "https://youtu.be/5ikfSQ6UHFU?si=BhXFkc4EQc57FntH" # Replace with actual album teaser
+    description: "Animation entièrement réalisé, dessiné et monté par Arthur Kowskii. Process : Photoshop, Davinci Resolve"
+
+  # Spotify configuration  
+  spotify:
+    title: "Étoiles en Plastiques - Album"
+    url: "https://open.spotify.com/album/4pHpH5Nzl4m9AxuQ3IE43G?si=qogefLmpQIC8hnrB7YAsPQ"
+    description: "L'album complet avec tous les morceaux sur Spotify"
+
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
   musicLinks:
     title: "Music Links"
     items:
       - text: "Spotify"
-        url: "https://open.spotify.com/album/1y7wp1DtYeQpGxxhoC2i3t?si=gVXYTvsqRoC6D18xovDuYg"
+        url: "https://open.spotify.com/album/4pHpH5Nzl4m9AxuQ3IE43G?si=syf-V0dsTPWzd7m5i9N8DA"
       - text: "Apple Music"
-        url: "https://music.apple.com/fr/album/le-super-mega-show/1768698755"
+        url: "https://music.apple.com/fr/album/%C3%A9toiles-en-plastiques/1827122321"
       - text: "Bandcamp"
-        url: "https://kowskii.bandcamp.com/album/le-super-mega-show-album"
-      - text: "YouTube"
-        url: "https://youtu.be/GtoGUcY1K1Y?si=YQXis7RFPEgLKbPy"
+        url: "https://kowskii.bandcamp.com/album/toiles-en-plastique-album"
+      - text: "*Soundcloud*"
+        url: "https://on.soundcloud.com/G4M0eKE9CAg6g6DeCh"
 
   # Optional process
   process:
-    title: "Process"
+    title: "Tracklist"
     steps:
-      - "Ceci est un test"
-      - "encore"
-      - "un dernier ?&"
-      - "j'ai menti"
-      - "test synchro :  de graphitis"
+      - "OUVERTURE (des portes)"
+      - "06h59"
+      - "ETOILES EN PLASTIQUES"
+      - "GO FAST"
+      - "KETAMINE"
+      - "POEME ELECTRONIQUE"
+      - "LE SABLE SOUS MES YEUX"
+      - "JE NE VOIS LE CIEL QUE DANS LES FLAQUES"
 
   # Gallery images auto from assetsFolder; title optional
   gallery:

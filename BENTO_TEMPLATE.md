@@ -33,6 +33,8 @@ bento:
     hero: true       # Main banner with title/description
     stats: true      # Project statistics
     musicLinks: false # Music links grid (enable to show)
+    video: false     # Video embed (YouTube/Vimeo)
+    soundcloud: false # SoundCloud embed (tracks/playlists)
     actions: true    # Action buttons (play, demo, etc.)
     tech: true       # Technology stack pills
     process: true    # Development process steps
@@ -130,6 +132,18 @@ bento:
   #       url: "https://yourname.bandcamp.com/track/..."
   #     - text: "YouTube"
   #       url: "https://youtube.com/watch?v=..."
+
+  # Video embed (YouTube/Vimeo). Enable with cards.video: true
+  # video:
+  #   title: "Project Demo" # Optional (auto-generated from URL if not provided)
+  #   url: "https://youtube.com/watch?v=..." # YouTube or Vimeo URL
+  #   description: "Brief description of the video content" # Optional
+
+  # SoundCloud embed (tracks/playlists). Enable with cards.soundcloud: true
+  # soundcloud:
+  #   title: "Audio Demo" # Optional (auto-generated from URL if not provided)
+  #   url: "https://soundcloud.com/user/track-or-set" # SoundCloud URL
+  #   description: "Brief description of the audio content" # Optional
 ---
 
 # Your Project Title
@@ -167,6 +181,8 @@ but you can also elaborate here.
 ### 3. Card Configuration
 - **Toggle Cards**: Set any card to `false` to hide it
 - **Stats**: Customize metrics that best represent your project
+- **Video**: Embed YouTube or Vimeo videos with auto-generated titles
+- **SoundCloud**: Embed SoundCloud tracks or playlists with auto-generated titles
 - **Process**: Adjust steps to match your development workflow
 - **Gallery**: Add project screenshots and images
 - **Challenges**: Highlight technical problems you solved
@@ -245,7 +261,64 @@ hero:
   backgroundPosition: "center"
 ```
 
-### 9. Assets Folder Pattern (auto gallery)
+### 9. Video Card Configuration
+
+The video card embeds YouTube or Vimeo videos directly in your project layout:
+
+```yaml
+# Enable video card
+cards:
+  video: true
+
+# Video configuration
+video:
+  title: "Project Demo"  # Optional - auto-generated from URL if not provided
+  url: "https://youtube.com/watch?v=dQw4w9WgXcQ"  # YouTube or Vimeo URL
+  description: "Brief description of the video content"  # Optional
+```
+
+**Supported Platforms:**
+- **YouTube**: Any youtube.com or youtu.be URL
+- **Vimeo**: Any vimeo.com URL
+
+**Auto-Generated Titles:**
+- If no title is provided, the system generates: "Watch on YouTube" or "Watch on Vimeo"
+- Custom titles override the auto-generated ones
+
+**Card Positioning:**
+- Video card takes the same 2×2 grid slot as Stats and Music Links cards
+- Only one of these three cards can be visible at a time (video > musicLinks > stats priority)
+
+### 10. SoundCloud Card Configuration
+
+The SoundCloud card embeds audio tracks or playlists directly in your project layout:
+
+```yaml
+# Enable SoundCloud card
+cards:
+  soundcloud: true
+
+# SoundCloud configuration
+soundcloud:
+  title: "Audio Demo"  # Optional - auto-generated from URL if not provided
+  url: "https://soundcloud.com/user/track-or-set"  # SoundCloud URL
+  description: "Brief description of the audio content"  # Optional
+```
+
+**Supported Content:**
+- **Individual Tracks**: Any soundcloud.com/user/track-name URL
+- **Playlists/Sets**: Any soundcloud.com/user/sets/playlist-name URL
+
+**Auto-Generated Titles:**
+- If no title is provided, the system generates: "Listen on SoundCloud" or "Listen on SoundCloud (Playlist)" for sets
+- Custom titles override the auto-generated ones
+
+**Card Positioning:**
+- SoundCloud card works alongside the Tech card
+- When `tech: false`: SoundCloud takes the tech position (left side, row 3)
+- When `tech: true`: SoundCloud appears to the right of tech (right side, row 4)
+
+### 11. Assets Folder Pattern (auto gallery)
 
 To simplify image management, you can let the Bento template auto-build the hero and gallery from a single folder.
 

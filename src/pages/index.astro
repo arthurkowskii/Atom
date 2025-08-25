@@ -287,23 +287,22 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 		<meta name="build-commit" content={import.meta.env.BUILD_COMMIT || 'local'} />
 		<meta name="build-date" content={new Date().toISOString()} />
 		
-		<!-- Enhanced Content Security Policy -->
+		<!-- Relaxed Content Security Policy for media embeds -->
 		<meta http-equiv="Content-Security-Policy" content="
 			default-src 'self';
-			script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;
-			style-src 'self' 'unsafe-inline';
-			img-src 'self' data: https: blob: https://*.arthurkowskii.com;
-			media-src 'self' data: blob: https://*.arthurkowskii.com;
-			font-src 'self' data: https://fonts.gstatic.com;
-			connect-src 'self' https://*.github.com https://api.github.com;
+			script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:;
+			style-src 'self' 'unsafe-inline' https: data:;
+			img-src 'self' data: https: blob:;
+			media-src 'self' data: https: blob:;
+			font-src 'self' data: https:;
+			connect-src 'self' https:;
 			worker-src 'self' blob:;
 			child-src 'none';
-			frame-src 'none';
+			frame-src 'self' https: https://open.spotify.com;
 			object-src 'none';
 			base-uri 'self';
-			form-action 'self' https://*.github.com;
+			form-action 'self' https:;
 			frame-ancestors 'none';
-			upgrade-insecure-requests;
 		">
 		
 		<title>Atom Portfolio</title>

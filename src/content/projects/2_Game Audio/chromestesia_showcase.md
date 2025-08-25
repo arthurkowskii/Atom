@@ -22,6 +22,8 @@ bento:
     hero: true
     stats: true
     musicLinks: false
+    video: false
+    spotify: false
     actions: true
     tech: true
     process: true

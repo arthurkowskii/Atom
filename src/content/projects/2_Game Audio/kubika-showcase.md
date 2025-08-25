@@ -20,6 +20,8 @@ bento:
     hero: true
     stats: true
     musicLinks: false
+    video: false
+    spotify: false
     actions: true
     tech: true
     process: true
@@ -56,6 +58,12 @@ bento:
     secondary:
       text: "Follow us on itch.io"
       url: "https://kubika.itch.io/kubika-a-cube-story"
+
+  # Video configuration
+  video:
+    title: "Kubika: Gameplay Trailer"
+    url: "https://youtube.com/watch?v=dQw4w9WgXcQ" # Replace with actual Kubika trailer
+    description: "Watch the gravity-defying puzzle mechanics and immersive 3D audio in action"
 
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
   musicLinks:

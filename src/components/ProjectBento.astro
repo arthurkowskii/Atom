@@ -12,6 +12,9 @@ export interface Props {
         cards?: {
           hero?: boolean;
           stats?: boolean;
+          musicLinks?: boolean;
+          video?: boolean;
+          spotify?: boolean;
           actions?: boolean;
           tech?: boolean;
           process?: boolean;
@@ -59,6 +62,16 @@ export interface Props {
           title?: string;
           items: Array<{ text: string; url: string; }>;
         };
+        video?: {
+          title?: string;
+          url: string;
+          description?: string;
+        };
+        spotify?: {
+          title?: string;
+          url: string;
+          description?: string;
+        };
       };
     };
   };
@@ -87,6 +100,8 @@ const cards = {
   hero: true, 
   stats: true, 
   musicLinks: false,
+  video: false,
+  spotify: false,
   actions: true, 
   tech: true, 
   process: true, 
@@ -128,6 +143,89 @@ const onAccentColor = contrastWithWhite >= contrastWithBlack ? '#ffffff' : '#000
 const hasMusicLinks = !!(cards.musicLinks && bento.musicLinks && Array.isArray(bento.musicLinks.items) && bento.musicLinks.items.length === 4);
 if (cards.musicLinks && !hasMusicLinks) {
   console.warn('[ProjectBento] musicLinks card enabled but missing 4 items; falling back to Stats card.');
+}
+
+// Video utilities
+function extractVideoId(url) {
+  // YouTube patterns
+  const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const youtubeMatch = url.match(youtubeRegex);
+  if (youtubeMatch) {
+    return { platform: 'youtube', id: youtubeMatch[1] };
+  }
+  
+  // Vimeo patterns
+  const vimeoRegex = /vimeo\.com\/(?:video\/)?(\d+)/;
+  const vimeoMatch = url.match(vimeoRegex);
+  if (vimeoMatch) {
+    return { platform: 'vimeo', id: vimeoMatch[1] };
+  }
+  
+  return null;
+}
+
+function getVideoEmbedUrl(url) {
+  const videoInfo = extractVideoId(url);
+  if (!videoInfo) return null;
+  
+  if (videoInfo.platform === 'youtube') {
+    return `https://www.youtube.com/embed/${videoInfo.id}`;
+  }
+  
+  if (videoInfo.platform === 'vimeo') {
+    return `https://player.vimeo.com/video/${videoInfo.id}`;
+  }
+  
+  return null;
+}
+
+function generateVideoTitle(url) {
+  const videoInfo = extractVideoId(url);
+  if (!videoInfo) return 'Video';
+  
+  if (videoInfo.platform === 'youtube') {
+    return 'Watch on YouTube';
+  }
+  
+  if (videoInfo.platform === 'vimeo') {
+    return 'Watch on Vimeo';
+  }
+  
+  return 'Video';
+}
+
+// Spotify utilities
+function extractSpotifyId(url) {
+  // Spotify patterns for albums, tracks, and playlists
+  const spotifyRegex = /spotify\.com\/(album|track|playlist)\/([a-zA-Z0-9]+)/;
+  const match = url.match(spotifyRegex);
+  if (match) {
+    return { platform: 'spotify', type: match[1], id: match[2] };
+  }
+  return null;
+}
+
+function getSpotifyEmbedUrl(url) {
+  const spotifyInfo = extractSpotifyId(url);
+  if (!spotifyInfo) return null;
+  
+  // Spotify embed URL format
+  return `https://open.spotify.com/embed/${spotifyInfo.type}/${spotifyInfo.id}?utm_source=generator`;
+}
+
+function generateSpotifyTitle(url) {
+  const spotifyInfo = extractSpotifyId(url);
+  if (!spotifyInfo) return 'Music';
+  
+  if (spotifyInfo.type === 'album') {
+    return 'Listen on Spotify (Album)';
+  } else if (spotifyInfo.type === 'playlist') {
+    return 'Listen on Spotify (Playlist)';
+  } else if (spotifyInfo.type === 'track') {
+    return 'Listen on Spotify (Track)';
+  }
+  
+  return 'Listen on Spotify';
 }
 
 // Icon mapping and platform inference for Music Links
@@ -618,6 +716,55 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     margin-top: 1rem;
   }
 
+  /* Video card styles - positioning handled in responsive sections */
+
+  .video-embed {
+    width: 100%;
+    height: 200px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 0.1rem;
+    background: #f3f4f6;
+  }
+
+  .video-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    color: var(--accent-color);
+  }
+
+  .video-description {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+    line-height: 1.4;
+  }
+
+  /* Spotify card styles - positioning handled in responsive sections */
+  .spotify-embed {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+    margin: 0;
+    background: #f3f4f6;
+  }
+
+  .spotify-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    color: var(--accent-color);
+  }
+
+  .spotify-description {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+    line-height: 1.4;
+  }
+
   .stat-item {
     text-align: center;
     padding: 1rem;
@@ -736,6 +883,24 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     grid-row: 3;
   }
 
+  .tech-card-shifted {
+    grid-column: 1 / 5;
+    grid-row: 5;
+  }
+
+  /* Spotify card positioning - works with tech card */
+  .spotify-card-replaces-tech {
+    grid-column: 1 / 5;
+    grid-row: 3;
+    padding: 0;
+  }
+
+  .spotify-card-after-tech {
+    grid-column: 5 / 9;
+    grid-row: 4;
+    padding: 0;
+  }
+
   .tech-grid {
     display: flex;
     flex-wrap: wrap;
@@ -765,6 +930,17 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .process-card {
     grid-column: 5 / 9;
     grid-row: 3;
+  }
+
+  /* Video card positioning - depends on process card state */
+  .video-card-replaces-process {
+    grid-column: 5 / 9;
+    grid-row: 3;
+  }
+
+  .video-card-after-process {
+    grid-column: 1 / 5;
+    grid-row: 4;
   }
 
   .process-list {
@@ -1015,9 +1191,31 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       grid-column: 1 / 5; 
       grid-row: 3; 
     }
+    .tech-card-shifted { 
+      grid-column: 1 / 5; 
+      grid-row: 4; 
+    }
     .process-card { 
       grid-column: 5 / 8; 
       grid-row: 3; 
+    }
+    .video-card-replaces-process {
+      grid-column: 5 / 8;
+      grid-row: 3;
+    }
+    .video-card-after-process {
+      grid-column: 1 / 5;
+      grid-row: 4;
+    }
+    .spotify-card-replaces-tech {
+      grid-column: 1 / 5;
+      grid-row: 3;
+      padding: 0;
+    }
+    .spotify-card-after-tech {
+      grid-column: 8 / 11;
+      grid-row: 3;
+      padding: 0;
     }
     .gallery-card { 
       grid-column: 8 / 11; 
@@ -1067,9 +1265,31 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       grid-column: 1 / 5; 
       grid-row: 3; 
     }
+    .tech-card-shifted { 
+      grid-column: 1 / 5; 
+      grid-row: 4; 
+    }
     .process-card { 
       grid-column: 5 / 9; 
       grid-row: 3; 
+    }
+    .video-card-replaces-process {
+      grid-column: 5 / 9;
+      grid-row: 3;
+    }
+    .video-card-after-process {
+      grid-column: 1 / 5;
+      grid-row: 4;
+    }
+    .spotify-card-replaces-tech {
+      grid-column: 1 / 5;
+      grid-row: 3;
+      padding: 0;
+    }
+    .spotify-card-after-tech {
+      grid-column: 5 / 9;
+      grid-row: 3;
+      padding: 0;
     }
     .gallery-card { 
       grid-column: 1 / 5; 
@@ -1132,9 +1352,31 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       grid-column: 1 / 7; 
       grid-row: 3; 
     }
+    .tech-card-shifted { 
+      grid-column: 1 / 7; 
+      grid-row: 4; 
+    }
     .process-card { 
       grid-column: 1 / 7; 
       grid-row: 4; 
+    }
+    .video-card-replaces-process {
+      grid-column: 1 / 7;
+      grid-row: 4;
+    }
+    .video-card-after-process {
+      grid-column: 1 / 7;
+      grid-row: 4;
+    }
+    .spotify-card-replaces-tech {
+      grid-column: 1 / 7;
+      grid-row: 3;
+      padding: 0;
+    }
+    .spotify-card-after-tech {
+      grid-column: 1 / 7;
+      grid-row: 4;
+      padding: 0;
     }
     .gallery-card { 
       grid-column: 1 / 7; 
@@ -1303,7 +1545,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
     <!-- Technology Stack -->
     {cards.tech && (
-      <div class="bento-card tech-card">
+      <div class={`bento-card ${cards.video && bento.video && cards.process && bento.process ? 'tech-card-shifted' : 'tech-card'}`}>
         <h3 class="card-title">Technology</h3>
         <p class="card-subtitle">Tools and technologies used</p>
         <div class="tech-grid">
@@ -1311,6 +1553,25 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
             <span class="tech-pill">{tech}</span>
           ))}
         </div>
+      </div>
+    )}
+
+    <!-- Spotify Card - Conditional positioning based on tech card -->
+    {cards.spotify && bento.spotify && (
+      <div class={`bento-card ${cards.tech ? 'spotify-card-after-tech' : 'spotify-card-replaces-tech'}`}>
+        {getSpotifyEmbedUrl(bento.spotify.url) ? (
+          <iframe 
+            class="spotify-embed"
+            src={getSpotifyEmbedUrl(bento.spotify.url)}
+            title={bento.spotify.title || generateSpotifyTitle(bento.spotify.url)}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy">
+          </iframe>
+        ) : (
+          <div class="spotify-embed" style="display: flex; align-items: center; justify-content: center; color: #666;">
+            <span>Unsupported Spotify URL</span>
+          </div>
+        )}
       </div>
     )}
 
@@ -1329,6 +1590,29 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
             </li>
           ))}
         </ul>
+      </div>
+    )}
+
+    <!-- Video Card - Conditional positioning based on process card -->
+    {cards.video && bento.video && (
+      <div class={`bento-card ${cards.process && bento.process ? 'video-card-after-process' : 'video-card-replaces-process'}`}>
+        {getVideoEmbedUrl(bento.video.url) ? (
+          <iframe 
+            class="video-embed"
+            src={getVideoEmbedUrl(bento.video.url)}
+            title={bento.video.title || generateVideoTitle(bento.video.url)}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        ) : (
+          <div class="video-embed" style="display: flex; align-items: center; justify-content: center; color: #666;">
+            <span>Unsupported video URL</span>
+          </div>
+        )}
+        <h3 class="card-title">{bento.video.title || generateVideoTitle(bento.video.url)}</h3>
+        {bento.video.description && (
+          <p class="video-description">{bento.video.description}</p>
+        )}
       </div>
     )}
 

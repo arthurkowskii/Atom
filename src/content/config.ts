@@ -23,6 +23,8 @@ const projectsCollection = defineCollection({
         hero: z.boolean().default(true),
         stats: z.boolean().default(true),
         musicLinks: z.boolean().default(false),
+        video: z.boolean().default(false),
+        spotify: z.boolean().default(false),
         actions: z.boolean().default(true),
         tech: z.boolean().default(true),
         process: z.boolean().default(true),
@@ -59,6 +61,20 @@ const projectsCollection = defineCollection({
           text: z.string(),
           url: z.string().url(),
         })).length(4),
+      }).optional(),
+
+      // Video configuration
+      video: z.object({
+        title: z.string().optional(),
+        url: z.string().url(),
+        description: z.string().optional(),
+      }).optional(),
+
+      // Spotify configuration
+      spotify: z.object({
+        title: z.string().optional(),
+        url: z.string().url(),
+        description: z.string().optional(),
       }).optional(),
       
       // Actions configuration
