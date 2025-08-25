@@ -35,6 +35,7 @@ bento:
     stats: true      # Project statistics
     musicLinks: false # Music links grid (enable to show)
     video: false     # Video embed (YouTube/Vimeo)
+    spotify: false   # Spotify embed (albums/tracks/playlists)
     soundcloud: false # SoundCloud embed (tracks/playlists)
     actions: true    # Action buttons (play, demo, etc.)
     tech: true       # Technology stack pills
@@ -145,6 +146,7 @@ bento:
   #   title: "Audio Demo" # Optional (auto-generated from URL if not provided)
   #   url: "https://soundcloud.com/user/track-or-set" # SoundCloud URL
   #   description: "Brief description of the audio content" # Optional
+  #   large: false # Optional - true = gallery position (full-width), false = tech position (small)
 ---
 
 # Your Project Title
@@ -300,7 +302,7 @@ video:
 
 ### 10. SoundCloud Card Configuration
 
-The SoundCloud card embeds audio tracks or playlists directly in your project layout:
+The SoundCloud card embeds audio tracks or playlists with flexible sizing options:
 
 ```yaml
 # Enable SoundCloud card
@@ -312,6 +314,7 @@ soundcloud:
   title: "Audio Demo"  # Optional - auto-generated from URL if not provided
   url: "https://soundcloud.com/user/track-or-set"  # SoundCloud URL
   description: "Brief description of the audio content"  # Optional
+  large: false  # Optional - true = gallery position (full-width), false = tech position (small)
 ```
 
 **Supported Content:**
@@ -322,10 +325,13 @@ soundcloud:
 - If no title is provided, the system generates: "Listen on SoundCloud" or "Listen on SoundCloud (Playlist)" for sets
 - Custom titles override the auto-generated ones
 
-**Card Positioning:**
-- SoundCloud card works alongside the Tech card
-- When `tech: false`: SoundCloud takes the tech position (left side, row 3)
-- When `tech: true`: SoundCloud appears to the right of tech (right side, row 4)
+**Size Variants:**
+- **Small (default)**: `large: false` - Positions alongside or replaces tech card (small embedded player)
+  - When `tech: false`: Takes the tech position (left side, row 3)
+  - When `tech: true`: Appears to the right of tech (right side, row 4)
+- **Large**: `large: true` - Takes the gallery position (full-width card, row 5)
+  - Perfect for music-focused projects where audio is the primary content
+  - Replaces the gallery card when enabled
 
 ### 11. Alt Title for Preview Cards
 

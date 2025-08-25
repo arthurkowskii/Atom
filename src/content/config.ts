@@ -26,6 +26,7 @@ const projectsCollection = defineCollection({
         musicLinks: z.boolean().default(false),
         video: z.boolean().default(false),
         spotify: z.boolean().default(false),
+        soundcloud: z.boolean().default(false),
         actions: z.boolean().default(true),
         tech: z.boolean().default(true),
         process: z.boolean().default(true),
@@ -76,6 +77,14 @@ const projectsCollection = defineCollection({
         title: z.string().optional(),
         url: z.string().url(),
         description: z.string().optional(),
+      }).optional(),
+
+      // SoundCloud configuration
+      soundcloud: z.object({
+        title: z.string().optional(),
+        url: z.string().url(),
+        description: z.string().optional(),
+        large: z.boolean().default(false), // true = gallery position, false = tech position
       }).optional(),
       
       // Actions configuration

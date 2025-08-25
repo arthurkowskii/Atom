@@ -228,6 +228,34 @@ function generateSpotifyTitle(url) {
   return 'Listen on Spotify';
 }
 
+// SoundCloud utilities
+function extractSoundCloudId(url) {
+  // SoundCloud patterns for tracks and playlists/sets
+  const soundcloudRegex = /soundcloud\.com\/([a-zA-Z0-9\-_]+)\/(?:sets\/)?([a-zA-Z0-9\-_]+)/;
+  const match = url.match(soundcloudRegex);
+  if (match) {
+    const isSet = url.includes('/sets/');
+    return { platform: 'soundcloud', type: isSet ? 'set' : 'track', user: match[1], id: match[2] };
+  }
+  return null;
+}
+
+function getSoundCloudEmbedUrl(url) {
+  // SoundCloud uses the full URL for embed
+  return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true`;
+}
+
+function generateSoundCloudTitle(url) {
+  const soundcloudInfo = extractSoundCloudId(url);
+  if (!soundcloudInfo) return 'Audio';
+  
+  if (soundcloudInfo.type === 'set') {
+    return 'Listen on SoundCloud (Playlist)';
+  }
+  
+  return 'Listen on SoundCloud';
+}
+
 // Icon mapping and platform inference for Music Links
 const MUSIC_ICONS: Record<string, any> = {
   spotify: spotifyIcon,
@@ -773,6 +801,20 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   .spotify-title {
     font-size: 1rem;
+  }
+
+  /* SoundCloud card styles */
+  .soundcloud-embed {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+    margin: 0;
+    background: #f3f4f6;
+  }
+
+  .soundcloud-title {
+    font-size: 1rem;
     font-weight: 600;
     margin-top: 1rem;
     color: var(--accent-color);
@@ -918,6 +960,25 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .spotify-card-after-tech {
     grid-column: 5 / 9;
     grid-row: 4;
+    padding: 0;
+  }
+
+  /* SoundCloud card positioning */
+  .soundcloud-card-small-replaces-tech {
+    grid-column: 1 / 5;
+    grid-row: 3;
+    padding: 0;
+  }
+
+  .soundcloud-card-small-after-tech {
+    grid-column: 5 / 9;
+    grid-row: 4;
+    padding: 0;
+  }
+
+  .soundcloud-card-large {
+    grid-column: 9 / 13;
+    grid-row: 3;
     padding: 0;
   }
 
@@ -1237,6 +1298,21 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       grid-row: 3;
       padding: 0;
     }
+    .soundcloud-card-small-replaces-tech {
+      grid-column: 1 / 5;
+      grid-row: 3;
+      padding: 0;
+    }
+    .soundcloud-card-small-after-tech {
+      grid-column: 8 / 11;
+      grid-row: 3;
+      padding: 0;
+    }
+    .soundcloud-card-large {
+      grid-column: 8 / 11;
+      grid-row: 3;
+      padding: 0;
+    }
     .gallery-card { 
       grid-column: 8 / 11; 
       grid-row: 3 / 5;
@@ -1307,6 +1383,21 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       padding: 0;
     }
     .spotify-card-after-tech {
+      grid-column: 5 / 9;
+      grid-row: 3;
+      padding: 0;
+    }
+    .soundcloud-card-small-replaces-tech {
+      grid-column: 1 / 5;
+      grid-row: 3;
+      padding: 0;
+    }
+    .soundcloud-card-small-after-tech {
+      grid-column: 5 / 9;
+      grid-row: 3;
+      padding: 0;
+    }
+    .soundcloud-card-large {
       grid-column: 5 / 9;
       grid-row: 3;
       padding: 0;
@@ -1394,6 +1485,21 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       padding: 0;
     }
     .spotify-card-after-tech {
+      grid-column: 1 / 7;
+      grid-row: 4;
+      padding: 0;
+    }
+    .soundcloud-card-small-replaces-tech {
+      grid-column: 1 / 7;
+      grid-row: 3;
+      padding: 0;
+    }
+    .soundcloud-card-small-after-tech {
+      grid-column: 1 / 7;
+      grid-row: 4;
+      padding: 0;
+    }
+    .soundcloud-card-large {
       grid-column: 1 / 7;
       grid-row: 4;
       padding: 0;
@@ -1604,6 +1710,31 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
         ) : (
           <div class="spotify-embed" style="display: flex; align-items: center; justify-content: center; color: #666;">
             <span>Unsupported Spotify URL</span>
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- SoundCloud Card - Small and Large size variants -->
+    {cards.soundcloud && bento.soundcloud && (
+      <div class={`bento-card ${
+        bento.soundcloud.large 
+          ? 'soundcloud-card-large' 
+          : cards.tech 
+            ? 'soundcloud-card-small-after-tech' 
+            : 'soundcloud-card-small-replaces-tech'
+      }`}>
+        {getSoundCloudEmbedUrl(bento.soundcloud.url) ? (
+          <iframe 
+            class="soundcloud-embed"
+            src={getSoundCloudEmbedUrl(bento.soundcloud.url)}
+            title={bento.soundcloud.title || generateSoundCloudTitle(bento.soundcloud.url)}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy">
+          </iframe>
+        ) : (
+          <div class="soundcloud-embed" style="display: flex; align-items: center; justify-content: center; color: #666;">
+            <span>Unsupported SoundCloud URL</span>
           </div>
         )}
       </div>

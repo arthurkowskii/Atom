@@ -23,10 +23,11 @@ bento:
     musicLinks: false
     video: false
     spotify: false
+    soundcloud: true
     actions: true
     tech: true
     process: true
-    gallery: true
+    gallery: false
     challenges: true
     results: true
   
@@ -36,7 +37,7 @@ bento:
     subtitleColor: "#e50000"
     backgroundPosition: "center"
     backgroundSize: "cover"
-    backgroundScale: 1.5  # Alternative to backgroundSize - use 1.1, 0.9, etc.
+    backgroundScale: 1.7  # Alternative to backgroundSize - use 1.1, 0.9, etc.
     showLogo: false
   
   # Project stats
@@ -78,6 +79,13 @@ bento:
         url: "https://bandcamp.com/"
       - text: "YouTube"
         url: "https://youtube.com/"
+
+  # SoundCloud configuration
+  soundcloud:
+    title: "Helena Rubinstein Commission"
+    url: "https://soundcloud.com/kforkowskii/sets/kowskii-for-helena-rubinstein-px50-event?si=257dbf8a42f749d4baf427d537d957da&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
+    description: "15 minutes de musique pour L'Oréal Paris"
+    large: true  # Use large size (gallery position) instead of small (tech position)
   
   # Development process
   process:
