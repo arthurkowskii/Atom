@@ -78,8 +78,8 @@ bento:
     steps:
       - "Ceci est un test"
       - "encore"
-      - "un dernier ?"
-      - "Spatialisation et intégration dans UNITY"
+      - "un dernier ?&"
+      - "j'ai menti"
       - "Extra : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
 
   # Gallery images auto from assetsFolder; title optional

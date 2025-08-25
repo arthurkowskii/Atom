@@ -16,7 +16,7 @@ Copy-Item "$SourceRepo\dist\*" "$DistRepo" -Recurse -Force -ErrorAction Stop
 
 # Step 3: Git commit + push
 Set-Location $DistRepo
-if (Test-Path ".git") {
+if (Test-Path "$DistRepo\.git") {
     git add .
     try {
         git commit -m "Deploy $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
@@ -27,5 +27,3 @@ if (Test-Path ".git") {
 } else {
     Write-Output "❌ Error: '$DistRepo' is not a Git repository."
 }
-
-Write-Output "--- Deployment complete ---"
