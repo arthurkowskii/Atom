@@ -1,7 +1,7 @@
 ---
 title: "Sound ReDesign : Heroes of Might and Magic VI"
 altTitle: "Heroes VI Redesign"
-description: "Kubika est un jeu de Sokoban en 3D où la gravité devient votre meilleur allié… ou votre pire ennemi ! Actuellement en développement, j'assure le Sound-Design  et l'Intégration Audio du projet"
+description: "Recréation de la musique et du sound design du trailer de Heroes of Might and Magic VI dans le cadre d’un projet d'étude. Contraintes : une orchestration traditionnelle, sans synthés, guitares ni aucun instrument moderne."
 tech: ["Reaper", "Phase Plant"]
 status: "completed"
 link: "https://kubika.itch.io/kubika-a-cube-story"
@@ -10,7 +10,7 @@ useBentoLayout: true
 
 # Bento Layout Configuration
 bento:
-  # Accent color theme (orange for Kubika)
+  # Accent color theme
   accentColor: "#e50000"
   
   # Centralized assets folder for hero/logo and gallery images
@@ -41,24 +41,24 @@ bento:
   
   # Project stats
   stats:
-    - value: "1y+"
+    - value: "2 Weeks"
       label: "DURATION"
-    - value: "5 👨‍👩‍👦‍👦"
+    - value: "1 👨‍👩‍👦‍👦"
       label: "TEAM SIZE"
-    - value : "PC"
+    - value : "VIDEO"
       label : "PLATFORM"
-    - value : KubiTeam
+    - value : ISART
       label : COMPANY
   
   # Action buttons
   actions:
     title: "Links"
     primary:
-      text: "Download the Alpha here ! ⬇️"
-      url: "https://kubika.itch.io/kubika-a-cube-story/purchase"
+      text: "📽️ Watch the Full Trailer Remake"
+      url: "https://youtu.be/OK9EgEImmZc?si=dzKnXIHsKYrMNpUF"
     secondary:
-      text: "Follow us on itch.io"
-      url: "https://kubika.itch.io/kubika-a-cube-story"
+      text: "Original Trailer from Ubisoft"
+      url: "https://youtu.be/IHwRdqbSQdM?si=GAwNMfhBCVJjL63F"
 
   # Video configuration
   video:
@@ -84,9 +84,11 @@ bento:
     title: "Process"
     subtitle: "From concept to shipping"
     steps:
-      - "Enregistrement et conception de l'intégralité des SFX présents dans le jeu"
-      - "Conception d'une banque unique et propre au jeu et réutilisable pour le studio KubiTeam"
-      - "Intégration des sons avec FMOD et UNITY"
+      - "Conception des SFX avec PhasePlant et Reaper"
+      - "Conception d'une banque de son en relation avec le projet"
+      - "Composition de la musique sous les contraintes de DA : instrument fantasiste, cordes... pas de synthé. pas d'instruments modernes."
+      - "Assemblage de la musique et des SFX dans Reaper directement"
+      - "Mixage et Mastering en respectant les normes de rendus"
   
   # Gallery images
   # Gallery now auto-populates from assetsFolder (excluding hero/logo files)

@@ -1,6 +1,6 @@
 ---
 title: "Kubika: A Cube Story"
-altTitle: "Kubika"
+altTitle: "Kubika: A Cube Story"
 description: "Kubika est un jeu de Sokoban en 3D où la gravité devient votre meilleur allié… ou votre pire ennemi ! Actuellement en développement, j'assure le Sound-Design  et l'Intégration Audio du projet"
 tech: ["Unity", "FMOD", "Wwise", "Pro Tools", "C#", "Unity Mixer"]
 status: "completed"

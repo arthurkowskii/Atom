@@ -335,3 +335,30 @@ The portfolio is now enterprise-grade with comprehensive monitoring, automated q
 - `src/pages/{index,projects/[slug],bio}.astro` - CSP policy updates for YouTube/Spotify
 - `src/content/projects/1_Music/*.md` - Updated with video/Spotify configurations
 - `BENTO_TEMPLATE.md` - Added comprehensive video/Spotify card documentation
+
+## Recent Changes (2025‑08‑25) - Alt-Title System & Hero Video Support
+
+### Alt-Title for Preview Cards
+- **Electron Preview Enhancement**: Added `altTitle` field to project schema allowing shorter, preview-optimized titles for electron hover cards while maintaining full titles in hero sections.
+- **Fallback Logic**: Electron preview cards use `altTitle` when available, automatically fallback to main `title` when empty. Hero cards always display the main title regardless of altTitle setting.
+- **Content Updates**: Updated all 9 project files with appropriate altTitle values. Long titles like "Sound ReDesign : Heroes of Might and Magic VI" now display as "Heroes VI Redesign" in compact preview cards.
+- **YAML Fixes**: Resolved frontmatter parsing errors by properly escaping quotes in description fields across music project files.
+
+### Hero Video Asset Support
+- **Video Hero Backgrounds**: Extended asset scanning system to support `hero.mp4`, `hero.webm`, and `hero.mov` files as hero card backgrounds with automatic looping, muted playback, and inline display.
+- **Gallery Video Integration**: Added video support to gallery cards with auto-loop, muted playback functionality. Videos display inline in both main gallery view and thumbnail strips.
+- **Thumbnail System**: Implemented `thumbnail.*` file detection for video hero projects. When hero is video, electron preview cards use thumbnail image instead of video for performance and visual clarity.
+- **Asset Scanning Enhancement**: Updated `import.meta.glob` patterns to include video formats alongside images. Enhanced `scanAssetsFolder` function with video detection and thumbnail fallback logic.
+
+### Technical Improvements
+- **Schema Enhancement**: Added `altTitle: z.string().optional()` to projects collection in `src/content/config.ts` with comprehensive validation.
+- **Preview Logic**: Modified electron preview generation in `src/pages/index.astro` to include altTitle in project summaries and use fallback logic in JavaScript display code.
+- **CSS Refinements**: Improved electron preview title container height (`calc(2 * 1.2em)`) to prevent text clipping on two-line titles and adjusted bottom margin for better spacing.
+- **Documentation**: Updated BENTO_TEMPLATE.md with altTitle usage examples and hero video support instructions including thumbnail requirements.
+
+### Key Files Modified
+- `src/content/config.ts` - Added altTitle field to project schema
+- `src/pages/index.astro` - Enhanced project summary generation with altTitle support and improved CSS spacing
+- `src/components/ProjectBento.astro` - Extended asset scanning for video support with thumbnail detection
+- All project `.md` files - Added altTitle field with appropriate shortened titles
+- `BENTO_TEMPLATE.md` - Added comprehensive altTitle and hero video documentation

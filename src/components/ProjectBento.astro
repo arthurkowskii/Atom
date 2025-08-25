@@ -1503,7 +1503,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
               loop 
               playsinline 
               aria-hidden="true"
-              style={`object-position: ${heroBackgroundPosition};`}>
+              style={`object-position: ${heroBackgroundPosition}; transform: scale(${heroBackgroundScale || 1});`}>
             </video>
           ) : (
             <img class="hero-bg-img" src={finalHeroUrl} alt="" aria-hidden="true" style={`object-position: ${heroBackgroundPosition}; transform: scale(${heroBackgroundScale || 1});`} />

@@ -552,7 +552,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             .preview-title {
                 font-size: min(var(--preview-title-size, 16px), calc(var(--preview-height, 120px) * 0.15));
                 font-weight: 700;
-                margin: 0 0 min(6px, calc(var(--preview-height, 120px) * 0.05)) 0;
+                margin: 0 0 min(8px, calc(var(--preview-height, 120px) * 0.07)) 0;
                 line-height: 1.1;
                 color: #000;
                 overflow: hidden;
@@ -563,7 +563,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 /* Fallback for browsers without line-clamp */
-                max-height: calc(2 * 1.1em);
+                max-height: calc(2 * 1.2em);
             }
             
             .preview-subtitle {
