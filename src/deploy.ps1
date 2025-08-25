@@ -1,6 +1,6 @@
 # Full deploy.ps1
 $SourceRepo = "C:\Users\arthu\Documents\GIT\Atom_Portfolio"
-$DistRepo   = "C:\Users\arthu\Documents\GIT\Atom_Portfolio_Dist"
+$DistRepo   = "C:\Users\arthu\Documents\GIT\Atom_Portfolio_Dist_Build"
 
 # Step 1: Build
 Write-Output "--- Building project ---"
