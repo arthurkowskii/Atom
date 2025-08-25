@@ -1,0 +1,77 @@
+# Security headers for static hosting
+# Configure these headers at your hosting provider level
+
+# Global security headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff  
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), fullscreen=(self)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+# Cache control for static assets
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# API endpoints with stricter security
+/api/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Admin interface security
+/admin/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-cache, no-store, must-revalidate
+  
+# Media uploads
+/images/uploads/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=86400
+
+# Performance optimizations for images
+/images/*
+  Cache-Control: public, max-age=2592000
+  Vary: Accept-Encoding
+  
+# Fonts optimization
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  
+# WebP and modern image formats
+/*.webp
+  Cache-Control: public, max-age=2592000
+  Content-Type: image/webp
+  
+# Health check endpoint (edge function)
+/api/health
+  Cache-Control: no-cache, no-store, must-revalidate
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, OPTIONS
+  
+# Service Worker
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  
+# Manifest and PWA files
+/manifest.json
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+  
+# HTML pages with smart caching
+/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+  Vary: Accept-Encoding
+  
+# Root index with shorter cache for updates
+/
+  Cache-Control: public, max-age=1800, must-revalidate
+  Vary: Accept-Encoding

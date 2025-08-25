@@ -1,0 +1,109 @@
+# Decap CMS Configuration for Atom Portfolio
+
+# For local development - use proxy server
+# backend:
+#   name: proxy
+#   proxy_url: http://localhost:8081/api/v1
+#   branch: main
+
+# For production deployment
+backend:
+  name: git-gateway
+  branch: main
+  squash_merges: true # Security: Squash commits to avoid history pollution
+  commit_messages:
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
+
+# Disable editorial workflow for production security
+# publish_mode: editorial_workflow
+
+# Media files configuration with restrictions
+media_folder: "public/images/uploads" # Folder where uploaded files will be saved
+public_folder: "/images/uploads" # Folder path used in the generated site
+media_library:
+  name: uploadcare
+  config:
+    multiple: false # Security: Prevent batch uploads
+    tabs: 'file' # Security: Only allow file uploads, not external URLs
+
+# Collections define the structure of your content
+collections:
+  # Bio page collection
+  - name: "bio"
+    label: "Bio Page"
+    files:
+      - label: "About Me"
+        name: "about"
+        file: "src/content/bio/about.md"
+        fields:
+          - { label: "Title", name: "title", widget: "string", default: "Arthur Kowskii", pattern: ['^.{1,100}$', 'Title must be 1-100 characters'] }
+          - { label: "Subtitle", name: "subtitle", widget: "string", default: "Composer / Sound Designer / Audio Programmer", pattern: ['^.{1,200}$', 'Subtitle must be 1-200 characters'] }
+          - { label: "Bio Text", name: "bio", widget: "markdown", pattern: ['^[\s\S]{1,5000}$', 'Bio must be 1-5000 characters'] }
+          - { label: "Portrait Image", name: "portrait", widget: "image", required: false, media_library: { config: { max_file_size: 2000000 } } }
+          - label: "Skills"
+            name: "skills"
+            widget: "list"
+            fields:
+              - { label: "Category", name: "category", widget: "string", pattern: ['^.{1,50}$', 'Category must be 1-50 characters'] }
+              - label: "Tools"
+                name: "tools"
+                widget: "list"
+                field: { label: "Tool", name: "tool", widget: "string", pattern: ['^.{1,30}$', 'Tool name must be 1-30 characters'] }
+          - { label: "Contact Email", name: "email", widget: "string", pattern: ['^[^\s@]+@[^\s@]+\.[^\s@]+$', 'Must be a valid email address'] }
+          - label: "Social Links"
+            name: "social"
+            widget: "list"
+            required: false
+            fields:
+              - { label: "Platform", name: "platform", widget: "string", pattern: ['^.{1,30}$', 'Platform name must be 1-30 characters'] }
+              - { label: "URL", name: "url", widget: "string", pattern: ['^https?://.+$', 'Must be a valid HTTP/HTTPS URL'] }
+
+  # Projects collection (for future use)
+  - name: "projects"
+    label: "Projects"
+    folder: "src/content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      # Domain is derived from top-level folder name (e.g., "1_Music/")
+      # Remove explicit domain field to avoid drift with folder-driven shells
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Technologies", name: "tech", widget: "list", field: { label: "Tech", name: "tech", widget: "string" } }
+      - { label: "Status", name: "status", widget: "select", options: ["completed", "in-progress", "planned"] }
+      - { label: "Live Link", name: "link", widget: "string", required: false }
+      - { label: "GitHub Link", name: "github", widget: "string", required: false }
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Content", name: "body", widget: "markdown" }
+
+# Site configuration
+site_url: https://arthurkowskii.com
+display_url: https://arthurkowskii.com
+logo_url: /favicon.svg
+
+# Security settings
+show_preview_links: false # Security: Disable preview links in production
+editor:
+  preview: false # Security: Disable preview pane to prevent XSS
+  
+# Access control (requires Netlify Identity or similar)
+# auth:
+#   providers:
+#     - name: github
+#       client_id: "your-github-oauth-app-client-id"
+#   roles:
+#     - name: admin
+#       description: "Full access to all content"
+#     - name: editor  
+#       description: "Limited editing access"
+
+# Rate limiting and security headers (configure at hosting level)
+# Recommended headers:
+# - X-Frame-Options: DENY
+# - X-Content-Type-Options: nosniff  
+# - Referrer-Policy: strict-origin-when-cross-origin

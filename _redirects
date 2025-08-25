@@ -1,0 +1,3 @@
+# Redirect rules for static hosting
+# SPA-like behavior for project routes
+/projects/* /projects/:splat 200

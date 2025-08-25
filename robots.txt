@@ -1,0 +1,57 @@
+# Robots.txt for Arthur Kowskii Portfolio
+# https://arthurkowskii.com
+
+User-agent: *
+Allow: /
+Allow: /bio
+Allow: /projects/
+Allow: /images/
+
+# Disallow admin and API endpoints
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_astro/
+
+# Allow sitemap
+Sitemap: https://arthurkowskii.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Specific rules for different bots
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /images/bio/
+
+User-agent: Twitterbot
+Allow: /
+Allow: /images/bio/
+
+User-agent: LinkedInBot
+Allow: /
+Allow: /bio
+Allow: /images/bio/
+
+# Block AI training bots (opt-out)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /

@@ -1,0 +1,70 @@
+{
+  "name": "Arthur Kowskii - Portfolio",
+  "short_name": "Atom Portfolio",
+  "description": "Interactive portfolio showcasing music production, game audio, and web development projects",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#00b3b0",
+  "background_color": "#ffffff",
+  "lang": "en-US",
+  "categories": ["portfolio", "music", "development", "entertainment"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/bio/logo-transparent.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/bio/logo-transparent.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Music Projects",
+      "short_name": "Music",
+      "description": "View music production projects",
+      "url": "/?domain=music",
+      "icons": []
+    },
+    {
+      "name": "Game Audio",
+      "short_name": "Audio",
+      "description": "Game audio implementation projects",
+      "url": "/?domain=game-audio",
+      "icons": []
+    },
+    {
+      "name": "Bio",
+      "short_name": "About",
+      "description": "Learn about Arthur",
+      "url": "/bio",
+      "icons": []
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/bio/arthur-portfolio.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Portfolio main interface"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
