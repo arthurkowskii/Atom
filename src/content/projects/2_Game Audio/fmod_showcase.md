@@ -1,44 +1,44 @@
 ---
-title: "Sound ReDesign : Heroes of Might and Magic VI"
-altTitle: "Heroes VI Redesign"
-description: "Recréation de la musique et du sound design du trailer de Heroes of Might and Magic VI dans le cadre d’un projet d'étude. Contraintes : une orchestration traditionnelle, sans synthés, guitares ni aucun instrument moderne."
-tech: ["Reaper", "Phase Plant"]
+title: "FMOD Demo : Interactive JDR"
+altTitle: "FMOD Demo"
+description: "Conception d’un projet FMOD pour un jeu de rôle. Le pitch : un jeu d’horreur situé dans un univers de science-fiction spatial, dans l’esprit de Dead Space.Le jeu comporte quatre phases de gameplay distinctes : exploration, infiltration, combat et survie — toutes contrôlées dynamiquement via le paramètre “INTERACTIVITY”."
+tech: ["Reaper", "FMOD"]
 status: "completed"
-link: "https://kubika.itch.io/kubika-a-cube-story"
+link: "https://youtu.be/URPsqY7SwxY?si=orus46GsXuOBT0hj"
 date: 2024-03-15
 useBentoLayout: true
 
 # Bento Layout Configuration
 bento:
   # Accent color theme
-  accentColor: "#e50000"
+  accentColor: "#ff0000ff"
   
   # Centralized assets folder for hero/logo and gallery images
-  assetsFolder: "/src/content/projects/2_Game Audio/Assets_Heroes"
+  assetsFolder: "/src/content/projects/2_Game Audio/Assets_FMOD"
   
   # Card visibility toggles
   cards:
     hero: true
     stats: true
     musicLinks: false
-    video: false
+    video: true
     spotify: false
     actions: true
     tech: true
-    process: true
+    process: false
     gallery: true
     challenges: true
     results: true
   
   # Hero card configuration
   hero:
-    subtitle: "Musique et Sound Design"
+    subtitle: "Démonstration Musique Dynamique"
     subtitleColor: "#e50000"
     backgroundPosition: "center"
     backgroundSize: "cover"
     backgroundScale: 1  # Alternative to backgroundSize - use 1.1, 0.9, etc.
-    overlayOpacity: 0.45  # Controls dark overlay opacity (0.0 = transparent, 1.0 = opaque) - default: 0.35
-    showLogo: false
+    overlayOpacity: 0  # Controls dark overlay opacity (0.0 = transparent, 1.0 = opaque) - default: 0.35
+    showLogo: true
   
   # Project stats
   stats:
@@ -46,7 +46,7 @@ bento:
       label: "DURATION"
     - value: "1 👨‍👩‍👦‍👦"
       label: "TEAM SIZE"
-    - value : "VIDEO"
+    - value : "FMOD"
       label : "PLATFORM"
     - value : ISART
       label : COMPANY
@@ -55,17 +55,17 @@ bento:
   actions:
     title: "Links"
     primary:
-      text: "📽️ Watch the Full Trailer Remake"
-      url: "https://youtu.be/OK9EgEImmZc?si=dzKnXIHsKYrMNpUF"
+      text: "📽️ Watch the DEMO"
+      url: "https://youtu.be/URPsqY7SwxY?si=orus46GsXuOBT0hj"
     secondary:
       text: "Original Trailer from Ubisoft"
       url: "https://youtu.be/IHwRdqbSQdM?si=GAwNMfhBCVJjL63F"
 
   # Video configuration
   video:
-    title: "Kubika: Gameplay Trailer"
-    url: "https://youtube.com/watch?v=dQw4w9WgXcQ" # Replace with actual Kubika trailer
-    description: "Watch the gravity-defying puzzle mechanics and immersive 3D audio in action"
+    title: "INTERACTIVE JDR - SPACE ABYSS"
+    url: "https://youtu.be/URPsqY7SwxY?si=orus46GsXuOBT0hj"
+    description: "Conception d’un projet FMOD pour un jeu de rôle. Le pitch : un jeu d’horreur situé dans un univers de science-fiction spatial, dans l’esprit de Dead Space. L’ambiance sonore y joue un rôle central, renforçant la tension et l’immersion du joueur à chaque instant. Le jeu comporte quatre phases de gameplay distinctes : exploration, infiltration, combat et survie — toutes contrôlées dynamiquement via le paramètre “INTERACTIVITY”."
 
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
   musicLinks:
@@ -98,15 +98,21 @@ bento:
   
   # Technical challenges
   challenges:
-    title: "Key Challenges"
-    subtitle: "Technical problems solved during development"
+    title: "Pitch"
+    subtitle: ""
     items:
-      - title: "Détection des différents type de cube"
-        description: "Developed custom 3D audio listener system that maintains spatial relationships regardless of world orientation"
-      - title: "Concevoir un son joué plus d'une cinquantaine de fois par minute et le rendre plaisant"
-        description: "Implemented audio pooling and LOD systems to handle complex 3D audio without performance impact"
-      - title: "Optimisation des performances"
-        description: "Created parametric music system with vertical remixing for seamless emotional transitions"
+      - title: ""
+        description: "Nous allons avoir besoin que tu composes de la musique interactive pour notre jeu avec des phases distinctes. Pour ce faire, dans l’application, nous allons appeler un paramètre que tu devras créer qui contiendra donc plusieurs états. Ce paramètre nous l’avons appelé INTERACTIVITY."
+      - title: "État 0 : Mise en contexte narration"
+        description: "Menu d'ouverture du jeu; mise en contexte."
+      - title: "État 01 + 1.5 : Musique de réflexion / Idle"
+        description: "c’est la musique que l’on entendra le plus souvent, celle qui permettra aux joueurs de discuter, réfléchir, lancer les dés etc...). Au bout d'un certain temps une couche de layer supplémentaire (1.5) accentue le sentiment d'urgence."
+      - title : "État 02 : Musique de combat avec transition"
+        description: "Lorsque l’on tombe sur un ennemi. Il faudra que la transition entre la musique de réfléxion et la musique de combat se fasse immédiatement et de façon très musicale"
+      - title: "Victoire et transition : 02 -> Win -> 01"
+        description: "Musique de fin de combat victorieuse : jingle qui clos le combat (on doit pouvoir revenir sur la musique de réflexion après ça)"
+      - title: "Défaite et transition : 02 -> Loose -> 01"
+        description: "Musique de fin de combat défaite suivie d’une loop pour expliquer la fin du jeu : c’est le game over. Attention : on peut également mourir en phase de réflexion, donc il faut que l’on puisse également aller à l’état 3 depuis l’état 1"
   
   # Results and impact
   results:

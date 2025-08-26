@@ -30,6 +30,7 @@ export interface Props {
           backgroundPosition?: string;
           backgroundSize?: string;
           backgroundScale?: number;
+          overlayOpacity?: number;
           logo?: string;
           showLogo?: boolean;
         };
@@ -393,13 +394,26 @@ const heroBackgroundSize = heroBackgroundScale ?
   `${heroBackgroundScale * 100}%` : 
   (bento.hero?.backgroundSize || 'cover');
 
+// Configurable overlay opacity (default: 0.35 for text readability)
+const overlayOpacity = bento.hero?.overlayOpacity ?? 0.35;
+// Create gradient: top is 30% of opacity, bottom is full opacity (maintains original ratio)
+const overlayTopOpacity = overlayOpacity * 0.3; // 30% of chosen opacity
+const overlayBottomOpacity = overlayOpacity; // Full chosen opacity
+
+// Debug: log the values for troubleshooting
+// console.log('Overlay Debug:', { 
+//   projectTitle: data.title,
+//   overlayOpacity, 
+//   overlayTopOpacity, 
+//   overlayBottomOpacity 
+// });
+
 // Use a dedicated .hero-bg layer for the image so hover scale is visible.
 // Keep hero card background empty to avoid a second static image behind it.
 const heroStyle = '';
 
-const heroBgStyle = finalHeroUrl ? 
-  `background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35)), url('${finalHeroUrl}'); background-position: ${heroBackgroundPosition}; background-size: ${heroBackgroundSize};` : 
-  '';
+// heroBgStyle is no longer used - overlay is controlled by .hero-overlay CSS class
+const heroBgStyle = '';
 
 // Generate CSS custom properties for the accent color
 // Handle both 6-char (#ff6b00) and 8-char (#dfdb00ff) hex colors
@@ -408,7 +422,7 @@ const hexRgb = cleanHex.length === 8 ? cleanHex.slice(0, 6) : cleanHex; // Remov
 const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join(', ') || '255, 107, 0';
 ---
 
-<style define:vars={{ accentColor, accentColorRgb, heroSubtitleColor, onAccentColor }}>
+<style define:vars={{ accentColor, accentColorRgb, heroSubtitleColor, onAccentColor, overlayTopOpacity, overlayBottomOpacity }}>
   .project-bento {
     min-height: 100vh;
     background: #ffffff !important;
@@ -697,7 +711,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.35));
+    background: linear-gradient(to bottom, rgba(0,0,0,var(--overlayTopOpacity)), rgba(0,0,0,var(--overlayBottomOpacity)));
   }
 
   .hero-card:hover .hero-bg {

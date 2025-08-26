@@ -967,8 +967,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			
 			// Initialize orbit system when DOM is ready
 			document.addEventListener('DOMContentLoaded', () => {
-				console.log('Initializing Atom Portfolio...');
-				console.log('GSAP version:', gsap.version);
+				// console.log('Initializing Atom Portfolio...');
+				// console.log('GSAP version:', gsap.version);
 				
 				// Minimum distance system is working correctly!
 				
@@ -1031,9 +1031,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 
 							this.synth.volume.value = gainToDb(this.config.volume || 0.2);
 							this.isInitialized = true;
-							console.log('🔊 Atom Sound System initialized (Tone.js placeholder)');
+							// console.log('🔊 Atom Sound System initialized (Tone.js placeholder)');
 						} catch (error) {
-							console.warn('Failed to initialize atom sounds:', error);
+							// console.warn('Failed to initialize atom sounds:', error);
 						}
 					}
 
@@ -1064,9 +1064,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 								this.lastSoundState = stateKey;
 							}
 							
-							console.log(`🔊 Playing ${eventType}: ${pitch} (state: ${stateKey || 'none'})`);
+							// console.log(`🔊 Playing ${eventType}: ${pitch} (state: ${stateKey || 'none'})`);
 						} catch (error) {
-							console.warn(`Atom sound error for ${eventType}:`, error);
+							// console.warn(`Atom sound error for ${eventType}:`, error);
 						}
 					}
 
@@ -1074,7 +1074,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					startDragSequence(electronId) {
 						// PLACEHOLDER: Play detach sound when starting to drag - replace with OGG file playback
 						this.playSound('electronDragStart', `drag-start-${electronId}`);
-						console.log(`🎵 Electron detached (${electronId})`);
+						// console.log(`🎵 Electron detached (${electronId})`);
 					}
 
 					stopDragSequence(snapBack = false) {
@@ -1085,7 +1085,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 							this.playSound('electronDragRelease'); // Gentle release
 						}
 						
-						console.log(`🎵 Electron dropped (snapBack: ${snapBack})`);
+						// console.log(`🎵 Electron dropped (snapBack: ${snapBack})`);
 					}
 				}
 
@@ -1450,7 +1450,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					setState(newState, electronElement = null) {
 						if (this.currentState === newState) return; // No change needed
 						
-						console.log(`🎯 STATE CHANGE: ${this.currentState} → ${newState}`);
+						// console.log(`🎯 STATE CHANGE: ${this.currentState} → ${newState}`);
 						this.previousState = this.currentState;
 						this.currentState = newState;
 						this.currentElectron = electronElement;
@@ -1570,7 +1570,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 const shellConfig = cfg.shells[shellIndex];
                 if (!shell || !shellConfig) return;
                 
-                console.log(`🟡 Applying shell ${shellIndex} effects`);
+                // console.log(`🟡 Applying shell ${shellIndex} effects`);
                 gsap.to(shell, {
                   attr: { 'stroke-width': shellConfig.hoverStrokeWidth },
                   opacity: shellConfig.hoverOpacity,
@@ -1584,7 +1584,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 const shellConfig = cfg.shells[shellIndex];
                 if (!shell || !shellConfig || !electron) return;
                 
-                console.log(`🔴 Applying electron effects for shell ${shellIndex}`);
+                // console.log(`🔴 Applying electron effects for shell ${shellIndex}`);
                 
                 // Apply shell effects
                 this.applyShellEffects(shellIndex);
@@ -1617,7 +1617,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 const shellConfig = cfg.shells[shellIndex];
                 if (!shell || !shellConfig) return;
                 
-                console.log(`🔄 Resetting shell ${shellIndex} effects`);
+                // console.log(`🔄 Resetting shell ${shellIndex} effects`);
                 gsap.to(shell, {
                   attr: { 'stroke-width': shellConfig.strokeWidth },
                   opacity: shellConfig.defaultOpacity,
@@ -1639,7 +1639,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               },
 					
               resetElectronEffects(shellIndex) {
-                console.log(`🔄 Resetting electron effects for shell ${shellIndex}`);
+                // console.log(`🔄 Resetting electron effects for shell ${shellIndex}`);
                 
                 // Hide preview (will be overridden immediately if going to another electron)
                 this.previewActive = false;
@@ -2247,7 +2247,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 						if (distanceSquared >= boundary.innerBoundSquared && 
 							distanceSquared <= boundary.outerBoundSquared) {
 							hoveredShellIndex = boundary.shellIndex;
-							console.log(`🎯 HITBOX: Mouse in shell ${hoveredShellIndex} tolerance zone`);
+							// console.log(`🎯 HITBOX: Mouse in shell ${hoveredShellIndex} tolerance zone`);
 							break; // Exit early when found
 						}
 					}
@@ -2283,10 +2283,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				
 				// Reference already stored globally above
 				
-				console.log('🚀 PHASE 1+2 COMPLETE: Immediate State Manager + RAF Throttling');
-				console.log(`Found ${electrons.length} electrons and ${shells.length} visual shells`);
-				console.log(`🎮 Optimized hitbox system: ±${tolerance}px zones, 60fps max, squared distances`);
-				console.log('🎯 Features: Animation interruption, no timeouts, no race conditions');
+				// console.log('🚀 PHASE 1+2 COMPLETE: Immediate State Manager + RAF Throttling');
+				// console.log(`Found ${electrons.length} electrons and ${shells.length} visual shells`);
+				// console.log(`🎮 Optimized hitbox system: ±${tolerance}px zones, 60fps max, squared distances`);
+				// console.log('🎯 Features: Animation interruption, no timeouts, no race conditions');
 				
 				// Focus-visible polyfill for better keyboard navigation UX
 				setupFocusVisible();
@@ -2394,10 +2394,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				});
 
 				// Debug console commands
-				console.log('📊 Performance monitoring active. Debug commands:');
-				console.log('  window.performanceMonitor.enable() - Force enable monitoring');
-				console.log('  window.performanceMonitor.getMetrics() - View collected metrics');
-				console.log('  window.performanceMonitor.getErrors() - View error log');
+				// console.log('📊 Performance monitoring active. Debug commands:');
+				// console.log('  window.performanceMonitor.enable() - Force enable monitoring');
+				// console.log('  window.performanceMonitor.getMetrics() - View collected metrics');
+				// console.log('  window.performanceMonitor.getErrors() - View error log');
 			});
 		</script>
 
@@ -2408,7 +2408,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				window.addEventListener('load', () => {
 					navigator.serviceWorker.register('/sw.js')
 						.then((registration) => {
-							console.log('🚀 Service Worker registered:', registration.scope);
+							// console.log('🚀 Service Worker registered:', registration.scope);
 							
 							// Listen for updates
 							registration.addEventListener('updatefound', () => {
@@ -2416,7 +2416,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 								if (newWorker) {
 									newWorker.addEventListener('statechange', () => {
 										if (newWorker.state === 'activated') {
-											console.log('✅ Service Worker updated');
+											// console.log('✅ Service Worker updated');
 											// Optionally notify user of updates
 										}
 									});
@@ -2424,7 +2424,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 							});
 						})
 						.catch((error) => {
-							console.warn('❌ Service Worker registration failed:', error);
+							// console.warn('❌ Service Worker registration failed:', error);
 						});
 				});
 			}

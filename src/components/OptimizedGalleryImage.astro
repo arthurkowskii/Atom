@@ -1,0 +1,196 @@
+---
+// Optimized Gallery Image Component
+// Provides progressive loading with placeholders and performance optimization
+export interface Props {
+  src: string;
+  alt: string;
+  isVideo?: boolean;
+  isHero?: boolean;
+  onClick?: string;
+  class?: string;
+}
+
+const { src, alt, isVideo = false, isHero = false, onClick, class: className = '' } = Astro.props;
+
+// Generate a simple SVG placeholder
+const placeholderSvg = `data:image/svg+xml;base64,${btoa(`
+  <svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="#f5f5f5"/>
+    <circle cx="200" cy="150" r="20" fill="#e0e0e0" opacity="0.5"/>
+  </svg>
+`)}`;
+
+// Determine loading strategy based on position
+const loadingStrategy = isHero ? 'eager' : 'lazy';
+const fetchPriority = isHero ? 'high' : 'low';
+---
+
+{isVideo ? (
+  <video 
+    src={src} 
+    muted 
+    loop 
+    autoplay 
+    playsinline 
+    loading="lazy" 
+    class={className}
+    onclick={onClick}
+    style="width: 100%; height: 100%; object-fit: cover;"
+  />
+) : (
+  <div class={`image-container ${className} ${isHero ? 'hero-image' : 'thumb-image'}`} onclick={onClick}>
+    <!-- SVG placeholder for instant loading -->
+    <img 
+      src={placeholderSvg}
+      alt=""
+      class="image-placeholder"
+      aria-hidden="true"
+      style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1;"
+    />
+    
+    <!-- Actual image with progressive loading -->
+    <img
+      src={src}
+      alt={alt}
+      loading={loadingStrategy}
+      decoding="async"
+      fetchpriority={fetchPriority}
+      class="optimized-image"
+      style="width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; opacity: 0; transition: opacity 0.5s ease;"
+      onload="this.style.opacity = '1'; this.parentElement.classList.add('loaded')"
+      onerror="this.parentElement.classList.add('error')"
+    />
+    
+    <!-- Loading indicator -->
+    <div class="loading-indicator" aria-hidden="true">
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+)}
+
+<style>
+  .image-container {
+    position: relative;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  .image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      45deg,
+      #f0f0f0 25%,
+      transparent 25%,
+      transparent 75%,
+      #f0f0f0 75%,
+      #f0f0f0
+    );
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  .optimized-image {
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* When image loads successfully */
+  .image-container.loaded .optimized-image {
+    opacity: 1;
+  }
+
+  .image-container.loaded .image-placeholder,
+  .image-container.loaded .loading-indicator {
+    opacity: 0;
+  }
+
+  /* Error state */
+  .image-container.error .loading-indicator {
+    opacity: 0;
+  }
+
+  .image-container.error .image-placeholder {
+    background: #ffeaea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-container.error .image-placeholder::after {
+    content: "⚠️";
+    font-size: 24px;
+    color: #e74c3c;
+  }
+
+  /* Dark theme support */
+  html[data-theme="dark"] .image-placeholder {
+    background: linear-gradient(
+      45deg,
+      #2a2a2a 25%,
+      transparent 25%,
+      transparent 75%,
+      #2a2a2a 75%,
+      #2a2a2a
+    );
+    background-size: 20px 20px;
+  }
+
+  html[data-theme="dark"] .image-container {
+    background: #1a1a1a;
+  }
+
+  html[data-theme="dark"] .loading-spinner {
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  html[data-theme="dark"] .image-container.error .image-placeholder {
+    background: #4a2c2c;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .optimized-image,
+    .image-placeholder,
+    .loading-indicator {
+      transition: none;
+    }
+    
+    .loading-spinner {
+      animation: none;
+    }
+  }
+</style>

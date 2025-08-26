@@ -35,6 +35,8 @@ bento:
     # Optional: per-project color for hero subtitle (falls back to accentColor)
     # Examples: "#ff6b00", "#ff6b00cc", "rgb(255,107,0)"
     subtitleColor: "#ff6b00"
+    # Optional: dark overlay opacity (0.0 = transparent, 1.0 = opaque, default: 0.35)
+    # overlayOpacity: 0.2
 
   # Optional stats
   stats:
