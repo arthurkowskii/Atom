@@ -2,7 +2,7 @@
 title: "Youtube_to_Reaper Script"
 altTitle: "Youtube to Reaper Script"
 description: "A lua script for reaper that takes the last Youtube/Soundcloud link from your clipboard"
-tech: ["Lua", "Reaper", "YouTube API"]
+tech: ["Lua", "Reascript"]
 status: "completed" # or "in-progress" | "planned"
 link: "https://example.com"
 github: "https://github.com/you/repo"
@@ -79,13 +79,13 @@ bento:
 
   # Optional process
   process:
-    title: "Processus de développement"
+    title: "Guide d'Utilisation"
     steps:
-      - "Recherche et compréhension de l'API Lua de Reaper et des méthodes d'accès au presse-papiers"
-      - "Implémentation de la détection et validation d'URL pour les formats YouTube et SoundCloud"
-      - "Création du suivi de progression de téléchargement avec retour visuel en temps réel"
-      - "Intégration avec le système de média items de Reaper pour l'import et positionnement automatique"
-      - "Ajout de la gestion d'erreurs et routines de nettoyage pour les fichiers temporaires"
+      - "Lancer l'installateur pour Windows (.exe) ou mac (.dmg)"
+      - "Ajouter le script à votre liste d'action reaper (un raccourci a été crée sur le bureau pour le trouver rapidement)"
+      - "Copier un lien Youtube ou Soundcloud"
+      - "Lancer le script youtube_to_reaper"
+      - "Une nouvelle piste a été créé depuis votre lien !"
 
   # Gallery images auto from assetsFolder; title optional
   gallery:
