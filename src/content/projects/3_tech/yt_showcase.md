@@ -58,10 +58,10 @@ bento:
   actions:
     title: "Experience"
     primary:
-      text: "🛒 SOON on Arthur Kowskii GUMROAD SHOP"
+      text: "🛒 Bientôt disponible (actuellement en beta)"
       url: "https://arthurkowskii.gumroad.com/"
     secondary:
-      text: "🗃️ See GitHub Repo"
+      text: "🗃️ Voir le projet sur GitHub"
       url: "https://github.com/arthurkowskii/Youtube_to_Reaper#"
 
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
