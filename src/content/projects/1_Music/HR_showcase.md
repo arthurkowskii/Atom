@@ -1,8 +1,8 @@
 ---
 title: "Helena Rubinstein - Commission"
 altTitle: "Helena Rubinstein"
-description: "Lors du salon annuel L’Oréal Paris, j'ai eu l'opportunité de collaborer avec Helena Rubinstein pour la présentation exclusive de leurs nouveaux produits. J'ai composé 15 minutes de musique, interprétée tout au long de la journée pour accompagner les différentes sessions de présentation, utilisant FMOD pour une expérience sonore fluide et immersive."
-tech: ["Reaper", "Phase Plant"]
+description: "À l’occasion du salon annuel L’Oréal Paris, j’ai eu l’opportunité de collaborer avec Helena Rubinstein pour la présentation exclusive de ses nouveaux produits. J’ai composé quinze minutes de musique, diffusées tout au long de l’événement afin d’accompagner les différentes sessions."
+tech: ["Ableton", "FMOD"]
 status: "completed"
 link: "https://kowskii.com"
 date: 2024-03-15
@@ -29,7 +29,7 @@ bento:
     process: true
     gallery: false
     challenges: true
-    results: true
+    results: false
   
   # Hero card configuration
   hero:
@@ -44,7 +44,7 @@ bento:
   
   # Project stats
   stats:
-    - value: "1 Months"
+    - value: "2 Weeks"
       label: "DURATION"
     - value: "10 👨‍👩‍👦‍👦"
       label: "TEAM SIZE"
@@ -65,7 +65,7 @@ bento:
 
   # Video configuration
   video:
-    title: "Helene Rubinstein"
+    title: "Helena Rubinstein"
     url: "https://youtube.com/watch?v=dQw4w9WgXcQ" # Replace with actual Kubika trailer
     description: "Arthur Kowskii pour Helena Rubinstein 2024"
 
@@ -87,18 +87,17 @@ bento:
     title: "Helena Rubinstein Commission"
     url: "https://soundcloud.com/kforkowskii/sets/kowskii-for-helena-rubinstein-px50-event?si=257dbf8a42f749d4baf427d537d957da&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing"
     description: "15 minutes de musique pour L'Oréal Paris"
-    large: true  # Use large size (gallery position) instead of small (tech position)
+    large: true  # large size = gallery position / small = tech position
   
   # Development process
   process:
     title: "Process"
     subtitle: "From concept to shipping"
     steps:
-      - "Conception des SFX avec PhasePlant et Reaper"
-      - "Conception d'une banque de son en relation avec le projet"
-      - "Composition de la musique sous les contraintes de DA : instrument fantasiste, cordes... pas de synthé. pas d'instruments modernes."
-      - "Assemblage de la musique et des SFX dans Reaper directement"
-      - "Mixage et Mastering en respectant les normes de rendus"
+      - "Helena Rubinstein (L’Oréal) me contacte pour composer 15 minutes de musique pour leur événement annuel de 2024. Le pitch : accompagner leur présentation d’un événement musical évoquant l’innovation, le luxe et l’histoire de la marque"
+      - "Conception d'une première musique témoin (3m) pour valider la direction artistique"
+      - "Composition des 12 minutes supplémentaires, en 3 parties et sur les thèmes de la marque : AVANT-GARDE, SCIENCE OF BEAUTY, BIOTECH"
+      - "Intégration de la musique sur FMOD pour une diffusion sur l'ensemble des deux journées de présentation"
   
   # Gallery images
   # Gallery now auto-populates from assetsFolder (excluding hero/logo files)
@@ -108,14 +107,10 @@ bento:
   # Technical challenges
   challenges:
     title: "Key Challenges"
-    subtitle: "Technical problems solved during development"
+    subtitle: "Défis principaux rencontrés lors de ce projet"
     items:
-      - title: "Détection des différents type de cube"
-        description: "Developed custom 3D audio listener system that maintains spatial relationships regardless of world orientation"
-      - title: "Concevoir un son joué plus d'une cinquantaine de fois par minute et le rendre plaisant"
-        description: "Implemented audio pooling and LOD systems to handle complex 3D audio without performance impact"
-      - title: "Optimisation des performances"
-        description: "Created parametric music system with vertical remixing for seamless emotional transitions"
+      - title: "Temps imparti"
+        description: "Le délai imparti pour ce projet était particulièrement court au regard du travail demandé, ce qui reste habituel pour ce type de productions, souvent communiquées aux équipes à la toute dernière étape avant la sortie. Quinze minutes de musique ont ainsi été commandées, à livrer et présenter en direct seulement deux semaines plus tard. Malgré cette contrainte, un brief clair, des ressources de qualité et une direction artistique solide ont permis de travailler dans une ambiance à la fois agréable et créativement stimulante"
   
   # Results and impact
   results:

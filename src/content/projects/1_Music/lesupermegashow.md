@@ -117,16 +117,26 @@ bento:
   # Optional challenges
   challenges:
     title: "Key Challenges"
+    subtitle: "Défis principaux rencontrés lors de ce projet"
     items:
-      - title: "Réactivité du système de music-switch"
-        description: "Dans ce jeu le joueur peut changer les pistes musicales à volonté grâce au système de switch. Pour une expérience fluide, un système de synchornisation musicale associé a un système de cooldown a permi de rendre cette expérience très satisfaisant pour le joueur."
+      - title: "Un album... et une série audio"
+        description: "LE SUPER MEGA SHOW ! » est un projet hybride, à la fois album et série audio. Il réunit plusieurs titres entrecoupés de courts épisodes narratifs qui ancrent l’histoire au sein de la musique. L’enjeu principal a été de trouver le bon équilibre entre narration et morceaux afin de proposer une expérience fluide et captivante. Pour garantir la continuité entre chaque épisode et chaque chanson, il a été indispensable de travailler sur une tracklist fixe"
+      - title: "Casting"
+        description: "Le présentateur du « Super Mega Show » a été écrit comme un personnage aussi charismatique qu'étrange. Il était donc primordial de trouver le comédien de doublage idéal pour lui donner vie. Le rôle a finalement été interprété par le comédien de doublage Benoit Grimmiaux (Bojack Horseman, Pokémon, Rick et Morty...). Travailler avec Benoit, d’abord une idole puis un véritable compagnon créatif, a été pour moi un immense honneur et une grande fierté."
+      - title: "Un album, une série audio... et puis un film !"
+        description: "Plus nous travaillions avec Benoit, plus nous mettions de cœur dans ce projet et ses fondations. C’est lors de l’enregistrement des épisodes audio qu’a émergé peu à peu l’envie irrésistible de passer à l’image. Pourtant, cela semblait impossible : je n’avais jamais écrit de script professionnel de cette ampleur, jamais storyboardé, monté ou préparé une équipe de tournage, conçu une mise en scène, un plan lumière, un schéma de plateau pour les techniciens, ni même assuré une réalisation sur le plateau. Et pourtant, c’est finalement tout cela que j’ai été amené à accomplir"
 
   # Optional results
   results:
     title: "Results"
     items:
-      - icon: "🚀"
-        text: "Decreased load time by 45%"
+      - icon: "🎬"
+        text: "Un court métrage de 12 minutes comprenant 2 clips musicaux (XR 300, ENFANT)."
+      - icon: "💽"
+        text: "Un album de 16 titres (18 en physique) comprenant 7 épisodes audio et 9 morceaux"
+      - icon: "📼"
+        text: "Une sortie physique en cassette, pour suivre la direction artistique de l'album à 50 exemplaires." 
+      
 ---
 
 # Your Project Title
