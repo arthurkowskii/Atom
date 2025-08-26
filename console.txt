@@ -1,12 +1,3 @@
-InvalidContentEntryDataError: **projects → 3_tech/yt_showcase** data does not match collection schema.
-
-  **title**: **title**: Required
-  **description**: **description**: Required
-  **tech**: **tech**: Required
-  **status**: **status**: Required
-  **date**: **date**: Required
-
-    at getEntryDataAndImages (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/utils.js:157:26)
-    at async parseData (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/content-layer.js:204:40)
-    at async syncData (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/loaders/glob.js:94:28)
-    at async FSWatcher.onChange (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/loaders/glob.js:234:9)
+[Violation] 'pagehide' handler took 230ms
+17[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+6[Violation] 'setTimeout' handler took <N>ms
