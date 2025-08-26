@@ -1,3 +1,0 @@
-[Violation] 'pagehide' handler took 230ms
-17[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
-6[Violation] 'setTimeout' handler took <N>ms

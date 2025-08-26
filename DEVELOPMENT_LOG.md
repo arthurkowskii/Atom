@@ -4,6 +4,8 @@ Use this as an executive summary for agentic AIs. Full details live in:
 - docs/history/PHASE_LOGS.md — long-form phase-by-phase history
 - docs/history/ERRORS_LESSONS.md — error catalog and fixes
 
+**🤖 For Agents**: Start with `CLAUDE.md` for startup protocol, then read `SESSION_CONTEXT.md` for current status.
+
 Last updated: 2025-08-26 (Comprehensive asset optimization - 91% reduction in file sizes)
 
 ## Project Snapshot

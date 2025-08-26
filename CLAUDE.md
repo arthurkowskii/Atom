@@ -1,4 +1,39 @@
-Date : 2025-08_19
+# PROJECT: Atom Portfolio - Interactive GSAP Portfolio
+
+Last updated: 2025-08-26
+
+## Quick Context
+- **Stack**: Astro + GSAP (client-side), Astro Content Collections, Decap CMS, SVG
+- **Core Concept**: Interactive atom with nucleus + concentric shells, electrons orbit representing projects
+- **Current Phase**: Phase 4 complete (enterprise optimizations), asset optimization complete (91% reduction)
+- **Status**: Production-ready, all major performance issues resolved
+
+## SESSION STARTUP PROTOCOL
+**⚠️ ALWAYS FOLLOW THIS ORDER:**
+1. **READ FIRST**: `SESSION_CONTEXT.md` for current status and session continuity
+2. **CHECK ERRORS**: Run `npm run dev` and scan console for issues  
+3. **VERIFY BUILD**: Ensure clean build before making changes
+4. **OVERLAY AWARENESS**: Any page changes MUST verify overlay system still works
+
+## Critical Atom-Specific Rules
+- **Dual Rendering System**: Projects render in both `/projects/[slug]` pages AND overlay system - changes affect both
+- **Asset Optimization Awareness**: Always check file sizes after asset modifications
+- **Error Checking Reflex**: Run `npm run dev` after ANY changes to catch build issues
+- **Overlay-Page Sync**: When updating project pages, verify overlay content displays correctly
+- **Dynamic Shells**: Project organization via folder structure (`1_Music/`, `2_Game Audio/`, etc.)
+
+## Key Commands
+- `npm run dev` - Start development server (localhost:4324)
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `/admin` - Access Decap CMS (local proxy mode)
+
+## Architecture Quick Reference
+- **Main atom scene**: `src/pages/index.astro`
+- **Orbital system**: `src/atom/core/OrbitSystem.js`  
+- **Configuration**: `src/user-tweaks.js` (central config)
+- **Project schema**: `src/content/config.ts`
+- **Bento layouts**: `src/components/ProjectBento.astro`
 
 ## Golden rules
 - Start with a **PLAN** before editing; keep patches small & reversible.
