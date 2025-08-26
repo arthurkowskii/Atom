@@ -1,8 +1,8 @@
 ---
 title: "Youtube_to_Reaper Script"
-altTitle: "Youtube_to_Reaper Script"
+altTitle: "Youtube to Reaper Script"
 description: "A lua script for reaper that takes the last Youtube/Soundcloud link from your clipboard"
-tech: ["FMOD", "Reaper", "Unity"]
+tech: ["Lua", "Reaper", "YouTube API"]
 status: "completed" # or "in-progress" | "planned"
 link: "https://example.com"
 github: "https://github.com/you/repo"
@@ -12,11 +12,11 @@ useBentoLayout: true
 # Bento Layout Configuration
 bento:
   # Theme color
-  accentColor: "#dfdb00ff"
+  accentColor: "#2666ec"
 
   # REQUIRED for auto hero/logo + gallery
   # Put images here and name hero.* and logo.* for the hero card
-  assetsFolder: "/src/content/projects/2_tech/Assets_yt"
+  assetsFolder: "/src/content/projects/3_tech/Assets_yt"
 
   # Toggle cards
   cards:
@@ -34,13 +34,13 @@ bento:
 
   # Hero subtitle only; hero/background/logo auto from assetsFolder
   hero:
-    subtitle: "Musicien, Sound-Designer et Intégrateur Audio"
-    subtitleColor: "#faf525"
+    subtitle: "Lua script for Reaper"
+    subtitleColor: "#2666ec"
     backgroundPosition: "center"
     backgroundSize: "cover"
-    backgroundScale: 1.4  # Alternative to backgroundSize - use 1.1, 0.9, etc.
-    overlayTopOpacity: 0.1  # Controls dark overlay opacity at top (0.0 = transparent, 1.0 = opaque)
-    overlayBottomOpacity: 0.8  # Controls dark overlay opacity at bottom (0.0 = transparent, 1.0 = opaque)
+    backgroundScale: 1 # Alternative to backgroundSize - use 1.1, 0.9, etc.
+    overlayTopOpacity: 0  # Controls dark overlay opacity at top (0.0 = transparent, 1.0 = opaque)
+    overlayBottomOpacity: 0.5  # Controls dark overlay opacity at bottom (0.0 = transparent, 1.0 = opaque)
     showLogo: false
 
   # Optional stats
@@ -49,20 +49,20 @@ bento:
       label: "LANGUAGE"
     - value: "0€+"
       label: "PRICE"
-    - value : "Reaper"
-      label : "PLATFORM"
-    - value : Kowskii
-      label : CREATOR
+    - value: "Reaper"
+      label: "PLATFORM"
+    - value: "Kowskii"
+      label: "CREATOR"
 
   # Optional actions
   actions:
     title: "Experience"
     primary:
-      text: "AVAILABLE SOON"
-      url: ""
-    secondary:
-      text: "🛒 Arthur Kowskii GUMROAD SHOP"
+      text: "🛒 SOON on Arthur Kowskii GUMROAD SHOP"
       url: "https://arthurkowskii.gumroad.com/"
+    secondary:
+      text: "🗃️ See GitHub Repo"
+      url: "https://github.com/arthurkowskii/Youtube_to_Reaper#"
 
   # Music links (exactly 4 items). Enable with cards.musicLinks: true
   musicLinks:
@@ -79,13 +79,13 @@ bento:
 
   # Optional process
   process:
-    title: "Process"
+    title: "Processus de développement"
     steps:
-      - "Création et conception de l'intégralité des SFX pour constituer une banque de son propre au projet."
-      - "Création des musiques ainsi que de leurs variantes (chaque musique à deux versions dans ce jeu)"
-      - "Intégration des musiques, SFX et mixage dans FMOD"
-      - "Spatialisation et intégration dans UNITY"
-      - "Extra : Création de graphitis, Conception de la cinématique d'introduction, animation du personnage jouable"
+      - "Recherche et compréhension de l'API Lua de Reaper et des méthodes d'accès au presse-papiers"
+      - "Implémentation de la détection et validation d'URL pour les formats YouTube et SoundCloud"
+      - "Création du suivi de progression de téléchargement avec retour visuel en temps réel"
+      - "Intégration avec le système de média items de Reaper pour l'import et positionnement automatique"
+      - "Ajout de la gestion d'erreurs et routines de nettoyage pour les fichiers temporaires"
 
   # Gallery images auto from assetsFolder; title optional
   gallery:
@@ -93,17 +93,25 @@ bento:
 
   # Optional challenges
   challenges:
-    title: "Key Challenges"
+    title: "Défis techniques"
     items:
-      - title: "Réactivité du système de music-switch"
-        description: "Dans ce jeu le joueur peut changer les pistes musicales à volonté grâce au système de switch. Pour une expérience fluide, un système de synchornisation musicale associé a un système de cooldown a permi de rendre cette expérience très satisfaisant pour le joueur."
+      - title: "Accès multi-plateforme au presse-papiers"
+        description: "Implémenter une surveillance fiable du presse-papiers sur différents systèmes d'exploitation tout en préservant la réactivité de Reaper a nécessité une gestion minutieuse du threading et de la sélection d'API."
+      - title: "Validation et parsing des formats d'URL"
+        description: "Supporter les multiples formats d'URL YouTube et SoundCloud (liens courts, URLs de playlists, paramètres de timestamp) tout en assurant une gestion d'erreurs robuste pour les liens invalides."
 
   # Optional results
   results:
-    title: "Results"
+    title: "Features"
     items:
-      - icon: "🚀"
-        text: "Decreased load time by 45%"
+      - icon: "📋"
+        text: "Smart URL detection : Automatically detects YouTube and SoundCloud URLs from clipboard"
+      - icon: "🎯"
+        text: "Real-time Progress Bar : Live progress window showing download status"
+      - icon: "🔄"
+        text: "Non-blocking : REAPER remains responsive during download"
+      - icon: "🧹"
+        text: "Auto-cleanup : Removes temporary files after import"
 ---
 
 # Your Project Title

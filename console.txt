@@ -1,69 +1,12 @@
-The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-client:1476 [vite] connecting...
-sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-client:1599 [vite] connected.
-2sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-tone.js?v=aee72653:9688  * Tone.js v15.1.22 * 
-7The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. <URL>Understand this warning
-sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-OrbitSystem.js:34 🔍 DEBUG: Found electron elements: 12
-OrbitSystem.js:36 🔍 DEBUG: Electron 0: {classes: SVGAnimatedString, shell: undefined, shellIndex: undefined, project: undefined}
-OrbitSystem.js:36 🔍 DEBUG: Electron 1: {classes: SVGAnimatedString, shell: '0', shellIndex: '0', project: '1_music/etoilesenplastiques'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 2: {classes: SVGAnimatedString, shell: '0', shellIndex: '0', project: '1_music/hr_showcase'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 3: {classes: SVGAnimatedString, shell: '0', shellIndex: '0', project: '1_music/lesupermegashow'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 4: {classes: SVGAnimatedString, shell: '1', shellIndex: '1', project: '2_game-audio/chromestesia_showcase'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 5: {classes: SVGAnimatedString, shell: '1', shellIndex: '1', project: '2_game-audio/fmod_showcase'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 6: {classes: SVGAnimatedString, shell: '1', shellIndex: '1', project: '2_game-audio/heroes_showcase'}
-sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-OrbitSystem.js:36 🔍 DEBUG: Electron 7: {classes: SVGAnimatedString, shell: '1', shellIndex: '1', project: '2_game-audio/kubika-showcase'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 8: {classes: SVGAnimatedString, shell: '2', shellIndex: '2', project: '3_tech/portfolio-website'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 9: {classes: SVGAnimatedString, shell: '2', shellIndex: '2', project: '3_tech/ai-trading-bot'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 10: {classes: SVGAnimatedString, shell: '2', shellIndex: '2', project: '3_tech/task-manager'}
-OrbitSystem.js:36 🔍 DEBUG: Electron 11: {classes: SVGAnimatedString, shell: '2', shellIndex: '2', project: '3_tech/test'}
-OrbitSystem.js:71 No shell config found for electron NaN
-initializeElectron @ OrbitSystem.js:71
-(anonymous) @ OrbitSystem.js:51
-init @ OrbitSystem.js:50
-(anonymous) @ index.astro:1002Understand this warning
-sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-OrbitSystem.js:54 OrbitSystem initialized with 11 electrons
-OrbitSystem.js:233 OrbitSystem started
-(index):35 Uncaught ReferenceError: gsap is not defined
-    at HTMLDocument.<anonymous> ((index):35:25)
-(anonymous) @ (index):35Understand this error
-3sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-(index):1 The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-(index):1 The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-5sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-15[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
-6[Violation] 'setTimeout' handler took <N>ms
+InvalidContentEntryDataError: **projects → 3_tech/yt_showcase** data does not match collection schema.
+
+  **title**: **title**: Required
+  **description**: **description**: Required
+  **tech**: **tech**: Required
+  **status**: **status**: Required
+  **date**: **date**: Required
+
+    at getEntryDataAndImages (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/utils.js:157:26)
+    at async parseData (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/content-layer.js:204:40)
+    at async syncData (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/loaders/glob.js:94:28)
+    at async FSWatcher.onChange (file:///C:/Users/arthu/Documents/GIT/Atom_Portfolio/node_modules/astro/dist/content/loaders/glob.js:234:9)
