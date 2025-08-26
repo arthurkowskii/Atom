@@ -30,7 +30,9 @@ export interface Props {
           backgroundPosition?: string;
           backgroundSize?: string;
           backgroundScale?: number;
-          overlayOpacity?: number;
+          overlayOpacity?: number; // DEPRECATED - use overlayTopOpacity/overlayBottomOpacity
+          overlayTopOpacity?: number;
+          overlayBottomOpacity?: number;
           logo?: string;
           showLogo?: boolean;
         };
@@ -394,11 +396,19 @@ const heroBackgroundSize = heroBackgroundScale ?
   `${heroBackgroundScale * 100}%` : 
   (bento.hero?.backgroundSize || 'cover');
 
-// Configurable overlay opacity (default: 0.35 for text readability)
-const overlayOpacity = bento.hero?.overlayOpacity ?? 0.35;
-// Create gradient: top is 30% of opacity, bottom is full opacity (maintains original ratio)
-const overlayTopOpacity = overlayOpacity * 0.3; // 30% of chosen opacity
-const overlayBottomOpacity = overlayOpacity; // Full chosen opacity
+// Configurable overlay opacity - support both new individual parameters and legacy single parameter
+let overlayTopOpacity, overlayBottomOpacity;
+
+if (bento.hero?.overlayTopOpacity !== undefined || bento.hero?.overlayBottomOpacity !== undefined) {
+  // Use individual parameters when provided
+  overlayTopOpacity = bento.hero?.overlayTopOpacity ?? 0.1; // Default top: light
+  overlayBottomOpacity = bento.hero?.overlayBottomOpacity ?? 0.35; // Default bottom: moderate
+} else {
+  // Fallback to legacy single parameter with proportional scaling
+  const legacyOpacity = bento.hero?.overlayOpacity ?? 0.35;
+  overlayTopOpacity = legacyOpacity * 0.3; // 30% of chosen opacity
+  overlayBottomOpacity = legacyOpacity; // Full chosen opacity
+}
 
 // Debug: log the values for troubleshooting
 // console.log('Overlay Debug:', { 

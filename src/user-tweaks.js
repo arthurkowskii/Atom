@@ -307,7 +307,13 @@ export const userTweaks = {
     }
   },
 
-
+  // 🌊 LIQUID GLASS EFFECTS
+  liquidGlass: {
+    enabled: true,
+    displacementScale: 70,     // Distortion intensity
+    blurAmount: 0.0625,        // Blur intensity
+    elasticity: 0.8            // Bounce elasticity
+  }
 
 };
 

@@ -39,7 +39,8 @@ bento:
     backgroundPosition: "top"
     backgroundSize: "cover"
     backgroundScale: 1.2  # Alternative to backgroundSize - use 1.1, 0.9, etc.
-    overlayOpacity: 0.35  # Controls dark overlay opacity (0.0 = transparent, 1.0 = opaque) - default: 0.35
+    overlayTopOpacity: 0.05   # Controls dark overlay opacity at top (0.0 = transparent, 1.0 = opaque)
+    overlayBottomOpacity: 0.25 # Controls dark overlay opacity at bottom (0.0 = transparent, 1.0 = opaque)
     showLogo: false
 
   # Optional stats

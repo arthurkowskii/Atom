@@ -28,8 +28,18 @@ export class OrbitSystem {
    */
   init() {
     try {
-      // Find all electrons in the DOM
-      const electronElements = document.querySelectorAll('.electron');
+      // Find all electrons in the DOM (exclude nucleus)
+      const electronElements = document.querySelectorAll('.electron:not(.nucleus)');
+      
+      // console.log('🔍 DEBUG: Found electron elements:', electronElements.length);
+      // electronElements.forEach((el, i) => {
+      //   console.log(`🔍 DEBUG: Electron ${i}:`, {
+      //     classes: el.className,
+      //     shell: el.dataset.shell,
+      //     shellIndex: el.dataset.shellIndex,
+      //     project: el.dataset.project
+      //   });
+      // });
       
       if (electronElements.length === 0) {
         console.warn('No electron elements found - using static fallback');
@@ -53,7 +63,7 @@ export class OrbitSystem {
    */
   initializeElectron(electron) {
     try {
-      const shellIndex = parseInt(electron.dataset.shell);
+      const shellIndex = parseInt(electron.dataset.shellIndex);
       const initialAngle = parseFloat(electron.dataset.angle);
       const shellConfig = this.config.shells[shellIndex];
       

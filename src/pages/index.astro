@@ -22,6 +22,8 @@ import { sanitizeMarkdown, sanitizeText } from '../utils/sanitize.js';
 
 // Get all projects and compute domains from folder structure (prefix-ordered)
 const projects = await getCollection('projects');
+// console.log('🔍 DEBUG: Total projects loaded:', projects.length);
+// projects.forEach(p => console.log(`🔍 DEBUG: Project ${p.slug} in folder ${p.id.split('/')[0]}`));
 
 function parseDomainFolder(folder) {
   const m = folder.match(/^(\d+)[-_ ]?(.*)$/);
@@ -2334,10 +2336,16 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 
 		<!-- Performance Monitoring and Error Tracking -->
 		<script type="module">
-			import monitor from '../utils/monitoring.js';
+			import monitor from '/src/utils/monitoring.js';
 
 			// Track GSAP animation events
 			document.addEventListener('DOMContentLoaded', () => {
+				// Wait for GSAP to be available
+				if (typeof gsap === 'undefined') {
+					console.warn('GSAP not available for performance monitoring');
+					return;
+				}
+				
 				const originalSet = gsap.set;
 				const originalTo = gsap.to;
 

@@ -6,7 +6,7 @@
 import { userTweaks } from './user-tweaks.js';
 
 // Debug: Check if userTweaks.liquidGlass is loading
-console.log('🔧 atom.config.js - userTweaks.liquidGlass:', userTweaks.liquidGlass);
+// console.log('🔧 atom.config.js - userTweaks.liquidGlass:', userTweaks.liquidGlass);
 
 export default {
   // Central nucleus (bio/about section)
@@ -283,11 +283,11 @@ export default {
 
   // Liquid Glass configuration (Apple-style with SVG refraction)
   liquidGlass: (() => {
-    console.log('🔧 atom.config.js - Building liquidGlass config with:', {
-      blurAmount: userTweaks.liquidGlass?.blurAmount,
-      displacementScale: userTweaks.liquidGlass?.displacementScale,
-      elasticity: userTweaks.liquidGlass?.elasticity
-    });
+    // console.log('🔧 atom.config.js - Building liquidGlass config with:', {
+    //   blurAmount: userTweaks.liquidGlass?.blurAmount,
+    //   displacementScale: userTweaks.liquidGlass?.displacementScale,
+    //   elasticity: userTweaks.liquidGlass?.elasticity
+    // });
     return {
     enabled: userTweaks.liquidGlass?.enabled ?? true,
     displacementScale: userTweaks.liquidGlass?.displacementScale ?? 70,

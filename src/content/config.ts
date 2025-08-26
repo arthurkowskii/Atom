@@ -46,7 +46,9 @@ const projectsCollection = defineCollection({
         backgroundPosition: z.string().optional(),
         backgroundSize: z.string().optional(),
         backgroundScale: z.number().optional(),
-        overlayOpacity: z.number().min(0).max(1).optional(), // Controls dark overlay opacity (0.0 = transparent, 1.0 = opaque)
+        overlayOpacity: z.number().min(0).max(1).optional(), // Controls dark overlay opacity (0.0 = transparent, 1.0 = opaque) - DEPRECATED, use overlayTopOpacity/overlayBottomOpacity
+        overlayTopOpacity: z.number().min(0).max(1).optional(), // Controls dark overlay opacity at top (0.0 = transparent, 1.0 = opaque)
+        overlayBottomOpacity: z.number().min(0).max(1).optional(), // Controls dark overlay opacity at bottom (0.0 = transparent, 1.0 = opaque)
         logo: z.string().optional(),
         showLogo: z.boolean().optional(),
       }).optional(),

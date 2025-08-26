@@ -51,7 +51,8 @@ bento:
     backgroundPosition: "center" # Optional - CSS background-position (default: "center")
     backgroundSize: "cover" # Optional - CSS background-size (default: "cover")
     backgroundScale: 1.2 # Optional - numerical scaling (1.0 = 100%, 1.2 = 120%, 0.8 = 80%)
-    overlayOpacity: 0.35 # Optional - dark overlay opacity (0.0 = transparent, 1.0 = opaque, default: 0.35)
+    overlayTopOpacity: 0.1   # Optional - dark overlay opacity at top (0.0 = transparent, 1.0 = opaque)
+    overlayBottomOpacity: 0.35 # Optional - dark overlay opacity at bottom (0.0 = transparent, 1.0 = opaque)
     logo: "/path/to/your/logo.png" # Optional
     showLogo: true # Optional - controls logo visibility (default: true)
   
