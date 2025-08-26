@@ -11,9 +11,10 @@ Last updated: 2025-08-26
 ## SESSION STARTUP PROTOCOL
 **⚠️ ALWAYS FOLLOW THIS ORDER:**
 1. **READ FIRST**: `SESSION_CONTEXT.md` for current status and session continuity
-2. **CHECK ERRORS**: Run `npm run dev` and scan console for issues  
-3. **VERIFY BUILD**: Ensure clean build before making changes
-4. **OVERLAY AWARENESS**: Any page changes MUST verify overlay system still works
+2. **READ SECOND**: `DEVELOPMENT_LOG.md` for project overview and architecture context
+3. **CHECK ERRORS**: Run `npm run dev` and scan console for issues  
+4. **VERIFY BUILD**: Ensure clean build before making changes
+5. **OVERLAY AWARENESS**: Any page changes MUST verify overlay system still works
 
 ## Critical Atom-Specific Rules
 - **Dual Rendering System**: Projects render in both `/projects/[slug]` pages AND overlay system - changes affect both
