@@ -1,7 +1,7 @@
 ---
 title: "Starting_Grid_for_Reaper Script"
 altTitle: "Starting Grid for Reaper"
-description: "A lua script for reaper that takes all of your selected items (audio, midi, video, fx...) and move them to the start of their tracks."
+description: "Starting\_Grid for Reaper est un script qui prend tous vos items sélectionnés (peu importe le type) et qui les place au début de leurs pistes. Le script fonctionne avec tous les types d’items supportés par Reaper et est destiné aux longues sessions de sampling qui résultent souvent en une multitude de samples éparpillés sur une longue durée."
 tech: ["Lua", "Reascript"]
 status: "completed" 
 link: "https://github.com/arthurkowskii/StartingGrid_for_Reaper"
