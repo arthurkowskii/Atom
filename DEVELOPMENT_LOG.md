@@ -391,3 +391,35 @@ The portfolio is now enterprise-grade with comprehensive monitoring, automated q
 - `src/components/ProjectBento.astro` - Complete SoundCloud embed system with video scaling fix and responsive CSS positioning
 - `src/pages/{index,projects/[slug],bio}.astro` - CSP policy updates for SoundCloud iframe support
 - `src/content/projects/1_Music/HR_showcase.md` - Implementation example with large SoundCloud configuration
+
+## Recent Changes (2025‑08‑26) - Hero Overlay Opacity Control System
+
+### Configurable Hero Overlay System
+- **Dual Opacity Parameters**: Added `overlayTopOpacity` and `overlayBottomOpacity` parameters to project schema allowing independent control of gradient overlay darkness at top and bottom of hero sections. Values range 0.0 (transparent) to 1.0 (opaque).
+- **Backward Compatibility**: Maintains support for legacy `overlayOpacity` parameter with automatic conversion (top = opacity × 0.3, bottom = opacity). New parameters take precedence when present.
+- **CSS Custom Properties Integration**: Implemented dynamic gradient generation using Astro's `define:vars` system with CSS custom properties (`--overlayTopOpacity`, `--overlayBottomOpacity`) for runtime flexibility.
+- **Universal Application**: Works across all hero contexts - direct bento pages, electron overlay system, and hero video backgrounds with consistent behavior.
+
+### Schema and Content Updates  
+- **Schema Enhancement**: Added `overlayTopOpacity: z.number().min(0).max(1).optional()` and `overlayBottomOpacity: z.number().min(0).max(1).optional()` to project collection validation in `src/content/config.ts`.
+- **Project Configurations**: Updated all 10 project markdown files with tailored opacity values - music projects use subtle overlays (0.05-0.4), game audio projects use stronger overlays (0.1-0.9) for text readability over complex visuals.
+- **Template Documentation**: Enhanced `BENTO_TEMPLATE.md` and `templates/bento-project.template.md` with comprehensive overlay parameter documentation and usage examples.
+
+### Technical Implementation
+- **Gradient Logic**: Enhanced ProjectBento component with sophisticated fallback logic supporting both individual and legacy parameters with TypeScript interface updates.
+- **CSS Integration**: Implemented `linear-gradient(to bottom, rgba(0,0,0,var(--overlayTopOpacity)), rgba(0,0,0,var(--overlayBottomOpacity)))` with proper CSS custom property handling.
+- **Debug Resolution**: Fixed website loading issues by correcting OrbitSystem electron selector (`.electron:not(.nucleus)`), adding missing liquidGlass config, and removing conflicting hardcoded gradient fallbacks.
+
+### Key Files Modified
+- `src/content/config.ts` - Schema validation for new opacity parameters
+- `src/components/ProjectBento.astro` - Gradient calculation logic and CSS custom properties integration
+- All project `.md` files in `src/content/projects/` - Individual overlay opacity configurations
+- `src/atom/core/OrbitSystem.js` - Fixed electron detection and dataset access
+- `src/user-tweaks.js` - Added missing liquidGlass configuration
+- Template files - Updated documentation with overlay parameter usage
+
+### Architecture Notes for Agents
+- **CSS Custom Properties**: Use Astro's `define:vars` for dynamic CSS values; ensure no conflicting hardcoded styles override the custom properties
+- **Gradient Application**: Hero overlays apply to both image and video backgrounds universally; overlay system maintains identical behavior
+- **Parameter Priority**: New dual parameters (`overlayTopOpacity`/`overlayBottomOpacity`) override legacy single parameter (`overlayOpacity`) when present
+- **Debugging Pattern**: Website loading issues often cascade from import path errors, missing configs, or selector conflicts - check console for systematic debugging
