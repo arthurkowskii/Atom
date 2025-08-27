@@ -1002,8 +1002,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     shell.style.opacity = '1';
                     shell.setAttribute('stroke-width', shellConfig?.hoverStrokeWidth || '5');
                   } else {
-                    // Non-selected shells: dim and thin
-                    shell.style.opacity = '0.3';
+                    // Non-selected shells: very dim like labels (match label opacity)
+                    shell.style.opacity = '0.15';
                     shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
                   }
                 });
