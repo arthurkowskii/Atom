@@ -2,6 +2,7 @@
 import { getCollection, getEntryBySlug } from 'astro:content';
 import BioBento from '../components/BioBento.astro';
 import ProjectBento from '../components/ProjectBento.astro';
+import Header from '../components/Header.astro';
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
 import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
@@ -345,6 +346,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin-top: 36px; /* Half header height (72px/2) to center atom in viewport */
             }
             
             #atom-svg {
@@ -675,11 +677,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
         </script>
 	</head>
 	<body>
-		<!-- Theme toggle button -->
-		<button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme"
-			style="position:fixed;top:16px;left:16px;z-index:10001;border:1px solid currentColor;border-radius:999px;padding:8px 12px;cursor:pointer;backdrop-filter:saturate(140%) blur(6px);">
-			<span id="theme-toggle-label">Dark</span>
-		</button>
+		<!-- Header with name, filters, and theme toggle -->
+		<Header />
+		
 		<div class="atom-container">
 				<svg 
 					id="atom-svg"
@@ -872,6 +872,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 										stroke={atomConfig.electrons.color}
 										stroke-width={atomConfig.electrons.strokeWidth}
 										data-project={project.slug}
+										data-domain={project.data.domain}
 										data-shell={shellIndex}
 										data-shell-index={shellIndex}
 										data-electron-index={electronIndex}
@@ -907,28 +908,170 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
         <script type="application/json" id="logos-map" set:html={JSON.stringify(logosMap)}></script>
         <script type="application/json" id="cfg-data" set:html={JSON.stringify(cfg)}></script>
 
-        <!-- Theme toggle wiring -->
+        <!-- Header functionality: theme toggle and project filters -->
         <script>
           (function(){
-            const btn = document.getElementById('theme-toggle');
-            const label = document.getElementById('theme-toggle-label');
-            function applyLabel() {
-              const t = document.documentElement.getAttribute('data-theme') || 'light';
-              label.textContent = t === 'dark' ? 'Light' : 'Dark';
-              // Ensure button color contrasts background
-              const fg = t === 'dark' ? '#fff' : '#000';
-              const bg = t === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-              btn.style.color = fg;
-              btn.style.borderColor = fg;
-              btn.style.background = bg;
+            // Theme toggle functionality
+            const themeSwitch = document.getElementById('theme-switch');
+            const header = document.getElementById('main-header');
+            
+            function applyTheme(theme) {
+              document.documentElement.setAttribute('data-theme', theme);
+              if (themeSwitch) {
+                themeSwitch.checked = (theme === 'dark');
+              }
+              try { localStorage.setItem('theme', theme); } catch {}
             }
-            applyLabel();
-            btn.addEventListener('click', () => {
-              const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-              document.documentElement.setAttribute('data-theme', cur);
-              try { localStorage.setItem('theme', cur); } catch {}
-              applyLabel();
+            
+            // Load saved theme or default to light
+            const savedTheme = (() => {
+              try { return localStorage.getItem('theme'); } catch { return null; }
+            })();
+            applyTheme(savedTheme || 'light');
+            
+            // Theme toggle event listener
+            themeSwitch?.addEventListener('change', () => {
+              const newTheme = themeSwitch.checked ? 'dark' : 'light';
+              applyTheme(newTheme);
             });
+            
+            // Project filter functionality (wait for DOM and config to be ready)
+            function initializeFilters() {
+              const filterBtns = document.querySelectorAll('.filter-btn');
+              const electrons = document.querySelectorAll('.electron:not(.nucleus)');
+              const shells = document.querySelectorAll('.shell');
+              const shellLabels = document.querySelectorAll('.shell-label-rotor');
+              
+              // Get config data
+              const cfg = (() => {
+                try {
+                  const cfgScript = document.getElementById('cfg-data');
+                  return cfgScript ? JSON.parse(cfgScript.textContent) : null;
+                } catch {
+                  return null;
+                }
+              })();
+              
+              if (!cfg) {
+                console.warn('Config not available, retrying in 100ms...');
+                setTimeout(initializeFilters, 100);
+                return;
+              }
+              
+              function applyFilter(domain) {
+                // Update active button
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.querySelector(`[data-filter="${domain}"]`);
+                activeBtn?.classList.add('active');
+                
+                // Make active filter button bolder
+                filterBtns.forEach(btn => {
+                  if (btn === activeBtn) {
+                    btn.style.fontWeight = '700'; // Bold
+                  } else {
+                    btn.style.fontWeight = '500'; // Normal
+                  }
+                });
+                
+                // Get domain index for shell filtering
+                const domainIndex = domain === 'all' ? -1 : cfg.domains.indexOf(domain);
+                
+                // Filter electrons
+                electrons.forEach(electron => {
+                  const electronDomain = electron.dataset.domain;
+                  if (domain === 'all' || electronDomain === domain) {
+                    // Show electron (full opacity + enable hover)
+                    electron.style.opacity = '1';
+                    electron.style.pointerEvents = 'auto';
+                  } else {
+                    // Dim electron (low opacity + disable hover)
+                    electron.style.opacity = '0.3';
+                    electron.style.pointerEvents = 'none';
+                  }
+                });
+                
+                // Filter shells and labels
+                shells.forEach((shell, index) => {
+                  const shellConfig = cfg.shells[index];
+                  if (domain === 'all') {
+                    // All shells: reset to normal appearance
+                    shell.style.opacity = shellConfig?.defaultOpacity || '0.3';
+                    shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
+                  } else if (index === domainIndex) {
+                    // Selected shell: full opacity and bold stroke
+                    shell.style.opacity = '1';
+                    shell.setAttribute('stroke-width', shellConfig?.hoverStrokeWidth || '5');
+                  } else {
+                    // Non-selected shells: dim and thin
+                    shell.style.opacity = '0.3';
+                    shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
+                  }
+                });
+                
+                // Filter shell labels
+                shellLabels.forEach((labelRotor, index) => {
+                  const labels = labelRotor.querySelectorAll('text');
+                  if (domain === 'all') {
+                    // All labels: reset to normal idle opacity
+                    labels.forEach(label => {
+                      label.style.opacity = '0.35'; // reset to idle opacity
+                    });
+                  } else if (index === domainIndex) {
+                    // Selected labels: bright like hover state
+                    labels.forEach(label => {
+                      label.style.opacity = '0.7'; // hover brightness
+                    });
+                  } else {
+                    // Dim labels (very low opacity)
+                    labels.forEach(label => {
+                      label.style.opacity = '0.15';
+                    });
+                  }
+                });
+              }
+              
+              // Filter button event listeners
+              filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                  const domain = btn.dataset.filter;
+                  
+                  // Toggle functionality: if clicking the active button, go back to 'all'
+                  if (btn.classList.contains('active') && domain !== 'all') {
+                    applyFilter('all');
+                  } else {
+                    applyFilter(domain);
+                  }
+                });
+              });
+            }
+            
+            // Initialize filters when ready
+            initializeFilters();
+            
+            // Header auto-hide during overlay
+            let overlayOpen = false;
+            
+            // Watch for overlay state changes
+            const overlayObserver = new MutationObserver((mutations) => {
+              mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                  const overlay = mutation.target;
+                  const isOpen = overlay.classList.contains('open');
+                  
+                  if (isOpen !== overlayOpen) {
+                    overlayOpen = isOpen;
+                    if (header) {
+                      header.classList.toggle('hidden', isOpen);
+                    }
+                  }
+                }
+              });
+            });
+            
+            const projectOverlay = document.getElementById('project-overlay');
+            if (projectOverlay) {
+              overlayObserver.observe(projectOverlay, { attributes: true });
+            }
           })();
         </script>
 
