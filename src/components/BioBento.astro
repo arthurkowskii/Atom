@@ -531,6 +531,12 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   /* Improve icon visibility in dark mode for raster/SVG icons */
   html[data-theme="dark"] .social-icon { filter: invert(1) brightness(1.2); }
 
+  /* Invert specific skill logos only (Ableton, FMOD) in dark mode */
+  html[data-theme="dark"] .skill-logo[data-logo-key="ableton"],
+  html[data-theme="dark"] .skill-logo[data-logo-key="fmod"] {
+    filter: invert(1) brightness(1.2);
+  }
+
   html[data-theme="dark"] .skills-section:not(:last-child) {
     border-bottom-color: #333333;
   }
@@ -630,12 +636,13 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
               <div class="skill-tools">
                 {(cat.tools || []).map((t: string) => {
                   const src = logoSrcFor(t);
+                  const key = normLabel(t);
                   const fallbackEmoji = categoryEmojis[cat.category] || '🔧';
                   
                   return (
                     <div class="skill-tool">
                       {src ? (
-                        <img src={src} alt="" aria-hidden="true" loading="lazy" />
+                        <img class="skill-logo" data-logo-key={key} src={src} alt="" aria-hidden="true" loading="lazy" />
                       ) : (
                         <span class="emoji">{fallbackEmoji}</span>
                       )}
