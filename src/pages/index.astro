@@ -19,7 +19,7 @@ import AtomCenterLogo from '../Assets/atom_center_logo.png';
 import atomConfig from '../atom.config.js';
 import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
-import { sanitizeMarkdown, sanitizeText } from '../utils/sanitize.js';
+import { sanitizeText } from '../utils/sanitize.js';
 
 // Get all projects and compute domains from folder structure (prefix-ordered)
 const projects = await getCollection('projects');
@@ -177,7 +177,7 @@ try {
     bioPayload = {
       title: sanitizeText(d.title) || '',
       subtitle: sanitizeText(d.subtitle) || '',
-      bio: d.bio ? await sanitizeMarkdown(d.bio) : '',
+      bio: d.bio || '',
       portrait: sanitizeText(d.portrait) || '/images/bio/arthur-portfolio.jpg',
       email: sanitizeText(d.email) || '',
       social: d.social || [],
@@ -450,6 +450,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 z-index: 10000; /* Ensure always on top */
                 box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow for visibility */
                 transition: all 0.2s ease;
+                outline: none !important;
             }
             #project-overlay .close-btn:hover {
                 transform: scale(1.1);
@@ -461,6 +462,15 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 text-rendering: geometricPrecision;      /* Hint for precise glyph shapes */
                 -webkit-font-smoothing: antialiased;     /* Chrome/WebKit */
                 -moz-osx-font-smoothing: grayscale;      /* Firefox on macOS */
+            }
+            /* Global removal of focus outlines across the atom and overlay */
+            *:focus, *:focus-visible {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+            /* Remove mobile tap highlight on interactive elements */
+            #atom-svg .electron, #atom-svg .nucleus, #project-overlay .close-btn {
+                -webkit-tap-highlight-color: transparent;
             }
             /* Ensure nucleus logo does not intercept pointer events */
             .nucleus-logo { pointer-events: none; }
@@ -618,36 +628,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             }
 
             /* Focus styles for keyboard navigation accessibility */
-            .electron:focus {
-                outline: 2px solid var(--accent-color, #00b3b0);
-                outline-offset: 2px;
-                border-radius: 50%;
-            }
-
-            .nucleus:focus {
-                outline: 3px solid var(--accent-color, #00b3b0);
-                outline-offset: 4px;
-                border-radius: 50%;
-            }
-
-            /* Enhanced focus visibility in dark mode */
-            html[data-theme="dark"] .electron:focus {
-                outline-color: #4ade80;
-                box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
-            }
-
-            html[data-theme="dark"] .nucleus:focus {
-                outline-color: #4ade80;
-                box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
-            }
-
-            /* Focus-visible for modern browsers (removes outline on mouse clicks) */
-            .electron:focus:not(:focus-visible) {
-                outline: none !important;
-                box-shadow: none !important;
-            }
-
-            .nucleus:focus:not(:focus-visible) {
+            /* Ensure SVG focus never shows ring */
+            .electron:focus, .electron:focus-visible,
+            .nucleus:focus, .nucleus:focus-visible {
                 outline: none !important;
                 box-shadow: none !important;
             }
@@ -1882,7 +1865,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               });
             }
 
-            closeBtn?.addEventListener('click', () => closeOverlay());
+            closeBtn?.addEventListener('click', () => { closeOverlay(); try { closeBtn.blur(); } catch {} });
             window.addEventListener('popstate', (e) => {
               // If overlay is open and we popped back, close it
               if (overlayOpen && !e.state?.overlay) {
@@ -2677,7 +2660,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 							gsap.to(e, { opacity: 1.0, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
 						});
 					});
-					nucleus.addEventListener('click', () => {
+              nucleus.addEventListener('click', () => {
                 // PLACEHOLDER: Play nucleus click sound - replace with OGG file playback
                 atomSounds.playSound('nucleusClick');
                 
@@ -2713,6 +2696,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 const cx = rect.left + rect.width / 2;
                 const cy = rect.top + rect.height / 2;
                 openBioOverlay(cx, cy);
+                // Remove focus after mouse/touch click to avoid highlight ring
+                try { nucleus.blur(); } catch {}
               });
 
               // Add keyboard support for nucleus

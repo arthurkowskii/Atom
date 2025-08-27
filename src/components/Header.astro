@@ -198,9 +198,20 @@
     background: #007AFF;
   }
   
-  /* Focus state for accessibility */
-  .theme-toggle input:focus + .toggle-slider {
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+  /* Remove iOS/Android tap highlight */
+  .theme-toggle, .toggle-slider, .filter-btn {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Completely remove browser focus visuals in header */
+  .theme-toggle input:focus + .toggle-slider,
+  .theme-toggle input:focus-visible + .toggle-slider {
+    box-shadow: none !important;
+  }
+  .filter-btn:focus,
+  .filter-btn:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
   }
   
   /* Responsive design */
@@ -261,13 +272,20 @@
     themeToggle.checked = initialTheme === 'dark';
     themeLabel.textContent = initialTheme === 'dark' ? 'Dark' : 'Light';
     
-    // Handle theme toggle
-    themeToggle.addEventListener('change', function() {
-      const newTheme = this.checked ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      themeLabel.textContent = newTheme === 'dark' ? 'Dark' : 'Light';
-    });
+  // Handle theme toggle
+  themeToggle.addEventListener('change', function() {
+    const newTheme = this.checked ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeLabel.textContent = newTheme === 'dark' ? 'Dark' : 'Light';
+    // Remove focus ring after click/tap to avoid persistent highlight
+    try { this.blur(); } catch {}
+  });
+
+  // Also blur filter buttons on click to avoid highlight sticking
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => { try { btn.blur(); } catch {} });
+  });
   });
 </script>
 </header>

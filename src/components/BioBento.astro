@@ -44,7 +44,7 @@ function logoSrcFor(label: string): string | null {
   return typeof val === 'string' ? val : (val?.src ?? null);
 }
 
-// Sanitize bio content for safe HTML rendering
+// Sanitize bio HTML (we allow basic tags like strong/em)
 const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
 ---
 
