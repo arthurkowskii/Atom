@@ -20,11 +20,11 @@ skills:
       - "Unity"
       - "C#"
       - "Git"
-  - category: "Image & Video"
+  - category: "AI"
     tools:
-      - "DaVinci Resolve"
-      - "Cinema 4D"
-      - "Photoshop"
+      - "Prompt Engineering"
+      - "RAG"
+      - "Automations/Agents"
 email: "contact@kowskii.com"
 social:
   - platform: "Portfolio"
