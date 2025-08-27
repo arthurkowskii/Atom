@@ -1304,6 +1304,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                   overlay.classList.add('open');
                   overlay.style.pointerEvents = 'auto';
                   
+                  // Reset scroll position to top
+                  overlay.scrollTop = 0;
+                  
                   // Only push history for non-bento projects (bento stays in overlay)
                   const currentProject = projectBySlug.get(slug);
                   if (!currentProject?.useBentoLayout) {
@@ -1366,6 +1369,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 },
                 onComplete: () => {
                   overlay.classList.add('open');
+                  
+                  // Reset scroll position to top
+                  overlay.scrollTop = 0;
+                  
                   // Keep one-page feel; no route push for bio
                   closeBtn.focus({ preventScroll: true });
                 }
