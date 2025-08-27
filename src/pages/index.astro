@@ -959,6 +959,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               }
               
               function applyFilter(domain) {
+                console.log('applyFilter called with:', domain); // Debug
+                
                 // Update active button
                 filterBtns.forEach(btn => btn.classList.remove('active'));
                 const activeBtn = document.querySelector(`[data-filter="${domain}"]`);
@@ -975,57 +977,127 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 
                 // Get domain index for shell filtering
                 const domainIndex = domain === 'all' ? -1 : cfg.domains.indexOf(domain);
+                console.log('Domain index:', domainIndex, 'Available domains:', cfg.domains); // Debug
                 
-                // Filter electrons
+                // Filter electrons with smooth transitions
                 electrons.forEach(electron => {
                   const electronDomain = electron.dataset.domain;
                   if (domain === 'all' || electronDomain === domain) {
                     // Show electron (full opacity + enable hover)
-                    electron.style.opacity = '1';
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(electron, {
+                        opacity: 1,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      electron.style.opacity = '1';
+                    }
                     electron.style.pointerEvents = 'auto';
                   } else {
                     // Dim electron (low opacity + disable hover)
-                    electron.style.opacity = '0.3';
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(electron, {
+                        opacity: 0.3,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      electron.style.opacity = '0.3';
+                    }
                     electron.style.pointerEvents = 'none';
                   }
                 });
                 
-                // Filter shells and labels
+                // Filter shells with smooth transitions
                 shells.forEach((shell, index) => {
                   const shellConfig = cfg.shells[index];
                   if (domain === 'all') {
                     // All shells: reset to normal appearance
-                    shell.style.opacity = shellConfig?.defaultOpacity || '0.3';
-                    shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(shell, {
+                        opacity: shellConfig?.defaultOpacity || 0.3,
+                        attr: { 'stroke-width': shellConfig?.strokeWidth || '4' },
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      shell.style.opacity = shellConfig?.defaultOpacity || '0.3';
+                      shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
+                    }
                   } else if (index === domainIndex) {
                     // Selected shell: full opacity and bold stroke
-                    shell.style.opacity = '1';
-                    shell.setAttribute('stroke-width', shellConfig?.hoverStrokeWidth || '5');
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(shell, {
+                        opacity: 1,
+                        attr: { 'stroke-width': shellConfig?.hoverStrokeWidth || '5' },
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      shell.style.opacity = '1';
+                      shell.setAttribute('stroke-width', shellConfig?.hoverStrokeWidth || '5');
+                    }
                   } else {
                     // Non-selected shells: very dim like labels (match label opacity)
-                    shell.style.opacity = '0.15';
-                    shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(shell, {
+                        opacity: 0.15,
+                        attr: { 'stroke-width': shellConfig?.strokeWidth || '4' },
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      shell.style.opacity = '0.15';
+                      shell.setAttribute('stroke-width', shellConfig?.strokeWidth || '4');
+                    }
                   }
                 });
                 
-                // Filter shell labels
+                // Filter shell labels with smooth transitions
                 shellLabels.forEach((labelRotor, index) => {
                   const labels = labelRotor.querySelectorAll('text');
                   if (domain === 'all') {
                     // All labels: reset to normal idle opacity
-                    labels.forEach(label => {
-                      label.style.opacity = '0.35'; // reset to idle opacity
-                    });
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(labels, {
+                        opacity: 0.35,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      labels.forEach(label => label.style.opacity = '0.35');
+                    }
                   } else if (index === domainIndex) {
                     // Selected labels: bright like hover state
-                    labels.forEach(label => {
-                      label.style.opacity = '0.7'; // hover brightness
-                    });
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(labels, {
+                        opacity: 0.7,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      labels.forEach(label => label.style.opacity = '0.7');
+                    }
                   } else {
                     // Dim labels (very low opacity)
-                    labels.forEach(label => {
-                      label.style.opacity = '0.15';
-                    });
+                    if (typeof gsap !== 'undefined') {
+                      gsap.to(labels, {
+                        opacity: 0.15,
+                        duration: 0.3,
+                        ease: 'power2.out',
+                        overwrite: 'auto'
+                      });
+                    } else {
+                      labels.forEach(label => label.style.opacity = '0.15');
+                    }
                   }
                 });
               }
@@ -1045,8 +1117,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               });
             }
             
-            // Initialize filters when ready
-            initializeFilters();
+            // Initialize filters after GSAP is loaded (moved to main script section)
             
             // Header auto-hide during overlay
             let overlayOpen = false;
@@ -1309,6 +1380,155 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				
 			// Register GSAP Draggable
 			gsap.registerPlugin(Draggable);
+			
+			// Initialize filter system now that GSAP is available
+			// (Function was moved from header script to ensure GSAP access)
+			function initializeFilterSystem() {
+              const filterBtns = document.querySelectorAll('.filter-btn');
+              const electrons = document.querySelectorAll('.electron:not(.nucleus)');
+              const shells = document.querySelectorAll('.shell');
+              const shellLabels = document.querySelectorAll('.shell-label-rotor');
+              
+              // Get config data
+              const cfg = (() => {
+                try {
+                  const cfgScript = document.getElementById('cfg-data');
+                  return cfgScript ? JSON.parse(cfgScript.textContent) : null;
+                } catch {
+                  return null;
+                }
+              })();
+              
+              if (!cfg) {
+                console.warn('Config not available for filters');
+                return;
+              }
+              
+              function applyFilter(domain) {
+                console.log('applyFilter called with:', domain); // Debug
+                
+                // Update active button
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.querySelector(`[data-filter="${domain}"]`);
+                activeBtn?.classList.add('active');
+                
+                // Make active filter button bolder
+                filterBtns.forEach(btn => {
+                  if (btn === activeBtn) {
+                    btn.style.fontWeight = '700'; // Bold
+                  } else {
+                    btn.style.fontWeight = '500'; // Normal
+                  }
+                });
+                
+                // Get domain index for shell filtering
+                const domainIndex = domain === 'all' ? -1 : cfg.domains.indexOf(domain);
+                
+                // Filter electrons with smooth transitions
+                electrons.forEach(electron => {
+                  const electronDomain = electron.dataset.domain;
+                  if (domain === 'all' || electronDomain === domain) {
+                    // Show electron (full opacity + enable hover)
+                    gsap.to(electron, {
+                      opacity: 1,
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                    electron.style.pointerEvents = 'auto';
+                  } else {
+                    // Dim electron (low opacity + disable hover)
+                    gsap.to(electron, {
+                      opacity: 0.3,
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                    electron.style.pointerEvents = 'none';
+                  }
+                });
+                
+                // Filter shells with smooth transitions
+                shells.forEach((shell, index) => {
+                  const shellConfig = cfg.shells[index];
+                  if (domain === 'all') {
+                    // All shells: reset to normal appearance
+                    gsap.to(shell, {
+                      opacity: shellConfig?.defaultOpacity || 0.3,
+                      attr: { 'stroke-width': shellConfig?.strokeWidth || '4' },
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  } else if (index === domainIndex) {
+                    // Selected shell: full opacity and bold stroke
+                    gsap.to(shell, {
+                      opacity: 1,
+                      attr: { 'stroke-width': shellConfig?.hoverStrokeWidth || '5' },
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  } else {
+                    // Non-selected shells: very dim like labels (match label opacity)
+                    gsap.to(shell, {
+                      opacity: 0.15,
+                      attr: { 'stroke-width': shellConfig?.strokeWidth || '4' },
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  }
+                });
+                
+                // Filter shell labels with smooth transitions
+                shellLabels.forEach((labelRotor, index) => {
+                  const labels = labelRotor.querySelectorAll('text');
+                  if (domain === 'all') {
+                    // All labels: reset to normal idle opacity
+                    gsap.to(labels, {
+                      opacity: 0.35,
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  } else if (index === domainIndex) {
+                    // Selected labels: bright like hover state
+                    gsap.to(labels, {
+                      opacity: 0.7,
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  } else {
+                    // Dim labels (very low opacity)
+                    gsap.to(labels, {
+                      opacity: 0.15,
+                      duration: 0.3,
+                      ease: 'power2.out',
+                      overwrite: 'auto'
+                    });
+                  }
+                });
+              }
+              
+              // Filter button event listeners
+              filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                  const domain = btn.dataset.filter;
+                  
+                  // Toggle functionality: if clicking the active button, go back to 'all'
+                  if (btn.classList.contains('active') && domain !== 'all') {
+                    applyFilter('all');
+                  } else {
+                    applyFilter(domain);
+                  }
+                });
+              });
+            }
+            
+            // Initialize the filter system
+            initializeFilterSystem();
 
             // Overlay state and helpers
             const overlay = document.getElementById('project-overlay');
