@@ -961,6 +961,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               function applyFilter(domain) {
                 console.log('applyFilter called with:', domain); // Debug
                 
+                // Update global filter state
+                currentFilter = domain;
+                
                 // Update active button
                 filterBtns.forEach(btn => btn.classList.remove('active'));
                 const activeBtn = document.querySelector(`[data-filter="${domain}"]`);
@@ -1100,7 +1103,48 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     }
                   }
                 });
+                
+                // Update hover interactions based on filter
+                updateHoverInteractions(domain);
               }
+              
+              function updateHoverInteractions(domain) {
+                // Get all interactive elements
+                const allElectrons = document.querySelectorAll('.electron:not(.nucleus)');
+                const allShells = document.querySelectorAll('.shell');
+                
+                allElectrons.forEach(electron => {
+                  const electronDomain = electron.dataset.domain;
+                  const isVisible = (domain === 'all' || electronDomain === domain);
+                  
+                  electron.setAttribute('data-hover-enabled', isVisible ? 'true' : 'false');
+                  
+                  // Force reset any ongoing hover state for filtered electrons
+                  if (!isVisible && hoverStateManager.currentElectron === electron) {
+                    hoverStateManager.setState('none');
+                  }
+                });
+                
+                allShells.forEach((shell, shellIndex) => {
+                  const shellDomain = cfg.domains[shellIndex];
+                  const isVisible = (domain === 'all' || shellDomain === domain);
+                  
+                  shell.setAttribute('data-hover-enabled', isVisible ? 'true' : 'false');
+                  
+                  // Force reset shell hover state if it's filtered out
+                  if (!isVisible && hoverStateManager.currentState === `shell-${shellIndex}`) {
+                    hoverStateManager.setState('none');
+                  }
+                });
+              }
+              
+              // Initialize all elements with hover enabled
+              document.querySelectorAll('.electron:not(.nucleus)').forEach(el => {
+                el.setAttribute('data-hover-enabled', 'true');
+              });
+              document.querySelectorAll('.shell').forEach(el => {
+                el.setAttribute('data-hover-enabled', 'true');
+              });
               
               // Filter button event listeners
               filterBtns.forEach(btn => {
@@ -1381,6 +1425,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			// Register GSAP Draggable
 			gsap.registerPlugin(Draggable);
 			
+			// Global filter state tracker
+			let currentFilter = 'all';
+			
 			// Initialize filter system now that GSAP is available
 			// (Function was moved from header script to ensure GSAP access)
 			function initializeFilterSystem() {
@@ -1407,6 +1454,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               function applyFilter(domain) {
                 console.log('applyFilter called with:', domain); // Debug
                 
+                // Update global filter state
+                currentFilter = domain;
+                
                 // Update active button
                 filterBtns.forEach(btn => btn.classList.remove('active'));
                 const activeBtn = document.querySelector(`[data-filter="${domain}"]`);
@@ -1428,23 +1478,25 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 electrons.forEach(electron => {
                   const electronDomain = electron.dataset.domain;
                   if (domain === 'all' || electronDomain === domain) {
-                    // Show electron (full opacity + enable hover)
+                    // Show electron (full opacity + keep hover enabled)
                     gsap.to(electron, {
                       opacity: 1,
                       duration: 0.3,
                       ease: 'power2.out',
-                      overwrite: 'auto'
+                      overwrite: false // Allow hover animations to override
                     });
                     electron.style.pointerEvents = 'auto';
+                    electron.setAttribute('data-filter-visible', 'true');
                   } else {
-                    // Dim electron (low opacity + disable hover)
+                    // Dim electron but keep hover + click enabled
                     gsap.to(electron, {
                       opacity: 0.3,
                       duration: 0.3,
                       ease: 'power2.out',
-                      overwrite: 'auto'
+                      overwrite: false // Allow hover animations to override
                     });
-                    electron.style.pointerEvents = 'none';
+                    electron.style.pointerEvents = 'auto'; // Keep clickable
+                    electron.setAttribute('data-filter-visible', 'false');
                   }
                 });
                 
@@ -1458,7 +1510,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                       attr: { 'stroke-width': shellConfig?.strokeWidth || '4' },
                       duration: 0.3,
                       ease: 'power2.out',
-                      overwrite: 'auto'
+                      overwrite: false // Allow hover animations to override
                     });
                   } else if (index === domainIndex) {
                     // Selected shell: full opacity and bold stroke
@@ -1467,7 +1519,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                       attr: { 'stroke-width': shellConfig?.hoverStrokeWidth || '5' },
                       duration: 0.3,
                       ease: 'power2.out',
-                      overwrite: 'auto'
+                      overwrite: false // Allow hover animations to override
                     });
                   } else {
                     // Non-selected shells: very dim like labels (match label opacity)
@@ -1476,7 +1528,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                       attr: { 'stroke-width': shellConfig?.strokeWidth || '4' },
                       duration: 0.3,
                       ease: 'power2.out',
-                      overwrite: 'auto'
+                      overwrite: false // Allow hover animations to override
                     });
                   }
                 });
@@ -1510,7 +1562,48 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     });
                   }
                 });
+                
+                // Update hover interactions based on filter
+                updateHoverInteractions(domain);
               }
+              
+              function updateHoverInteractions(domain) {
+                // Get all interactive elements
+                const allElectrons = document.querySelectorAll('.electron:not(.nucleus)');
+                const allShells = document.querySelectorAll('.shell');
+                
+                allElectrons.forEach(electron => {
+                  const electronDomain = electron.dataset.domain;
+                  const isVisible = (domain === 'all' || electronDomain === domain);
+                  
+                  electron.setAttribute('data-hover-enabled', isVisible ? 'true' : 'false');
+                  
+                  // Force reset any ongoing hover state for filtered electrons
+                  if (!isVisible && hoverStateManager.currentElectron === electron) {
+                    hoverStateManager.setState('none');
+                  }
+                });
+                
+                allShells.forEach((shell, shellIndex) => {
+                  const shellDomain = cfg.domains[shellIndex];
+                  const isVisible = (domain === 'all' || shellDomain === domain);
+                  
+                  shell.setAttribute('data-hover-enabled', isVisible ? 'true' : 'false');
+                  
+                  // Force reset shell hover state if it's filtered out
+                  if (!isVisible && hoverStateManager.currentState === `shell-${shellIndex}`) {
+                    hoverStateManager.setState('none');
+                  }
+                });
+              }
+              
+              // Initialize all elements with hover enabled
+              document.querySelectorAll('.electron:not(.nucleus)').forEach(el => {
+                el.setAttribute('data-hover-enabled', 'true');
+              });
+              document.querySelectorAll('.shell').forEach(el => {
+                el.setAttribute('data-hover-enabled', 'true');
+              });
               
               // Filter button event listeners
               filterBtns.forEach(btn => {
@@ -1890,12 +1983,25 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 if (this.currentState.startsWith('shell-')) {
                   const shellIndex = parseInt(this.currentState.split('-')[1]);
                   // Ensure electrons are at baseline when only shell is hovered
-                  // Reset opacity for all; radius only for non-nucleus electrons
-                  gsap.to(document.querySelectorAll('.electron'), {
-                    opacity: 1.0,
-                    duration: atomConfig.timing.hoverDuration,
-                    ease: 'power2.out',
-                    overwrite: 'auto'
+                  // Respect filter state for opacity
+                  const allElectrons = document.querySelectorAll('.electron');
+                  allElectrons.forEach(e => {
+                    let targetOpacity = 1.0;
+                    
+                    // If filtering is active and this electron is filtered out, keep it dimmed
+                    if (currentFilter !== 'all' && !e.classList.contains('nucleus')) {
+                      const electronDomain = e.dataset.domain;
+                      if (electronDomain !== currentFilter) {
+                        targetOpacity = 0.3; // Keep filtered-out electrons dimmed during shell hover
+                      }
+                    }
+                    
+                    gsap.to(e, { 
+                      opacity: targetOpacity, 
+                      duration: atomConfig.timing.hoverDuration, 
+                      ease: 'power2.out', 
+                      overwrite: 'auto' 
+                    });
                   });
                   gsap.to(document.querySelectorAll('.electron:not(.nucleus)'), {
                     attr: { r: atomConfig.electrons.radius },
@@ -1973,13 +2079,25 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 if (window.orbitSystem) window.orbitSystem.pauseShell(shellIndex);
                 try { const t = labelTweenByShell.get(shellIndex); t && t.pause(); } catch {}
                 
-                // Global spotlight
+                // Global spotlight - respect filter state
                 const allElectrons = document.querySelectorAll('.electron');
                 allElectrons.forEach(e => {
                   if (e === electron) {
+                    // Hovered electron always gets full opacity
                     gsap.to(e, { opacity: 1.0, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
                   } else {
-                    gsap.to(e, { opacity: shellConfig.electronHoverOpacity, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
+                    // Other electrons: respect filter state
+                    let targetOpacity = shellConfig.electronHoverOpacity;
+                    
+                    // If filtering is active and this electron is filtered out, keep it dimmed
+                    if (currentFilter !== 'all' && !e.classList.contains('nucleus')) {
+                      const electronDomain = e.dataset.domain;
+                      if (electronDomain !== currentFilter) {
+                        targetOpacity = 0.3; // Keep filtered-out electrons dimmed
+                      }
+                    }
+                    
+                    gsap.to(e, { opacity: targetOpacity, duration: atomConfig.timing.hoverDuration, ease: 'power2.out', overwrite: 'auto' });
                   }
                 });
               },
@@ -2242,8 +2360,22 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     if (dragLock) return;
                     // Record electron event timing to prevent mousemove conflicts
                     lastElectronEventTime = performance.now();
-                    // Pass the actual electron element to the state manager
-                    hoverStateManager.setState(`electron-${shellIndex}-${electronIndex}`, electron);
+                    
+                    // Always allow scale hover, but check for full hover effects
+                    const isFilterVisible = electron.getAttribute('data-hover-enabled') === 'true';
+                    
+                    if (isFilterVisible) {
+                        // Full hover effects (opacity changes + scale)
+                        hoverStateManager.setState(`electron-${shellIndex}-${electronIndex}`, electron);
+                    } else {
+                        // Scale-only hover for filtered electrons
+                        gsap.to(electron, {
+                          attr: { r: atomConfig.electrons.hoverRadius },
+                          duration: atomConfig.timing.hoverDuration,
+                          ease: 'power2.out',
+                          overwrite: 'auto'
+                        });
+                    }
                     
                     // Pause electron orbital motion when hovering
                     if (window.orbitSystem) {
@@ -2289,6 +2421,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 electron.addEventListener('mouseleave', () => {
                     if (dragLock) return;
                     
+                    const isFilterVisible = electron.getAttribute('data-hover-enabled') === 'true';
+                    
                     // Resume electron orbital motion when leaving
                     if (window.orbitSystem) {
                         window.orbitSystem.resumeElectron(electron);
@@ -2296,10 +2430,33 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                     
                     // Reset sound state when leaving electron
                     atomSounds.lastSoundState = null;
-                    // Check if we're still in the shell's tolerance zone via distance calculation
-                    // The mousemove handler will determine the correct next state
-                    // For now, assume we're leaving completely (will be corrected by mousemove if needed)
-                    hoverStateManager.setState('none');
+                    
+                    if (isFilterVisible) {
+                        // When leaving an electron from the active filtered shell, go back to shell hover instead of none
+                        if (currentFilter !== 'all') {
+                          const electronDomain = electron.dataset.domain;
+                          if (electronDomain === currentFilter) {
+                            // Go back to shell hover for the active domain
+                            const domainIndex = cfg.domains.indexOf(currentFilter);
+                            hoverStateManager.setState(`shell-${domainIndex}`);
+                          } else {
+                            hoverStateManager.setState('none');
+                          }
+                        } else {
+                          // Check if we're still in the shell's tolerance zone via distance calculation
+                          // The mousemove handler will determine the correct next state
+                          // For now, assume we're leaving completely (will be corrected by mousemove if needed)
+                          hoverStateManager.setState('none');
+                        }
+                    } else {
+                        // Scale-only reset for filtered electrons
+                        gsap.to(electron, {
+                          attr: { r: atomConfig.electrons.radius },
+                          duration: atomConfig.timing.hoverDuration,
+                          ease: 'power2.out',
+                          overwrite: 'auto'
+                        });
+                    }
                     // Micro: remove hover ring
                     try {
                       const ring = electron._hoverRing;
@@ -2630,6 +2787,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					const shouldDeferToElectronEvent = timeSinceElectronEvent < 100; // 100ms grace period
 					
 					if (hoveredShellIndex !== null) {
+						// Check if hover is enabled for this shell (filter-aware)
+						const shell = shells[hoveredShellIndex];
+						if (shell?.getAttribute('data-hover-enabled') === 'false') return;
+						
 						// Only update if we're not already in an electron state for this shell
 						const currentElectronState = hoverStateManager.currentState.startsWith(`electron-${hoveredShellIndex}-`);
 						if (!currentElectronState && !shouldDeferToElectronEvent) {

@@ -6,7 +6,7 @@
   <div class="header-content">
     <!-- Name (left) -->
     <div class="header-name">
-      <h1>Arthur kowskii</h1>
+      <h1>Arthur Kowskii</h1>
     </div>
     
     <!-- Project filters (center) -->
@@ -19,6 +19,7 @@
     
     <!-- Theme toggle (right) -->
     <div class="theme-toggle-container">
+      <span class="theme-label" id="theme-label">Light</span>
       <label class="theme-toggle" for="theme-switch" aria-label="Toggle dark mode">
         <input type="checkbox" id="theme-switch" />
         <span class="toggle-slider"></span>
@@ -129,6 +130,19 @@
     display: flex;
     align-items: center;
     justify-self: end;
+    gap: 12px;
+  }
+  
+  .theme-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #525252;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: color 0.3s ease;
+  }
+  
+  html[data-theme="dark"] .theme-label {
+    color: #a1a1aa;
   }
   
   .theme-toggle {
@@ -212,6 +226,7 @@
     .toggle-slider:before {
       height: 18px;
       width: 18px;
+      font-size: 10px;
     }
     
     .theme-toggle input:checked + .toggle-slider:before {
@@ -230,4 +245,29 @@
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('theme-switch');
+    const themeLabel = document.getElementById('theme-label');
+    
+    // Check for saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    
+    // Apply initial theme
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    themeToggle.checked = initialTheme === 'dark';
+    themeLabel.textContent = initialTheme === 'dark' ? 'Dark' : 'Light';
+    
+    // Handle theme toggle
+    themeToggle.addEventListener('change', function() {
+      const newTheme = this.checked ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeLabel.textContent = newTheme === 'dark' ? 'Dark' : 'Light';
+    });
+  });
+</script>
 </header>

@@ -6,7 +6,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 
 **🤖 For Agents**: Start with `CLAUDE.md` for startup protocol, then read `SESSION_CONTEXT.md` for current status.
 
-Last updated: 2025-08-26 (Comprehensive asset optimization - 91% reduction in file sizes)
+Last updated: 2025-08-27 (Header navigation system with project filtering)
 
 ## Project Snapshot
 
@@ -470,3 +470,43 @@ The portfolio is now enterprise-grade with comprehensive monitoring, automated q
 - **Functional Compatibility**: All hero videos, thumbnails, gallery images, and preview cards work identically with optimized files  
 - **Format Consistency**: Maintained original aspect ratios, color profiles, and playback behavior
 - **Production Ready**: All optimized assets ready for deployment with no additional processing required
+
+## Recent Changes (2025‑08‑27) - Header Navigation & Project Filtering System
+
+### Header Component Implementation
+- **Navigation Header**: Added comprehensive header component with name, project filters, and theme toggle. Fixed positioning at top with backdrop blur and responsive design across all screen sizes.
+- **iOS-Style Theme Toggle**: Implemented smooth sliding toggle switch matching iOS design (blue background, white circle) with localStorage persistence for user preferences across sessions.
+- **Centered Layout**: Used CSS Grid (1fr auto 1fr) for perfect centering of filter buttons between name (left) and theme toggle (right) with responsive gap management.
+
+### Interactive Project Filtering System
+- **Domain-Based Filtering**: Added "All", "Music", "Game Audio", and "Tech" filter buttons that intelligently dim/highlight corresponding shells, electrons, and labels in the atom interface.
+- **Visual Hierarchy Enhancement**: Selected filter gets bold text weight (700), selected domain elements show full opacity with enhanced effects (bold shell strokes, bright label opacity), non-selected elements fade to subtle opacity (0.15).
+- **Toggle Deselection**: Clicking active filter returns to "All" state - provides intuitive UX for clearing domain focus while maintaining "All" as permanent option.
+
+### GSAP Transition Integration  
+- **Smooth Animations**: Replaced instant opacity changes with 300ms GSAP transitions using power2.out easing, matching existing hover animation system for consistency.
+- **Comprehensive Element Coverage**: All interactive elements animate smoothly - electrons fade in/out, shells transition opacity + stroke-width simultaneously, labels gracefully brighten/dim.
+- **Conflict Resolution**: Implemented overwrite: 'auto' and proper timing initialization to prevent animation conflicts with existing hover system.
+
+### Technical Architecture
+- **Overlay Integration**: Header auto-hides during project/bio overlay opening using MutationObserver, slides back when overlay closes for seamless full-screen experience.
+- **Scroll Position Reset**: Fixed overlay scroll position to always start at top when reopening projects, preventing disorienting mid-content starts.
+- **Clip-Path Resize Fix**: Resolved circular overlay mask breaking on window resize by adding viewport-aware recalculation maintaining proper coverage during window scaling.
+
+### Enhanced User Experience
+- **Atom Centering**: Adjusted atom positioning to account for fixed header, maintaining perfect visual center in available viewport space with 36px offset compensation.
+- **Persistent Preferences**: Theme choice survives page refreshes via localStorage integration, defaulting to light mode for first-time visitors with smooth state restoration.
+- **Responsive Behavior**: Filter buttons adapt to smaller screens with reduced padding/font sizes while maintaining touch-friendly interaction areas.
+
+### Filter System Visual Effects
+- **Selected Domain State**: Bold filter button + bold shell stroke (hoverStrokeWidth) + bright labels (0.7 opacity) + full electron visibility creating clear focus hierarchy.
+- **Dimmed Domain State**: Normal filter buttons + very dim shells (0.15 opacity) + subtle labels (0.15 opacity) + dimmed electrons (0.3 opacity) for background context.
+- **All Domain State**: All elements return to normal idle appearance with proper opacity restoration and stroke width reset ensuring clean baseline state.
+
+### Key Files Modified
+- `src/components/Header.astro` - Complete header component with responsive design and theme toggle
+- `src/pages/index.astro` - Filter system logic, GSAP transitions, overlay fixes, and header integration  
+- Header positioning, atom centering, scroll reset, and clip-path resize handling
+- GSAP-based smooth transitions for all filtering interactions with proper timing and conflict resolution
+
+The portfolio now features professional header navigation with intuitive project filtering, maintaining the interactive atom experience while adding powerful content organization capabilities.
