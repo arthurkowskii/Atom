@@ -510,3 +510,35 @@ The portfolio is now enterprise-grade with comprehensive monitoring, automated q
 - GSAP-based smooth transitions for all filtering interactions with proper timing and conflict resolution
 
 The portfolio now features professional header navigation with intuitive project filtering, maintaining the interactive atom experience while adding powerful content organization capabilities.
+
+## Recent Changes (2025‑08‑27) - Advanced Filtering System Polish & Hover Interactions
+
+### Filter-Aware Hover System Implementation
+- **Intelligent Hover Behavior**: Enhanced filtering system with sophisticated hover interactions that respect visual hierarchy. Filtered-out items maintain reduced opacity even during hover events, preserving focus on selected domain.
+- **Dual Hover Modes**: Implemented separate hover behaviors for visible vs. filtered elements - visible electrons get full hover effects (scale + opacity changes), filtered electrons get scale-only hover without breaking visual hierarchy.
+- **Shell-to-Electron Transition**: Fixed shell hover states to maintain selection when hovering electrons from the same domain. When leaving electrons from active filtered shell, hover returns to shell state instead of clearing completely.
+
+### Preview System Enhancement
+- **Universal Preview Cards**: Extended project preview functionality to filtered electrons. All electrons now show preview cards on hover regardless of filter state, maintaining consistent user experience across visible and dimmed items.
+- **Preview Lifecycle Management**: Added proper preview show/hide logic for filtered electrons with state tracking (`previewActive`, `currentElectron`) ensuring clean transitions and no preview conflicts.
+
+### Visual Hierarchy Optimization
+- **Filter State Persistence**: Hover interactions now respect current filter state throughout all opacity calculations. Filtered-out elements stay properly dimmed (0.3 opacity) during shell hover and electron spotlight effects.
+- **Clean State Management**: Implemented global `currentFilter` tracking with filter-aware opacity logic in `applyElectronEffects` and `enterCurrentState` methods ensuring consistent visual focus.
+- **Smooth Scale Interactions**: Filtered electrons provide tactile feedback through scale hover while maintaining reduced visual prominence, balancing interactivity with hierarchy.
+
+### Technical Implementation
+- **Filter State Integration**: Added `currentFilter` global variable updated during filter changes with `updateHoverInteractions()` managing `data-hover-enabled` attributes for precise interaction control.
+- **Hover Logic Refinement**: Modified electron mouseenter/mouseleave events with filter-aware branching - visible electrons use full hover state manager, filtered electrons use direct GSAP scale animations.
+- **Opacity Calculation Enhancement**: Updated all hover functions to check `currentFilter !== 'all'` and apply domain-based opacity targeting, preventing filtered elements from returning to full opacity during interactions.
+
+### User Experience Improvements
+- **Consistent Interaction Model**: All electrons remain clickable and show previews regardless of filter state. Filtering is purely visual hierarchy enhancement without functionality restrictions.
+- **Intuitive Hover Feedback**: Users get appropriate feedback from all elements - filtered items provide subtle scale feedback confirming interactivity while maintaining visual subordination to selected domain.
+- **State Transition Polish**: Smooth transitions between filter states, hover states, and preview display with proper cleanup preventing stuck hover states or visual conflicts.
+
+### Key Files Modified
+- `src/pages/index.astro` - Enhanced filtering logic with hover-aware opacity calculations, filter state tracking, and preview system integration for filtered electrons
+- Filter system now provides professional-grade interaction design with sophisticated hover behaviors, universal preview access, and bulletproof visual hierarchy management
+
+The filtering system achieves optimal balance between visual focus and interaction completeness, providing clear domain highlighting while maintaining full functionality across all portfolio projects.
