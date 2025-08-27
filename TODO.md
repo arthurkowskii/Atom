@@ -1,12 +1,10 @@
 # TODO list
-- reset scrolling after closing a project page
 - liquid glass implementation
 - header
 - sampler/playground
 - downloadable FMOD project for FMOD jdr demo
-- resolve the circle problem while resizing the page after opening a project.
-
+- dark mode switch should be visible in project pages and the cross to close the page should be moved on the left
 # liquid glass references
 https://github.com/rdev/liquid-glass-react?tab=readme-ov-file
 https://github.com/polidario/Frontend-Projects/tree/main/liquid-glass-vue
-w
+wAs 
