@@ -7,7 +7,7 @@ import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
 import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
 import LogoProTools from '../Assets/software_logos/Pro_Tools.webp';
-import LogoFMOD from '../Assets/software_logos/Fmod.webp';
+import LogoFMOD from '../Assets/software_logos/Fmod.svg';
 import LogoWwise from '../Assets/software_logos/Wwise.webp';
 import LogoUnity from '../Assets/software_logos/Unity.webp';
 import LogoCsharp from '../Assets/software_logos/Csharp.webp';
@@ -1292,9 +1292,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 						if (!pitch) return;
 
 						try {
-							// Ensure audio context is started
+							// Only play if audio context is already unlocked by a user gesture
 							if (context.state !== 'running') {
-								await start();
+								return;
 							}
 
 							// PLACEHOLDER: Replace with Web Audio API buffer source playback
@@ -1335,6 +1335,21 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				// Initialize atom sound system
 				const atomSounds = new AtomSoundSystem(cfg);
 				atomSounds.init(); // Initialize on page load for zero latency
+
+				// Unlock audio context on first actual user gesture (click/tap/keydown)
+				(function setupAudioUnlock(){
+				  const unlock = async () => {
+				    try { await start(); } catch {}
+				    window.removeEventListener('pointerdown', unlock, true);
+				    window.removeEventListener('click', unlock, true);
+				    window.removeEventListener('keydown', unlock, true);
+				    window.removeEventListener('touchend', unlock, true);
+				  };
+				  window.addEventListener('pointerdown', unlock, true);
+				  window.addEventListener('click', unlock, true);
+				  window.addEventListener('keydown', unlock, true);
+				  window.addEventListener('touchend', unlock, true);
+				})();
 
             // Labels rotation setup
 				const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

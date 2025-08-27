@@ -1,11 +1,12 @@
 ---
 export interface Props { data: any }
 const { data } = Astro.props;
+// Explicit logo imports for reliability on Windows/esbuild
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
 import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
 import LogoProTools from '../Assets/software_logos/Pro_Tools.webp';
-import LogoFMOD from '../Assets/software_logos/Fmod.webp';
+import LogoFMOD from '../Assets/software_logos/Fmod.svg';
 import LogoWwise from '../Assets/software_logos/Wwise.webp';
 import LogoUnity from '../Assets/software_logos/Unity.webp';
 import LogoCsharp from '../Assets/software_logos/Csharp.webp';
@@ -14,8 +15,7 @@ import LogoDavinci from '../Assets/software_logos/Davinci_Resolve.webp';
 import LogoCinema4D from '../Assets/software_logos/Cinema_4D.webp';
 import LogoPhotoshop from '../Assets/software_logos/photoshop.webp';
 
-// In Astro, importing images returns an object with a `src` property.
-// Use `any` and normalize to a string at render time.
+// Static logo registry
 const RAW_LOGOS: Record<string, any> = {
   ableton: LogoAbleton,
   reaper: LogoReaper,
@@ -38,9 +38,9 @@ function normLabel(label: string): string {
 
 function logoSrcFor(label: string): string | null {
   const key = normLabel(label);
-  const val = RAW_LOGOS[key];
-  if (!val) return null;
-  return typeof val === 'string' ? val : (val?.src ?? null);
+  const mod = RAW_LOGOS[key];
+  if (!mod) return null;
+  return typeof mod === 'string' ? mod : (mod?.src ?? mod?.default ?? null);
 }
 ---
 

@@ -27,8 +27,16 @@ skills:
       - "Automations/Agents"
 email: "contact@kowskii.com"
 social:
-  - platform: "Portfolio"
-    url: "https://kowskii.com"
+  - platform: "X"
+    url: "https://x.com/kforkowskii"
+  - platform: "LinkedIn"
+    url: "https://www.linkedin.com/in/arthur-kowskii-croquebois-30083b1b3/"
+  - platform: "GitHub"
+    url: "https://github.com/arthurkowskii"
+  - platform: "Bluesky"
+    url: "https://bsky.app/profile/kforkowskii.bsky.social"
+  - platform: "Instagram"
+    url: "https://www.instagram.com/kforkowskii/"
 ---
 
 # About Arthur Kowskii

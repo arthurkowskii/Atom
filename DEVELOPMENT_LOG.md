@@ -6,7 +6,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 
 **🤖 For Agents**: Start with `CLAUDE.md` for startup protocol, then read `SESSION_CONTEXT.md` for current status.
 
-Last updated: 2025-08-27 (Header navigation system with project filtering)
+Last updated: 2025-08-27 (Header navigation system with project filtering; Bio social card WIP)
 
 ## Project Snapshot
 
@@ -26,6 +26,17 @@ Last updated: 2025-08-27 (Header navigation system with project filtering)
 - Validate dynamic shells across 1–5 domain folders; tune spacing/label density if needed.
 - Decide production Decap backend for deployment (git-gateway or GitHub).
 - Add SEO/meta polish for `/bio` (title/description/og image) when finalizing.
+- Bio social card: finalize icon set (X, Bluesky, GitHub, LinkedIn, Instagram). Currently wired: X + LinkedIn (static SVG). Instagram removed until static icon is provided. Add remaining platforms + CMS dropdown and platform→icon map.
+
+## Work in Progress (Bio Social Card)
+
+- Implemented initial social card using local static SVGs (X, LinkedIn). Removed “Portfolio” link.
+- Instagram: GIF removed; awaiting static SVG/PNG to add back (no animations by default).
+- To do:
+  - Add Bluesky and GitHub icons and mapping.
+  - Update `public/admin/config.yml` to present platform dropdown (X, Bluesky, GitHub, LinkedIn, Instagram).
+  - Optional: Provide static Instagram icon, then wire it.
+  - Verify both `/bio` and overlay rendering after additions.
 
 ## Key Files
 

@@ -116,8 +116,8 @@ async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
     
-    // Cache successful responses
-    if (networkResponse.ok) {
+    // Cache successful, fully-cacheable responses (skip partial/opaque/range)
+    if (networkResponse && networkResponse.ok && isCacheableResponse(request, networkResponse)) {
       const cache = await caches.open(RUNTIME_CACHE);
       cache.put(request, networkResponse.clone());
     }
@@ -141,12 +141,20 @@ async function networkFirst(request) {
 }
 
 async function cacheFirst(request) {
+  // Bypass caching for Range requests (media seeking)
+  try {
+    const range = request.headers.get && request.headers.get('range');
+    if (range) {
+      return fetch(request);
+    }
+  } catch {}
+
   const cachedResponse = await caches.match(request);
   if (cachedResponse) {
     // Update cache in background
     fetch(request)
       .then(response => {
-        if (response.ok) {
+        if (response && response.ok && isCacheableResponse(request, response)) {
           const cache = caches.open(RUNTIME_CACHE);
           cache.then(c => c.put(request, response));
         }
@@ -161,7 +169,7 @@ async function cacheFirst(request) {
   try {
     const networkResponse = await fetch(request);
     
-    if (networkResponse.ok) {
+    if (networkResponse && networkResponse.ok && isCacheableResponse(request, networkResponse)) {
       const cache = await caches.open(RUNTIME_CACHE);
       cache.put(request, networkResponse.clone());
     }
@@ -178,7 +186,7 @@ async function staleWhileRevalidate(request) {
   
   const networkPromise = fetch(request)
     .then(response => {
-      if (response.ok) {
+      if (response && response.ok && isCacheableResponse(request, response)) {
         const cache = caches.open(CACHE_NAME);
         cache.then(c => c.put(request, response.clone()));
       }
@@ -207,6 +215,26 @@ async function staleWhileRevalidate(request) {
   
   // Both cache and network failed
   return createOfflineResponse();
+}
+
+function isCacheableResponse(request, response) {
+  try {
+    // Skip if request is a Range request
+    const isRange = request.headers && request.headers.get && !!request.headers.get('range');
+    if (isRange) return false;
+  } catch {}
+
+  // Only cache 200 OK, basic type (same-origin) responses
+  if (!response || response.status !== 200) return false;
+  if (response.type && response.type !== 'basic' && response.type !== 'cors') return false;
+
+  // Skip partial content
+  try {
+    const contentRange = response.headers && response.headers.get && response.headers.get('Content-Range');
+    if (contentRange) return false;
+  } catch {}
+
+  return true;
 }
 
 async function handleHealthCheck(request) {

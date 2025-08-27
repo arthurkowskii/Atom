@@ -2,11 +2,12 @@
 export interface Props { data: any }
 const { data } = Astro.props;
 import { sanitizeMarkdown } from '../utils/sanitize.js';
+// Explicit logo imports for reliability on Windows/esbuild
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
 import LogoLogicPro from '../Assets/software_logos/Logic_Pro.webp';
 import LogoProTools from '../Assets/software_logos/Pro_Tools.webp';
-import LogoFMOD from '../Assets/software_logos/Fmod.webp';
+import LogoFMOD from '../Assets/software_logos/Fmod.svg';
 import LogoWwise from '../Assets/software_logos/Wwise.webp';
 import LogoUnity from '../Assets/software_logos/Unity.webp';
 import LogoCsharp from '../Assets/software_logos/Csharp.webp';
@@ -14,9 +15,14 @@ import LogoGit from '../Assets/software_logos/Git.webp';
 import LogoDavinci from '../Assets/software_logos/Davinci_Resolve.webp';
 import LogoCinema4D from '../Assets/software_logos/Cinema_4D.webp';
 import LogoPhotoshop from '../Assets/software_logos/photoshop.webp';
+// Social icons provided by user
+import IconX from '../Assets/social_media_icons/X.svg';
+import IconLinkedIn from '../Assets/social_media_icons/LinkedIn.svg';
+import IconInstagram from '../Assets/social_media_icons/instagram.svg';
+import IconGitHub from '../Assets/social_media_icons/github.svg';
+import IconBluesky from '../Assets/social_media_icons/bluesky.svg';
 
-// In Astro, importing images returns an object with a `src` property.
-// Use `any` and normalize to a string at render time.
+// Static logo registry
 const RAW_LOGOS: Record<string, any> = {
   ableton: LogoAbleton,
   reaper: LogoReaper,
@@ -39,9 +45,9 @@ function normLabel(label: string): string {
 
 function logoSrcFor(label: string): string | null {
   const key = normLabel(label);
-  const val = RAW_LOGOS[key];
-  if (!val) return null;
-  return typeof val === 'string' ? val : (val?.src ?? null);
+  const mod = RAW_LOGOS[key];
+  if (!mod) return null;
+  return typeof mod === 'string' ? mod : (mod?.src ?? mod?.default ?? null);
 }
 
 // Sanitize bio HTML (we allow basic tags like strong/em)
@@ -89,8 +95,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
 
   .contact-card,
   .social-card {
-    min-height: 60px;
-    max-height: 60px;
+    min-height: 96px; /* Increased to keep titles aligned and allow content */
     padding: 12px 24px;
   }
 
@@ -254,7 +259,8 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   .contact-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Keep label aligned with other cards */
+    align-items: flex-start;
   }
 
   .card-label {
@@ -290,27 +296,38 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   .social-card {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Keep label aligned with contact card */
+    align-items: flex-start;
   }
 
   .social-links {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 8px;
   }
 
   .social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: 12px;
     font-weight: 500;
     color: #171717;
     text-decoration: none;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border: 1px solid #e5e5e5;
     border-radius: 6px;
-    transition: all 0.3s ease;
-    text-align: center;
+    transition: all 0.2s ease;
   }
+
+  .social-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+  }
+
+  .social-label { line-height: 1; }
 
   .social-link:hover {
     border-color: #171717;
@@ -511,6 +528,9 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     background: #2a2a2a;
   }
 
+  /* Improve icon visibility in dark mode for raster/SVG icons */
+  html[data-theme="dark"] .social-icon { filter: invert(1) brightness(1.2); }
+
   html[data-theme="dark"] .skills-section:not(:last-child) {
     border-bottom-color: #333333;
   }
@@ -555,9 +575,39 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     <div class="bento-card social-card" data-animation-delay="500">
       <div class="card-label">Social</div>
       <div class="social-links">
-        {(data?.social || []).map((s: any) => (
-          <a class="social-link" href={s.url} target="_blank" rel="noreferrer noopener">{s.platform}</a>
-        ))}
+        {(() => {
+          const socials = (data?.social || []);
+          const supported = new Map([
+            ['x', { key: 'X', staticSrc: IconX }],
+            ['linkedin', { key: 'LinkedIn', staticSrc: IconLinkedIn }],
+            ['instagram', { key: 'Instagram', staticSrc: IconInstagram }],
+            ['github', { key: 'GitHub', staticSrc: IconGitHub }],
+            ['bluesky', { key: 'Bluesky', staticSrc: IconBluesky }],
+          ]);
+
+          return socials
+            .map((s) => ({ raw: s, key: String(s.platform || '').toLowerCase().replace(/[^a-z0-9]+/g, '') }))
+            .filter(({ key }) => supported.has(key))
+            .map(({ raw, key }) => {
+              const meta = supported.get(key);
+              if (!meta) return null;
+              const toUrl = String(raw.url || '#');
+              const staticSrc = meta.staticSrc ? (typeof meta.staticSrc === 'string' ? meta.staticSrc : meta.staticSrc.src) : '';
+              const animatedSrc = meta.animatedSrc ? (typeof meta.animatedSrc === 'string' ? meta.animatedSrc : meta.animatedSrc.src) : '';
+              const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='; // 1x1 transparent gif
+
+              return (
+                <a class="social-link" data-platform={String(meta.key).toLowerCase()} href={toUrl} target="_blank" rel="noreferrer noopener">
+                  {staticSrc ? (
+                    <img class="social-icon" src={staticSrc} alt="" aria-hidden="true" loading="lazy" />
+                  ) : animatedSrc ? (
+                    <img class="social-icon" src={BLANK} data-animated-src={animatedSrc} data-blank-src={BLANK} data-duration-ms="1500" alt="" aria-hidden="true" />
+                  ) : null}
+                  <span class="social-label">{meta.key}</span>
+                </a>
+              );
+            });
+        })()}
       </div>
     </div>
 
@@ -651,4 +701,6 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   } else {
     initBioBentoAnimations();
   }
+
+  // No animated social icons currently; Instagram support will be added when a static icon is available
 </script>
