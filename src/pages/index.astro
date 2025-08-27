@@ -2375,6 +2375,11 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                           ease: 'power2.out',
                           overwrite: 'auto'
                         });
+                        
+                        // Show preview for filtered electrons too
+                        hoverStateManager.previewActive = true;
+                        hoverStateManager.currentElectron = electron;
+                        hoverStateManager.showPreview(electron);
                     }
                     
                     // Pause electron orbital motion when hovering
@@ -2456,6 +2461,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                           ease: 'power2.out',
                           overwrite: 'auto'
                         });
+                        
+                        // Hide preview for filtered electrons
+                        hoverStateManager.previewActive = false;
+                        hoverStateManager.hidePreview();
                     }
                     // Micro: remove hover ring
                     try {
