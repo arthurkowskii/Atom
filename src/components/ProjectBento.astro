@@ -460,15 +460,16 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   /* Dark theme bento cards */
   html[data-theme="dark"] .bento-card {
     background: #1a1a1a;
-    border: 2px solid #2a2a2a;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid #333333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
     color: #e4e4e7;
   }
 
   html[data-theme="dark"] .bento-card:hover,
   html[data-theme="dark"] .bento-card:focus {
     border-color: rgba(var(--accent-color-rgb), 0.6);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px) scale(1.02);
   }
 
   /* Dark theme card titles and text */
@@ -540,6 +541,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   html[data-theme="dark"] .action-btn.secondary:hover {
     background: rgba(var(--accent-color-rgb), 0.25);
     border-color: rgba(var(--accent-color-rgb), 0.5);
+    transform: translateY(-1px) scale(1.02);
   }
 
   /* Dark theme tech pills */
@@ -630,9 +632,9 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     background: #ffffff;
     border-radius: 16px;
     padding: 1.5rem;
-    border: 2px solid #e5e5e5;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     position: relative;
     
@@ -653,7 +655,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .bento-card:hover,
   .bento-card:focus {
     border-color: var(--accent-color) !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px) scale(1.02);
     outline: none; /* Remove any browser default outline */
   }
 
@@ -676,14 +679,15 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    height: 4px;
+    background: var(--accent-color);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .bento-card:hover::before {
-    opacity: 1;
+    transform: scaleX(1);
   }
 
   /* Hero Section - Large banner */
@@ -948,7 +952,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   }
 
   .action-btn.primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
     box-shadow: 0 8px 25px rgba(var(--accent-color-rgb), 0.4);
   }
 
@@ -961,6 +965,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   .action-btn.secondary:hover {
     background: rgba(var(--accent-color-rgb), 0.2);
     border-color: rgba(var(--accent-color-rgb), 0.6);
+    transform: translateY(-1px) scale(1.02);
   }
 
   /* Tech Stack Card */
