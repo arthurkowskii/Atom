@@ -335,7 +335,7 @@ export const userTweaks = {
     lineHeight: 1.6,    // line height for bio text readability
     alignment: 'top',   // 'top' | 'center' - vertical alignment in bio card
     justify: true,      // boolean - enable justified text alignment
-    fontWeight: 500     // font weight
+    fontWeight: 400     // font weight
   },
 
   // 🎨 Modern Design System

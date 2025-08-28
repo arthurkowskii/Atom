@@ -303,7 +303,8 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 		<meta name="build-commit" content={import.meta.env.BUILD_COMMIT || 'local'} />
 		<meta name="build-date" content={new Date().toISOString()} />
 		
-		<!-- Relaxed Content Security Policy for media embeds -->
+		<!-- Relaxed Content Security Policy for media embeds.
+		     Note: frame-ancestors cannot be set via <meta>; configure via HTTP headers in production. -->
 		<meta http-equiv="Content-Security-Policy" content="
 			default-src 'self';
 			script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:;
@@ -318,7 +319,6 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			object-src 'none';
 			base-uri 'self';
 			form-action 'self' https:;
-			frame-ancestors 'none';
 		">
 		
 		<title>Atom Portfolio</title>
@@ -2885,9 +2885,9 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				}
 				
 				// Add event listeners
-				document.addEventListener('keydown', onKeyDown, true);
-				document.addEventListener('mousedown', onPointerDown, true);
-				document.addEventListener('touchstart', onPointerDown, true);
+					document.addEventListener('keydown', onKeyDown, true);
+					document.addEventListener('mousedown', onPointerDown, { capture: true });
+					document.addEventListener('touchstart', onPointerDown, { capture: true, passive: true });
 				
 				focusableElements.forEach(element => {
 					element.addEventListener('focus', onFocus, true);
@@ -2903,10 +2903,10 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			// Track GSAP animation events
 			document.addEventListener('DOMContentLoaded', () => {
 				// Wait for GSAP to be available
-				if (typeof gsap === 'undefined') {
-					console.warn('GSAP not available for performance monitoring');
-					return;
-				}
+					if (typeof gsap === 'undefined') {
+						// Silently skip monitoring when GSAP is not on page
+						return;
+					}
 				
 				const originalSet = gsap.set;
 				const originalTo = gsap.to;
@@ -2971,16 +2971,16 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			});
 		</script>
 
-		<!-- Service Worker Registration (prod only) -->
-		<script type="module">
-			if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('/sw.js').catch(() => {});
-				});
-			} else if ('serviceWorker' in navigator) {
-				// In dev, unregister any existing SW to avoid caching issues
-				navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(() => {});
-			}
-		</script>
+			<!-- Service Worker Registration (prod only) -->
+			<script type="module" define:vars={{ IS_PROD: import.meta.env.PROD }}>
+				if (IS_PROD && 'serviceWorker' in navigator) {
+					window.addEventListener('load', () => {
+						navigator.serviceWorker.register('/sw.js').catch(() => {});
+					});
+				} else if ('serviceWorker' in navigator) {
+					// In dev, unregister any existing SW to avoid caching issues
+					navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(() => {});
+				}
+			</script>
 	</body>
 </html>
