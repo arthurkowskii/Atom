@@ -1140,16 +1140,20 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     transform: scale(1.05);
   }
 
-  /* Thumbnail Strip */
+  /* Thumbnail Grid (max 3 per row) */
   .gallery-thumbnails {
-    display: flex;
-    gap: 0.4rem;
-    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem; /* keep existing spacing */
+    /* Do not stretch vertically; height will be set by content/JS */
+    flex: 0 0 auto;
     min-height: 60px;
+    overflow: hidden; /* ensure clean clip when rows are limited */
   }
 
   .gallery-thumb {
-    flex: 1;
+    /* Each grid cell becomes a square tile */
+    aspect-ratio: 1 / 1;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -1170,6 +1174,18 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .gallery-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* CSS-only fallback: if JS didn't set data-rows yet, show only first row of 3 */
+  .gallery-thumbnails:not([data-rows]) .gallery-thumb:nth-child(n+4) {
+    display: none;
   }
 
   /* Gallery Counter Badge */
@@ -1437,7 +1453,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       min-height: 280px;
     }
     
-    /* Small tablet - adjust thumbnail size */
+    /* Small tablet - keep thumbnails grid */
     .gallery-card .gallery-thumbnails {
       min-height: 50px;
     }
@@ -1539,9 +1555,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       min-height: 200px;
     }
     
-    /* Mobile landscape - stack thumbnails vertically */
+    /* Mobile landscape - use 2 columns for readability */
     .gallery-card .gallery-thumbnails {
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       min-height: 80px;
     }
     .challenges-card { 
@@ -2086,6 +2103,90 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   // Global instance
   let bentoAnimationSystem = null;
 
+  // ==========================
+  // Gallery layout (dynamic rows)
+  // - Thumbnails are a CSS grid (3 cols desktop, 2 cols mobile landscape)
+  // - Show as many full rows as fit; hide the rest
+  // ==========================
+  function getGridColumnCount(el) {
+    const style = getComputedStyle(el);
+    let template = style.gridTemplateColumns;
+    if (!template || template === 'none') return 1;
+    // Normalize repeat() to explicit list if necessary by counting spaces
+    // e.g., "1fr 1fr 1fr" => 3
+    return template.split(' ').filter(Boolean).length;
+  }
+
+  function layoutOneGallery(card) {
+    try {
+      const grid = card.querySelector('.gallery-grid');
+      const thumbs = card.querySelector('.gallery-thumbnails');
+      const hero = card.querySelector('.gallery-hero');
+      if (!grid || !thumbs || !hero) return;
+
+      const thumbsStyle = getComputedStyle(thumbs);
+      if (thumbsStyle.display === 'none') return; // hidden on mobile portrait
+
+      const gridStyle = getComputedStyle(grid);
+      const gapYGrid = parseFloat(gridStyle.gap) || 0;
+      const gapX = parseFloat(thumbsStyle.columnGap || thumbsStyle.gap) || 0;
+
+      const columns = Math.max(1, getGridColumnCount(thumbs));
+      const width = thumbs.clientWidth;
+      if (width <= 0) return;
+      const tile = (width - (columns - 1) * gapX) / columns;
+      if (!(tile > 0)) return;
+
+      // Available vertical space for thumbnails within the grid
+      const available = grid.clientHeight - hero.clientHeight - gapYGrid;
+      if (!(available > 0)) return;
+
+      let rowsFit = Math.floor((available + gapX) / (tile + gapX));
+      if (rowsFit < 1) rowsFit = 1; // always show at least one full row
+
+      const items = Array.from(thumbs.children);
+      const visibleCount = Math.min(items.length, columns * rowsFit);
+      for (let i = 0; i < items.length; i++) {
+        const el = items[i];
+        if (i < visibleCount) el.style.removeProperty('display');
+        else el.style.display = 'none';
+      }
+
+      // Fix the container height to exactly fit the number of full rows
+      const rowsHeight = rowsFit * tile + (rowsFit - 1) * gapX;
+      thumbs.style.height = rowsHeight + 'px';
+      thumbs.style.flex = `0 0 ${rowsHeight}px`;
+
+      thumbs.setAttribute('data-rows', String(rowsFit));
+    } catch (err) {
+      console.warn('Gallery layout error:', err);
+    }
+  }
+
+  function layoutAllGalleries() {
+    const cards = document.querySelectorAll('.gallery-card');
+    cards.forEach(card => layoutOneGallery(card));
+  }
+
+  function setupGalleryObservers() {
+    const cards = document.querySelectorAll('.gallery-card');
+    let rafId = null;
+    const schedule = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(layoutAllGalleries);
+    };
+
+    // Observe size changes of the gallery grid to recalc rows
+    cards.forEach(card => {
+      const grid = card.querySelector('.gallery-grid');
+      if (!grid) return;
+      const ro = new ResizeObserver(() => schedule());
+      ro.observe(grid);
+    });
+
+    window.addEventListener('resize', schedule);
+  }
+
   // Main animation function with perfect audio sync
   async function animateBentoCards() {
     console.log('🎵 animateBentoCards() called', { 
@@ -2094,6 +2195,9 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       stack: new Error().stack 
     });
     
+    // Ensure gallery rows are laid out before animating cards
+    layoutAllGalleries();
+
     if (!bentoAnimationSystem) {
       bentoAnimationSystem = new BentoAnimationSystem();
     }
@@ -2126,6 +2230,9 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       if (bentoContent && bentoContent.style.display !== 'none') {
         setTimeout(animateBentoCards, 100);
       }
+      // Initial gallery layout + observers
+      layoutAllGalleries();
+      setupGalleryObservers();
     });
   }
 

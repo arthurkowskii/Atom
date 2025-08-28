@@ -131,7 +131,9 @@ bento:
     title: "Results"
     items:
       - icon: "🎬"
-        text: "Un court métrage de 12 minutes comprenant 2 clips musicaux (XR 300, ENFANT)."
+        text: "Un court métrage de 12 minutes, écrit et réalisé par Arthur Kowskii"
+      - icon: "🎙️"
+        text: "2 Clips musicaux : XR 300 (feat. Mai) et ENFANT"
       - icon: "💽"
         text: "Un album de 16 titres (18 en physique) comprenant 7 épisodes audio et 9 morceaux"
       - icon: "📼"
