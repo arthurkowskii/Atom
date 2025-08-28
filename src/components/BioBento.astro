@@ -102,15 +102,16 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
 
   /* Base Card Styling */
   .bento-card {
-    background: #ffffff;
-    border: 2px solid #e5e5e5;
+    background: var(--surface-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 16px;
     padding: 24px;
     position: relative;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all var(--transition-medium);
     overflow: hidden;
     opacity: 0;
     transform: scale(0.8);
+    box-shadow: var(--shadow-card);
   }
 
   .bento-card.animated {
@@ -132,9 +133,9 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   }
 
   .bento-card:hover {
-    border-color: #171717;
+    border-color: var(--border-accent);
     transform: translateY(-2px) scale(1);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-card-hover);
   }
 
   .bento-card:hover::before {
@@ -167,7 +168,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     line-height: 1.1;
     margin: 0 0 8px;
     text-transform: uppercase;
-    color: #171717;
+    color: var(--text-primary);
   }
 
   .hero-subtitle {
@@ -176,7 +177,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-weight: 500;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #525252;
+    color: var(--text-secondary);
     margin: 0;
   }
 
@@ -200,7 +201,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #525252;
+    color: var(--text-secondary);
     margin: 0 0 8px;
   }
 
@@ -209,7 +210,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
-    color: #171717;
+    color: var(--text-primary);
     margin: 0;
   }
 
@@ -225,7 +226,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-size: var(--bio-text-font-size, 16px);
     font-weight: var(--bio-text-font-weight, 400);
     line-height: var(--bio-text-line-height, 1.6);
-    color: #171717;
+    color: var(--text-primary);
     margin: 0;
     text-align: var(--bio-text-align, left);
   }
@@ -272,7 +273,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #525252;
+    color: var(--text-secondary);
     margin: 0 0 12px;
   }
 
@@ -280,19 +281,26 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: #171717;
+    color: var(--text-primary);
     text-decoration: none;
-    padding: 8px 12px;
-    border: 2px solid #e5e5e5;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: var(--skill-card-padding, 16px);
+    min-height: var(--skill-box-min-h, 48px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--skill-border-radius, 12px);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-medium);
     text-align: center;
   }
 
   .contact-email:hover {
-    background: #171717;
-    color: #ffffff;
-    border-color: #171717;
+    border-color: var(--border-accent);
+    background: var(--surface-secondary);
+    box-shadow: var(--shadow-card-hover);
+    transform: var(--skill-hover-transform);
   }
 
   /* Social Card */
@@ -306,7 +314,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   .social-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--social-gap, 12px);
   }
 
   .social-link {
@@ -316,26 +324,30 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: 12px;
     font-weight: 500;
-    color: #171717;
+    color: var(--text-primary);
     text-decoration: none;
-    padding: 6px 10px;
-    border: 1px solid #e5e5e5;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    padding: var(--skill-card-padding, 16px);
+    min-height: var(--skill-box-min-h, 48px);
+    background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--skill-border-radius, 12px);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-medium);
   }
 
   .social-icon {
-    width: 18px;
-    height: 18px;
+    width: var(--social-icon-size, 20px);
+    height: var(--social-icon-size, 20px);
     display: inline-block;
   }
 
   .social-label { line-height: 1; }
 
   .social-link:hover {
-    border-color: #171717;
-    background: #f8f9fa;
-    transform: translateY(-1px);
+    border-color: var(--border-accent);
+    background: var(--surface-secondary);
+    box-shadow: var(--shadow-card-hover);
+    transform: var(--skill-hover-transform);
   }
 
   /* Unified Skills Card */
@@ -363,7 +375,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #171717;
+    color: var(--text-primary);
     margin: 0 0 20px 0;
   }
 
@@ -373,15 +385,15 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #171717;
+    color: var(--text-primary);
     margin: 0;
   }
 
-  /* Grid-based layout: exactly 2 boxes per line (desktop/tablet) */
+  /* Dynamic grid layout: auto-fit for responsive behavior */
   .skill-tools {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--skill-gap, 12px);
+    grid-template-columns: repeat(auto-fit, minmax(var(--skill-min-width, 140px), 1fr));
+    gap: var(--skill-gap, 16px);
   }
 
   .skill-tool {
@@ -391,17 +403,21 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     font-size: var(--skill-font-size, 15px);
     font-weight: 500;
-    color: #171717;
-    padding: var(--skill-box-pad-y, 12px) var(--skill-box-pad-x, 18px);
+    color: var(--text-primary);
+    padding: var(--skill-card-padding, 16px);
     min-height: var(--skill-box-min-h, 48px);
-    border: 1px solid #e5e5e5;
-    border-radius: var(--skill-border-radius, 10px);
-    transition: all 0.25s ease;
+    background: linear-gradient(135deg, var(--surface-primary) 0%, var(--surface-secondary) 100%);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--skill-border-radius, 12px);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-medium);
   }
 
   .skill-tool:hover {
-    border-color: #171717;
-    background: #f8f9fa;
+    border-color: var(--border-accent);
+    background: var(--surface-secondary);
+    box-shadow: var(--shadow-card-hover);
+    transform: var(--skill-hover-transform);
   }
 
   .skill-tool img {
@@ -519,6 +535,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   html[data-theme="dark"] .social-link,
   html[data-theme="dark"] .skill-tool {
     color: #ffffff;
+    background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
     border-color: #333333;
   }
 
@@ -532,6 +549,7 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   html[data-theme="dark"] .skill-tool:hover {
     border-color: #ffffff;
     background: #2a2a2a;
+    color: #ffffff;
   }
 
   /* Improve icon visibility in dark mode for raster/SVG icons */
@@ -546,22 +564,55 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   html[data-theme="dark"] .skills-section:not(:last-child) {
     border-bottom-color: #333333;
   }
+
+  /* Dark mode modern design system overrides */
+  html[data-theme="dark"] {
+    --surface-primary: #1a1a1a;
+    --surface-secondary: #222222; 
+    --surface-tertiary: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #999999;
+    --border-primary: #333333;
+    --border-secondary: #404040;
+    --border-accent: #cccccc;
+  }
 </style>
 
 <section class="bio-container" aria-label="Bio">
   <div class="bio-bento" style={`
-    --skill-gap: ${atomConfig.bentoSkillsUI?.gap ?? 12}px;
+    --skill-gap: ${atomConfig.modernDesign?.skillGrid?.gap ?? 16}px;
+    --skill-min-width: ${atomConfig.modernDesign?.skillGrid?.minCardWidth ?? 140}px;
+    --skill-card-padding: ${atomConfig.modernDesign?.skillGrid?.cardPadding ?? 16}px;
+    --skill-hover-transform: ${atomConfig.modernDesign?.skillGrid?.hoverTransform ?? 'translateY(-2px)'};
     --skill-box-min-h: ${atomConfig.bentoSkillsUI?.boxMinHeight ?? 48}px;
-    --skill-box-pad-x: ${atomConfig.bentoSkillsUI?.padX ?? 18}px;
-    --skill-box-pad-y: ${atomConfig.bentoSkillsUI?.padY ?? 12}px;
     --skill-font-size: ${atomConfig.bentoSkillsUI?.fontSize ?? 15}px;
     --skill-logo-size: ${atomConfig.bentoSkillsUI?.logoSize ?? 18}px;
-    --skill-border-radius: ${atomConfig.bentoSkillsUI?.borderRadius ?? 10}px;
+    --skill-border-radius: ${atomConfig.modernDesign?.skillGrid?.borderRadius ?? 12}px;
     --bio-text-font-size: ${atomConfig.bioText?.fontSize ?? 16}px;
     --bio-text-font-weight: ${atomConfig.bioText?.fontWeight ?? 400};
     --bio-text-line-height: ${atomConfig.bioText?.lineHeight ?? 1.6};
     --bio-text-justify: ${atomConfig.bioText?.alignment === 'top' ? 'flex-start' : 'center'};
     --bio-text-align: ${atomConfig.bioText?.justify ? 'justify' : 'left'};
+    --surface-primary: ${atomConfig.modernDesign?.colors?.surfacePrimary ?? '#ffffff'};
+    --surface-secondary: ${atomConfig.modernDesign?.colors?.surfaceSecondary ?? '#f8fafc'};
+    --surface-tertiary: ${atomConfig.modernDesign?.colors?.surfaceTertiary ?? '#f1f5f9'};
+    --text-primary: ${atomConfig.modernDesign?.colors?.textPrimary ?? '#0f172a'};
+    --text-secondary: ${atomConfig.modernDesign?.colors?.textSecondary ?? '#475569'};
+    --text-tertiary: ${atomConfig.modernDesign?.colors?.textTertiary ?? '#64748b'};
+    --border-primary: ${atomConfig.modernDesign?.colors?.borderPrimary ?? '#e2e8f0'};
+    --border-secondary: ${atomConfig.modernDesign?.colors?.borderSecondary ?? '#cbd5e1'};
+    --border-accent: ${atomConfig.modernDesign?.colors?.borderAccent ?? '#3b82f6'};
+    --shadow-card: ${atomConfig.modernDesign?.shadows?.card ?? '0 1px 3px rgba(0, 0, 0, 0.12)'};
+    --shadow-card-hover: ${atomConfig.modernDesign?.shadows?.cardHover ?? '0 4px 20px rgba(0, 0, 0, 0.15)'};
+    --shadow-subtle: ${atomConfig.modernDesign?.shadows?.subtle ?? '0 1px 3px rgba(0, 0, 0, 0.08)'};
+    --transition-fast: ${atomConfig.modernDesign?.transitions?.fast ?? '0.15s ease'};
+    --transition-medium: ${atomConfig.modernDesign?.transitions?.medium ?? '0.3s ease'};
+    --transition-slow: ${atomConfig.modernDesign?.transitions?.slow ?? '0.5s ease'};
+    --social-gap: ${atomConfig.modernDesign?.socialLinks?.gap ?? 12}px;
+    --social-padding: ${atomConfig.modernDesign?.socialLinks?.padding ?? 12}px;
+    --social-min-height: ${atomConfig.modernDesign?.socialLinks?.minTouchTarget ?? 44}px;
+    --social-icon-size: ${atomConfig.modernDesign?.socialLinks?.iconSize ?? 20}px;
   `}>
     <!-- Hero Card -->
     <div class="bento-card hero-card" data-animation-delay="0">

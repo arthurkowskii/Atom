@@ -270,6 +270,44 @@ export default {
     fontWeight: userTweaks.bioText?.fontWeight ?? 400
   },
 
+  // Modern design system configuration
+  modernDesign: {
+    shadows: {
+      card: userTweaks.modernDesign?.shadows?.card ?? '0 1px 3px rgba(0, 0, 0, 0.12)',
+      cardHover: userTweaks.modernDesign?.shadows?.cardHover ?? '0 4px 20px rgba(0, 0, 0, 0.15)',
+      subtle: userTweaks.modernDesign?.shadows?.subtle ?? '0 1px 3px rgba(0, 0, 0, 0.08)'
+    },
+    colors: {
+      surfacePrimary: userTweaks.modernDesign?.colors?.surfacePrimary ?? '#ffffff',
+      surfaceSecondary: userTweaks.modernDesign?.colors?.surfaceSecondary ?? '#f8fafc',
+      surfaceTertiary: userTweaks.modernDesign?.colors?.surfaceTertiary ?? '#f1f5f9',
+      textPrimary: userTweaks.modernDesign?.colors?.textPrimary ?? '#0f172a',
+      textSecondary: userTweaks.modernDesign?.colors?.textSecondary ?? '#475569',
+      textTertiary: userTweaks.modernDesign?.colors?.textTertiary ?? '#64748b',
+      borderPrimary: userTweaks.modernDesign?.colors?.borderPrimary ?? '#e2e8f0',
+      borderSecondary: userTweaks.modernDesign?.colors?.borderSecondary ?? '#cbd5e1',
+      borderAccent: userTweaks.modernDesign?.colors?.borderAccent ?? '#475569'
+    },
+    transitions: {
+      fast: userTweaks.modernDesign?.transitions?.fast ?? '0.15s ease',
+      medium: userTweaks.modernDesign?.transitions?.medium ?? '0.3s ease',
+      slow: userTweaks.modernDesign?.transitions?.slow ?? '0.5s ease'
+    },
+    skillGrid: {
+      minCardWidth: userTweaks.modernDesign?.skillGrid?.minCardWidth ?? 140,
+      gap: userTweaks.modernDesign?.skillGrid?.gap ?? 16,
+      cardPadding: userTweaks.modernDesign?.skillGrid?.cardPadding ?? 16,
+      hoverTransform: userTweaks.modernDesign?.skillGrid?.hoverTransform ?? 'translateY(-2px)',
+      borderRadius: userTweaks.modernDesign?.skillGrid?.borderRadius ?? 12
+    },
+    socialLinks: {
+      minTouchTarget: userTweaks.modernDesign?.socialLinks?.minTouchTarget ?? 44,
+      iconSize: userTweaks.modernDesign?.socialLinks?.iconSize ?? 20,
+      padding: userTweaks.modernDesign?.socialLinks?.padding ?? 12,
+      gap: userTweaks.modernDesign?.socialLinks?.gap ?? 12
+    }
+  },
+
   // Bento animations configuration
   bentoAnimations: userTweaks.bentoAnimations || {
     enabled: false,

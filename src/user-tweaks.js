@@ -336,6 +336,54 @@ export const userTweaks = {
     alignment: 'top',   // 'top' | 'center' - vertical alignment in bio card
     justify: true,      // boolean - enable justified text alignment
     fontWeight: 500     // font weight
+  },
+
+  // 🎨 Modern Design System
+  // Professional UI enhancements based on 2025 design standards
+  modernDesign: {
+    // Enhanced shadow system (layered depth)
+    shadows: {
+      card: '0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04)',
+      cardHover: '0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.06)',
+      subtle: '0 1px 3px rgba(0, 0, 0, 0.08)'
+    },
+    
+    // Sophisticated color palette
+    colors: {
+      surfacePrimary: '#ffffff',
+      surfaceSecondary: '#f8fafc', 
+      surfaceTertiary: '#f1f5f9',
+      textPrimary: '#0f172a',
+      textSecondary: '#475569',
+      textTertiary: '#64748b',
+      borderPrimary: '#e2e8f0',
+      borderSecondary: '#cbd5e1',
+      borderAccent: '#475569'    // Changed from blue to sophisticated gray
+    },
+    
+    // Enhanced interaction timing
+    transitions: {
+      fast: '0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+      medium: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+      slow: '0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+    },
+    
+    // Professional skill grid settings
+    skillGrid: {
+      minCardWidth: 140,        // px, minimum width for auto-fit grid
+      gap: 16,                  // px, space between skill cards (increased from 12)
+      cardPadding: 16,          // px, internal card padding
+      hoverTransform: 'translateY(-2px) scale(1.02)',  // hover effect transform
+      borderRadius: 12          // px, card corner radius
+    },
+    
+    // Enhanced social link design
+    socialLinks: {
+      minTouchTarget: 44,       // px, minimum touch target size
+      iconSize: 20,             // px, icon size
+      padding: 10,              // px, internal padding
+      gap: 12                   // px, space between links
+    }
   }
 
 };
