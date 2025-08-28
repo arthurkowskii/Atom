@@ -2,6 +2,7 @@
 export interface Props { data: any }
 const { data } = Astro.props;
 import { sanitizeMarkdown } from '../utils/sanitize.js';
+import atomConfig from '../atom.config.js';
 // Explicit logo imports for reliability on Windows/esbuild
 import LogoAbleton from '../Assets/software_logos/Ableton.webp';
 import LogoReaper from '../Assets/software_logos/Reaper.webp';
@@ -374,25 +375,26 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     margin: 0;
   }
 
+  /* Grid-based layout: exactly 2 boxes per line (desktop/tablet) */
   .skill-tools {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--skill-gap, 12px);
   }
 
   .skill-tool {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-size: 14px;
+    font-size: var(--skill-font-size, 15px);
     font-weight: 500;
     color: #171717;
-    padding: 10px 16px;
+    padding: var(--skill-box-pad-y, 12px) var(--skill-box-pad-x, 18px);
+    min-height: var(--skill-box-min-h, 48px);
     border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+    border-radius: var(--skill-border-radius, 10px);
+    transition: all 0.25s ease;
   }
 
   .skill-tool:hover {
@@ -401,8 +403,8 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
   }
 
   .skill-tool img {
-    width: 16px;
-    height: 16px;
+    width: var(--skill-logo-size, 18px);
+    height: var(--skill-logo-size, 18px);
     object-fit: contain;
     filter: none;
     flex-shrink: 0;
@@ -447,6 +449,8 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     .hero-subtitle {
       text-align: center;
     }
+    /* On small screens, fall back to one per line for readability */
+    .skill-tools { grid-template-columns: 1fr; gap: 10px; }
   }
 
   @media (max-width: 699px) {
@@ -543,7 +547,15 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
 </style>
 
 <section class="bio-container" aria-label="Bio">
-  <div class="bio-bento">
+  <div class="bio-bento" style={`
+    --skill-gap: ${atomConfig.bentoSkillsUI?.gap ?? 12}px;
+    --skill-box-min-h: ${atomConfig.bentoSkillsUI?.boxMinHeight ?? 48}px;
+    --skill-box-pad-x: ${atomConfig.bentoSkillsUI?.padX ?? 18}px;
+    --skill-box-pad-y: ${atomConfig.bentoSkillsUI?.padY ?? 12}px;
+    --skill-font-size: ${atomConfig.bentoSkillsUI?.fontSize ?? 15}px;
+    --skill-logo-size: ${atomConfig.bentoSkillsUI?.logoSize ?? 18}px;
+    --skill-border-radius: ${atomConfig.bentoSkillsUI?.borderRadius ?? 10}px;
+  `}>
     <!-- Hero Card -->
     <div class="bento-card hero-card" data-animation-delay="0">
       <h1 class="hero-name">{String(data?.title || '').toUpperCase()}</h1>

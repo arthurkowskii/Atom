@@ -1892,6 +1892,28 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 closeOverlay();
               }
             });
+            
+            // Fix for clip-path resize issue: recalculate overlay mask on window resize
+            window.addEventListener('resize', () => {
+              if (overlayOpen && overlayR > 0) {
+                // Recalculate the maximum radius needed to cover the new viewport
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const overlayX = parseFloat(overlay.style.getPropertyValue('--x')) || vw / 2;
+                const overlayY = parseFloat(overlay.style.getPropertyValue('--y')) || vh / 2;
+                
+                // Calculate maximum distance to any corner from the overlay center
+                const dx = Math.max(overlayX, vw - overlayX);
+                const dy = Math.max(overlayY, vh - overlayY);
+                const newMaxRadius = Math.hypot(dx, dy);
+                
+                // Only update if the overlay is fully open (not during animation)
+                if (overlayR >= newMaxRadius * 0.9) {
+                  overlay.style.setProperty('--r', `${newMaxRadius}px`);
+                  overlayR = newMaxRadius;
+                }
+              }
+            });
             // (Backdrop click and deep-link auto-open were removed per request)
 
                 // Add hover effects to electrons (includes shell effects)
@@ -2949,32 +2971,15 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			});
 		</script>
 
-		<!-- Service Worker Registration -->
-		<script>
-			// Register service worker for PWA capabilities and caching
-			if ('serviceWorker' in navigator) {
+		<!-- Service Worker Registration (prod only) -->
+		<script type="module">
+			if (import.meta.env.PROD && 'serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('/sw.js')
-						.then((registration) => {
-							// console.log('🚀 Service Worker registered:', registration.scope);
-							
-							// Listen for updates
-							registration.addEventListener('updatefound', () => {
-								const newWorker = registration.installing;
-								if (newWorker) {
-									newWorker.addEventListener('statechange', () => {
-										if (newWorker.state === 'activated') {
-											// console.log('✅ Service Worker updated');
-											// Optionally notify user of updates
-										}
-									});
-								}
-							});
-						})
-						.catch((error) => {
-							// console.warn('❌ Service Worker registration failed:', error);
-						});
+					navigator.serviceWorker.register('/sw.js').catch(() => {});
 				});
+			} else if ('serviceWorker' in navigator) {
+				// In dev, unregister any existing SW to avoid caching issues
+				navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister())).catch(() => {});
 			}
 		</script>
 	</body>

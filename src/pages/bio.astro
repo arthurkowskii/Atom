@@ -1,6 +1,7 @@
 ---
 import { getEntryBySlug } from 'astro:content';
 import BioBento from '../components/BioBento.astro';
+import atomConfig from '../atom.config.js';
 
 const entry = await getEntryBySlug('bio', 'about');
 const data = entry?.data || {};

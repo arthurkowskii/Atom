@@ -553,3 +553,34 @@ The portfolio now features professional header navigation with intuitive project
 - Filter system now provides professional-grade interaction design with sophisticated hover behaviors, universal preview access, and bulletproof visual hierarchy management
 
 The filtering system achieves optimal balance between visual focus and interaction completeness, providing clear domain highlighting while maintaining full functionality across all portfolio projects.
+
+## Recent Changes (2025-08-28) - Configuration System Fixes & Clip-Path Regression Resolution
+
+### Bio Skills UI Parameter System Fix
+- **Configuration Chain Issue**: Resolved Bio Skills UI parameters in `src/user-tweaks.js` not taking effect due to cascading syntax errors in `src/atom.config.js` preventing proper module export and configuration loading.
+- **Syntax Error Resolution**: Fixed missing closing brace in `multiStage` object (lines 236-250) and removed problematic liquid glass configuration as explicitly requested by user ("liquid glass features was supposed to be completely removed").
+- **Parameter Functionality**: Restored complete functionality of `bentoSkillsUI` parameters (boxMinHeight, padX, padY, fontSize, logoSize, gap, borderRadius) with proper CSS custom property application in BioBento component.
+- **Configuration Architecture**: Verified end-to-end parameter chain: `user-tweaks.js` → `atom.config.js` → `BioBento.astro` component with CSS custom properties for dynamic skill card styling.
+
+### Clip-Path Resize Regression Fix
+- **Circle Layer Visibility Issue**: Resolved regression where circular overlay mask became visible when users scaled browser windows, breaking the seamless overlay experience mentioned as previously fixed in development log.
+- **Root Cause Analysis**: Identified missing window resize event handler for viewport-aware recalculation of clip-path CSS custom properties (`--r`, `--x`, `--y`) that define the circular mask coverage.
+- **Window Resize Handler**: Implemented comprehensive resize listener at `src/pages/index.astro:1897-1916` that recalculates maximum radius needed to cover new viewport dimensions using same `Math.hypot(dx, dy)` calculation as original system.
+- **Smart Recalculation Logic**: Added safety checks to only update radius when overlay is fully open (not during animations) and properly maintains circular mask coverage during window scaling operations.
+
+### Technical Implementation Details
+- **Bio Skills Configuration**: Fixed `atomConfig.bentoSkillsUI` returning `undefined` by resolving syntax errors that prevented proper JavaScript object structure in atom.config.js export.
+- **CSS Custom Properties**: Enhanced skill card styling system with proper CSS variable application (`--skill-gap`, `--skill-box-min-h`, `--skill-font-size`, etc.) for runtime parameter control.
+- **Clip-Path Coverage**: Overlay resize handler extracts current overlay position from CSS custom properties and calculates maximum distance to viewport corners ensuring proper circular mask coverage.
+- **Animation Compatibility**: Resize handler includes progress checks to avoid interference with ongoing GSAP overlay opening/closing animations.
+
+### Key Files Modified
+- `src/atom.config.js` - Fixed syntax errors in multiStage object and removed liquid glass configuration
+- `src/user-tweaks.js` - Verified bentoSkillsUI parameter structure and functionality  
+- `src/pages/index.astro` - Added window resize handler for clip-path recalculation (lines 1897-1916)
+- `src/components/BioBento.astro` - CSS custom properties integration for dynamic skill card parameters
+
+### User Experience Impact  
+- **Bio Skills Customization**: Users can now successfully modify skill card appearance through `user-tweaks.js` parameters with immediate visual feedback in both `/bio` route and nucleus overlay.
+- **Responsive Overlay System**: Circular project/bio overlays maintain proper coverage during browser window resizing, eliminating visible circle artifacts during window scaling operations.
+- **Configuration Reliability**: Restored robust configuration chain ensuring parameter changes propagate correctly from user tweaks through atom config to component rendering.

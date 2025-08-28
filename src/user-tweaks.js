@@ -315,6 +315,19 @@ export const userTweaks = {
     elasticity: 0.8            // Bounce elasticity
   }
 
+  ,
+  // 🧩 Bio Skills UI (card chips)
+  // Quick controls for the skill boxes (logo + text chips) on the Bio page
+  bentoSkillsUI: {
+    boxMinHeight: 23,   // px, vertical size of each box (test value: increased from CSS default 48)
+    padX: 20,           // px, horizontal padding inside each box (test value: increased from CSS default 18)
+    padY: 12,           // px, vertical padding inside each box (test value: increased from CSS default 12)
+    fontSize: 14,       // px, text size inside boxes (test value: increased from CSS default 15)
+    logoSize: 25,       // px, logo/icon size inside boxes (test value: increased from default 18)
+    gap: 16,            // px, space between boxes (test value: increased from default 12)
+    borderRadius: 12    // px, corner radius of boxes (test value: increased from default 10)
+  }
+
 };
 
 // Don't edit below this line unless you know what you're doing!

@@ -1,35 +1,26 @@
-7The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-8sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-client:1476 [vite] connecting...
+3
 sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
     at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-client:1599 [vite] connected.
-11sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
+
+The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.
+The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.
+(index):1 The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.
+(index):1 The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.
+4
+sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
     at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-tone.js?v=49dfccaa:9688  * Tone.js v15.1.22 * 
-23The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. <URL>Understand this warning
-2sw.js:166 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Partial response (status code 206) is unsupported
-    at cacheFirst (sw.js:166:13)
-cacheFirst @ sw.js:166
-await in cacheFirst
-(anonymous) @ sw.js:101Understand this error
-OrbitSystem.js:54 OrbitSystem initialized with 9 electrons
-OrbitSystem.js:233 OrbitSystem started
-(index):39 GSAP not available for performance monitoring
-(anonymous) @ (index):39Understand this warning
-The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-(index):1 The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-(index):1 The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element.Understand this error
-15[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
-6[Violation] 'setTimeout' handler took <N>ms
+cacheFirst	@	sw.js:166
+await in cacheFirst		
+(anonymous)	@	sw.js:101
+15
+[Violation] Added non-passive event listener to a scroll-blocking <some> event. Consider marking event handler as 'passive' to make the page more responsive. See <URL>
+6
+[Violation] 'setTimeout' handler took <N>ms
+(index):1 Refused to load the image 'http://localhost:4323/favicon.svg' because it violates the following Content Security Policy directive: "img-src 'self' data: https: blob:".
+sw.js:363 🚀 Service Worker loaded
+sw.js:33 🚀 Service Worker installing...
+sw.js:38 📦 Caching core assets
+sw.js:46 ❌ Service Worker install failed: TypeError: Failed to execute 'addAll' on 'Cache': Request failed
+(anonymous)	@	sw.js:46
+Promise.catch		
+(anonymous)	@	sw.js:45
