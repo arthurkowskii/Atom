@@ -319,13 +319,22 @@ export const userTweaks = {
   // 🧩 Bio Skills UI (card chips)
   // Quick controls for the skill boxes (logo + text chips) on the Bio page
   bentoSkillsUI: {
-    boxMinHeight: 23,   // px, vertical size of each box (test value: increased from CSS default 48)
-    padX: 20,           // px, horizontal padding inside each box (test value: increased from CSS default 18)
-    padY: 12,           // px, vertical padding inside each box (test value: increased from CSS default 12)
-    fontSize: 14,       // px, text size inside boxes (test value: increased from CSS default 15)
-    logoSize: 25,       // px, logo/icon size inside boxes (test value: increased from default 18)
-    gap: 16,            // px, space between boxes (test value: increased from default 12)
-    borderRadius: 12    // px, corner radius of boxes (test value: increased from default 10)
+    boxMinHeight: 23,   // px, vertical size of each box (increased from CSS default 48)
+    padX: 20,           // px, horizontal padding inside each box (increased from CSS default 18)
+    padY: 12,           // px, vertical padding inside each box (increased from CSS default 12)
+    fontSize: 14,       // px, text size inside boxes (increased from CSS default 15)
+    logoSize: 25,       // px, logo/icon size inside boxes (increased from default 18)
+    gap: 16,            // px, space between boxes (increased from default 12)
+    borderRadius: 12    // px, corner radius of boxes (increased from default 10)
+  },
+
+  // 📝 Bio Text Styling
+  // Controls for the main bio text content in the bio card
+  bioText: {
+    fontSize: 18,       // px, main bio text size (default was 16px)
+    lineHeight: 1.6,    // line height for bio text readability
+    alignment: 'top',   // 'top' | 'center' - vertical alignment in bio card
+    justify: true       // boolean - enable justified text alignment
   }
 
 };

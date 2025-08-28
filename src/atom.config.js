@@ -261,6 +261,14 @@ export default {
     borderRadius: userTweaks.bentoSkillsUI?.borderRadius ?? 10
   },
 
+  // Bio text styling parameters
+  bioText: {
+    fontSize: userTweaks.bioText?.fontSize ?? 16,
+    lineHeight: userTweaks.bioText?.lineHeight ?? 1.6,
+    alignment: userTweaks.bioText?.alignment ?? 'center',
+    justify: userTweaks.bioText?.justify ?? false
+  },
+
   // Bento animations configuration
   bentoAnimations: userTweaks.bentoAnimations || {
     enabled: false,

@@ -2,7 +2,8 @@
 title: "Arthur kowskii"
 subtitle: "Composer / Sound Designer / Audio Programmer"
 bio: |
-  <strong>Explorateur sonore et éternel apprenant.</strong> Étudiant à <strong>ISART Digital Paris</strong> (Musique &amp; Sound Design), je vis pour <strong>apprendre</strong> et concrétiser des projets qui me passionnent.
+  <p>Freelance depuis 5 ans et <strong>Étudiant à ISART Digital Paris</strong> (Musique & Sound Design), je vis pour concrétiser des projets qui me passionnent que ce soit en <i>musique, graphisme tech ou science…</i> <br><br><strong>Apprendre</strong> est tout pour moi et sera toujours mon passion principale. </p>
+
 portrait: "/images/bio/arthur-portfolio.jpg"
 skills:
   - category: "DAW"
