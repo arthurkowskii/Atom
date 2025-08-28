@@ -266,7 +266,8 @@ export default {
     fontSize: userTweaks.bioText?.fontSize ?? 16,
     lineHeight: userTweaks.bioText?.lineHeight ?? 1.6,
     alignment: userTweaks.bioText?.alignment ?? 'center',
-    justify: userTweaks.bioText?.justify ?? false
+    justify: userTweaks.bioText?.justify ?? false,
+    fontWeight: userTweaks.bioText?.fontWeight ?? 400
   },
 
   // Bento animations configuration
