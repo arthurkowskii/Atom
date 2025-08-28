@@ -289,6 +289,18 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
+		<!-- Entry Gate: redirect to welcome screen when not entered (before paint) -->
+		<script type="module" define:vars={{ PRE_ENABLED: (userTweaks as any).prePage?.enabled !== false, PRE_PATH: (userTweaks as any).prePage?.path || '/welcome', PRE_KEY: (userTweaks as any).prePage?.storageKey || 'entered' }}>
+			try {
+				const enabled = PRE_ENABLED;
+				const path = PRE_PATH;
+				const key = PRE_KEY;
+				const entered = sessionStorage.getItem(key);
+				if (enabled && !entered && location.pathname === '/') {
+					location.replace(path);
+				}
+			} catch {}
+		</script>
 		
 		<!-- PWA Manifest -->
 		<link rel="manifest" href="/manifest.json" />

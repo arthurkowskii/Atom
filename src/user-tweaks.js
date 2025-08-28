@@ -384,6 +384,16 @@ export const userTweaks = {
       padding: 10,              // px, internal padding
       gap: 12                   // px, space between links
     }
+  },
+
+  // 🚪 Pre-Page (Welcome)
+  prePage: {
+    enabled: true,
+    path: '/welcome',
+    storageKey: 'entered',       // sessionStorage key to mark entry
+    buttonLabel: 'Enter Portfolio',
+    noindex: true,               // add noindex robots meta on welcome page
+    audioPrewarm: true           // try to unlock audio on click
   }
 
 };
