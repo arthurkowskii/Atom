@@ -1,4 +1,4 @@
-3ProjectBento.astro:2258 [GLB] click on index 0 item? true
-ProjectBento.astro:2258 [GLB] click on index 1 item? true
-ProjectBento.astro:2258 [GLB] click on index 2 item? true
-ProjectBento.astro:2258 [GLB] click on index 3 item? true
+[Welcome] Enter clicked
+index.astro:1283 [Intro] runAtomIntro() {force: true, fromWelcome: true, prefersReduced: true, respectReducedMotion: true, introCfg: {…}}
+index.astro:1297 [Intro] Reduced-motion enabled; applying final state instantly.
+OrbitSystem.js:233 OrbitSystem started

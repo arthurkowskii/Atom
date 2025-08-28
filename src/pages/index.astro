@@ -280,7 +280,7 @@ function computeShellsAndViewport() {
 }
 
 const { shells: dynamicShells, viewport: dynamicViewport } = computeShellsAndViewport();
-const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicViewport, domains } as any;
+const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicViewport, domains, prePage: (userTweaks as any).prePage } as any;
 ---
 
 <html lang="en">
@@ -289,15 +289,14 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<!-- Entry Gate: redirect to welcome screen when not entered (before paint) -->
-		<script type="module" define:vars={{ PRE_ENABLED: (userTweaks as any).prePage?.enabled !== false, PRE_PATH: (userTweaks as any).prePage?.path || '/welcome', PRE_KEY: (userTweaks as any).prePage?.storageKey || 'entered' }}>
+		<!-- Entry Gate (same-document overlay): in dev, reset gate each refresh -->
+		<script type="module" define:vars={{ PRE_ENABLED: (userTweaks as any).prePage?.enabled !== false, PRE_KEY: (userTweaks as any).prePage?.storageKey || 'entered', DEV: import.meta.env.DEV }}>
 			try {
-				const enabled = PRE_ENABLED;
-				const path = PRE_PATH;
 				const key = PRE_KEY;
-				const entered = sessionStorage.getItem(key);
-				if (enabled && !entered && location.pathname === '/') {
-					location.replace(path);
+				if (DEV) {
+					// In dev: always reset the welcome gate per refresh
+					try { sessionStorage.removeItem(key); } catch {}
+					try { sessionStorage.removeItem('enterFx'); } catch {}
 				}
 			} catch {}
 		</script>
@@ -885,6 +884,17 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				})}
 			</svg>
 			
+			<!-- Welcome Overlay (same-document) -->
+			<div id="welcome-overlay" style="display:none; position: fixed; inset: 0; background: #fff; z-index: 9997; display: none;">
+				<div style="position:absolute; inset: 0; display:flex; align-items:center; justify-content:center; padding:24px;">
+					<div class="enter-card" role="dialog" aria-labelledby="enter-title" aria-describedby="enter-desc" style="display:flex;flex-direction:column;align-items:center;gap:16px;border:1px solid #e5e7eb;border-radius:12px;padding:28px 32px;background:#ffffff;color:#111827;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+						<h2 id="enter-title" class="enter-title" style="margin:0;font-size:20px;">Enter Portfolio</h2>
+						<p id="enter-desc" class="enter-hint" style="margin:0;font-size:12px;color:#6b7280;">Click to enter the portfolio</p>
+						<button id="enter-btn-inline" class="enter-btn" aria-label="Enter Portfolio" style="-webkit-appearance:none;appearance:none;border:1px solid #111827;background:#111827;color:#fff;padding:10px 18px;border-radius:9999px;cursor:pointer;font-size:14px;line-height:1;">Enter Portfolio</button>
+					</div>
+				</div>
+			</div>
+
 			<!-- Electron Hover Preview -->
 			<div id="electron-preview" class="electron-preview" style="display: none;">
 				<div class="preview-content">
@@ -1252,15 +1262,56 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					root.style.setProperty('--preview-content-max-width', Math.max(textMaxWidth, 100) + 'px'); // Minimum 100px
 				}
 
-				// Create and start orbit system
-				const orbitSystem = new OrbitSystem(cfg);
-				orbitSystem.init();
-				orbitSystem.start();
+                // Create orbit system (start after welcome overlay or immediately when bypassed)
+                const orbitSystem = new OrbitSystem(cfg);
+                orbitSystem.init();
 				
-				// Store reference globally immediately for event handlers
-				window.orbitSystem = orbitSystem;
+                // Store reference globally immediately for event handlers
+                window.orbitSystem = orbitSystem;
 
-				// PLACEHOLDER: Atom Sound System - replace with OGG file system
+                // Intro animation removed per request; orbits will start based on welcome overlay state.
+
+                  // Welcome overlay gating (same-document)
+                  (function setupWelcomeOverlay(){
+                    try {
+                      const preEnabled = (cfg?.prePage?.enabled ?? true) !== false;
+                      const key = (cfg?.prePage?.storageKey) || 'entered';
+                      const overlay = document.getElementById('welcome-overlay');
+                      const btn = document.getElementById('enter-btn-inline');
+                      const entered = (() => { try { return sessionStorage.getItem(key); } catch { return null; } })();
+                      console.debug('[Welcome] Overlay setup', { preEnabled, entered, hasOverlay: !!overlay });
+
+                      function prewarmAudio() {
+                        try {
+                          const Ctx = window.AudioContext || window.webkitAudioContext;
+                          if (!Ctx) return;
+                          const ctx = new Ctx();
+                          const resume = ctx.resume?.bind(ctx);
+                          if (ctx.state === 'suspended' && resume) resume();
+                          const buffer = ctx.createBuffer(1, 1, 22050);
+                          const src = ctx.createBufferSource();
+                          src.buffer = buffer; src.connect(ctx.destination); src.start(0);
+                          try { ctx.close?.(); } catch {}
+                        } catch {}
+                      }
+
+                      if (preEnabled && overlay && !entered) {
+                        overlay.style.display = 'block';
+                        btn?.addEventListener('click', async () => {
+                          try { sessionStorage.setItem(key, '1'); } catch {}
+                          prewarmAudio();
+                          overlay.style.display = 'none';
+                          // Start orbits now that user has entered
+                          try { if (!window.orbitSystem?.isRunning) window.orbitSystem?.start(); } catch {}
+                        }, { once: true });
+                      } else {
+                        // No overlay → start orbits immediately
+                        try { if (!window.orbitSystem?.isRunning) window.orbitSystem?.start(); } catch {}
+                      }
+                    } catch {}
+                  })();
+
+                  // PLACEHOLDER: Atom Sound System - replace with OGG file system
 				class AtomSoundSystem {
 					constructor(config) {
 						this.config = config?.atomSounds || { enabled: false };
