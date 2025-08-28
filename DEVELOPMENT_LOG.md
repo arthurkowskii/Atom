@@ -28,6 +28,29 @@ Last updated: 2025-08-28 (Gallery thumbnails grid + Lightbox focus mode)
 - Decide production Decap backend for deployment (git-gateway or GitHub).
 - Add SEO/meta polish for `/bio` (title/description/og image) when finalizing.
 
+## Recent Changes (Welcome + Error Fixes)
+
+- Welcome flow (same-document overlay):
+  - Merged the Enter screen into the main page as an inline overlay (`#welcome-overlay`) so the header stays visible and there’s no route change.
+  - On first load, the overlay shows; clicking “Enter Portfolio” prewarms audio (Web Audio API), hides the overlay, and starts the orbit system. If already entered in this tab (sessionStorage), orbits start immediately.
+  - In dev, the overlay resets on every refresh to simplify testing (clears the sessionStorage gate).
+  - Prevented atom flash on load by adding an early head script that sets `html.welcome-gate` before paint and CSS that hides the atom and shows the overlay while gated.
+- Removed unused separate welcome route:
+  - Deleted `src/pages/welcome.astro` and pruned unused `prePage.path`/`noindex` from `src/user-tweaks.js`.
+- Error fixes and hardening:
+  - Service worker: replaced inline `import.meta.env.PROD` usage with an injected boolean via `define:vars` to avoid runtime undefined in the browser.
+  - CSP meta: removed `frame-ancestors` from meta CSP (must be set via HTTP headers); kept permissive media/embed directives.
+  - Event listeners: marked `touchstart` as `passive: true` where safe to reduce scroll‑blocking warnings.
+  - Embeds: switched YouTube to `youtube-nocookie.com` and added `sandbox` + `referrerpolicy` to YouTube/Spotify/SoundCloud iframes to reduce third‑party noise and tighten security.
+  - Monitoring noise: silenced the “GSAP not available for performance monitoring” console warn when GSAP isn’t on the page.
+
+### Files Touched (Welcome + Fixes)
+
+- `src/pages/index.astro` — inline welcome overlay, audio prewarm, orbit start on enter, dev reset and no‑flash gate (early head script + CSS), service worker env fix, passive listener.
+- `src/components/ProjectBento.astro` — YouTube privacy domain + sandbox/referrerpolicy for embeds.
+- `src/user-tweaks.js` — pruned `prePage.path`/`noindex` (overlay no longer uses them).
+- Deleted: `src/pages/welcome.astro` (replaced by inline overlay on the main page).
+
 ## Recent Changes (Gallery)
 
 - Gallery card overhaul in `ProjectBento.astro`:
