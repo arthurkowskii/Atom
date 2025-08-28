@@ -1,4 +1,4 @@
----
+﻿---
 // Bento Grid project template - modern, content-focused layout
 export interface Props {
   project: {
@@ -1667,6 +1667,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 <div class="project-bento">
   <div class="bento-container">
     
+    <script type="application/json" class="bento-gallery-config" set:html={JSON.stringify(atomConfig.bentoGallery || {})}></script>
     <!-- Hero Card - Main banner with project info -->
     {cards.hero && (
       <div class="bento-card hero-card" style={heroStyle}>
@@ -2012,7 +2013,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
         // PLACEHOLDER: Audio will be replaced with custom OGG files + Web Audio API
         // Only create audio objects when actually needed (defer until user interaction)
-        console.log('🎵 Bento Animation System initialized (audio deferred until user interaction)');
+        console.log('ðŸŽµ Bento Animation System initialized (audio deferred until user interaction)');
         this.isInitialized = true;
         
       } catch (error) {
@@ -2024,7 +2025,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       if (this.synth) return; // Already initialized
       
       try {
-        console.log('🎵 Initializing audio after user interaction...');
+        console.log('ðŸŽµ Initializing audio after user interaction...');
         
         // PLACEHOLDER: Tone.js synthesis - replace with OGG file loading
         // Create bubbly sine wave synth
@@ -2046,7 +2047,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
         this.synth.volume.value = gainToDb(this.config.audio.volume);
         
-        console.log('🎵 Audio components created successfully');
+        console.log('ðŸŽµ Audio components created successfully');
       } catch (error) {
         console.warn('Failed to initialize audio:', error);
       }
@@ -2080,7 +2081,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       // Start Tone context after unlock only
       if (this.synth && context.state !== 'running') {
         try {
-          console.log('🎵 Starting Tone.js context after user gesture...');
+          console.log('ðŸŽµ Starting Tone.js context after user gesture...');
           await start();
         } catch (err) {
           console.warn('Tone context start failed:', err);
@@ -2110,7 +2111,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
         // Play ONE note ONLY when animation starts
         if (this.config.audio?.enabled && this.isInitialized && this.synth) {
           const pitch = this.config.audio.pitches?.[cardType] || 'C4';
-          console.log(`🎵 Playing ${pitch} for ${cardType} card ${index}`);
+          console.log(`ðŸŽµ Playing ${pitch} for ${cardType} card ${index}`);
           
           try {
             // PLACEHOLDER: Replace with Web Audio API buffer source playback
@@ -2125,10 +2126,10 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     }
 
     async startAnimation() {
-      console.log('🎵 startAnimation() called', { isPlaying: this.isPlaying });
+      console.log('ðŸŽµ startAnimation() called', { isPlaying: this.isPlaying });
       
       if (this.isPlaying) {
-        console.log('🎵 Already playing, returning early');
+        console.log('ðŸŽµ Already playing, returning early');
         return;
       }
       this.isPlaying = true;
@@ -2147,8 +2148,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       const visibleBentoProject = document.querySelector('#bento-content .bento-project[style*="display: block"]');
       const cards = visibleBentoProject ? visibleBentoProject.querySelectorAll('.bento-card') : [];
       
-      console.log(`🎵 Starting bento animation for ${cards.length} cards (audio: ${this.config.audio?.enabled})`);
-      console.log(`🎵 Visible project:`, visibleBentoProject?.dataset?.projectSlug || 'none');
+      console.log(`ðŸŽµ Starting bento animation for ${cards.length} cards (audio: ${this.config.audio?.enabled})`);
+      console.log(`ðŸŽµ Visible project:`, visibleBentoProject?.dataset?.projectSlug || 'none');
       
       cards.forEach((card, index) => {
         const cardType = this.getCardType(card);
@@ -2163,7 +2164,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     }
 
     reset() {
-      console.log('🎵 reset() called');
+      console.log('ðŸŽµ reset() called');
       // Reset ALL bento cards (since we're closing/switching projects)
       const cards = document.querySelectorAll('#bento-content .bento-card');
       cards.forEach(card => {
@@ -2213,7 +2214,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     const closeBtn = document.createElement('button');
     closeBtn.className = 'glb-close';
     closeBtn.setAttribute('aria-label', 'Close');
-    closeBtn.textContent = '×';
+    closeBtn.textContent = 'Ã—';
     closeBtn.addEventListener('click', () => closeBasicLightbox());
 
     const viewport = document.createElement('div');
@@ -2226,13 +2227,13 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     const btnPrev = document.createElement('button');
     btnPrev.className = 'glb-nav glb-prev';
     btnPrev.setAttribute('aria-label', 'Previous');
-    btnPrev.textContent = '‹';
+    btnPrev.textContent = 'â€¹';
     btnPrev.addEventListener('click', () => basicPrev());
 
     const btnNext = document.createElement('button');
     btnNext.className = 'glb-nav glb-next';
     btnNext.setAttribute('aria-label', 'Next');
-    btnNext.textContent = '›';
+    btnNext.textContent = 'â€º';
     btnNext.addEventListener('click', () => basicNext());
 
     container.appendChild(closeBtn);
@@ -2350,11 +2351,29 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   // ==========================
   function getGridColumnCount(el) {
     const style = getComputedStyle(el);
-    let template = style.gridTemplateColumns;
+    const template = style.gridTemplateColumns;
     if (!template || template === 'none') return 1;
-    // Normalize repeat() to explicit list if necessary by counting spaces
-    // e.g., "1fr 1fr 1fr" => 3
-    return template.split(' ').filter(Boolean).length;
+    const m = template.match(/repeat\(\s*(\d+)\s*,/i);
+    if (m) {
+      const n = parseInt(m[1], 10);
+      return Number.isFinite(n) && n > 0 ? n : 1;
+    }
+    return template.split(/\s+/).filter(Boolean).length;
+  }
+
+  // Config provider for gallery layout
+  const DEFAULT_GALLERY_CFG = { extraRow1DeltaPx: 500, extraRow2DeltaPx: 800, heroMinHeightFallback: 120, maxRows: 3 };
+  function getGalleryCfg(card) {
+    try { if (window.atomConfig?.bentoGallery) return window.atomConfig.bentoGallery; } catch {}
+    try {
+      const root = card.closest('.project-bento') || document;
+      const el = root.querySelector('.bento-gallery-config');
+      if (el) {
+        const parsed = JSON.parse(el.textContent || '{}');
+        return { ...DEFAULT_GALLERY_CFG, ...parsed };
+      }
+    } catch {}
+    return DEFAULT_GALLERY_CFG;
   }
 
   function layoutOneGallery(card) {
@@ -2377,12 +2396,47 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       const tile = (width - (columns - 1) * gapX) / columns;
       if (!(tile > 0)) return;
 
-      // Available vertical space for thumbnails within the grid
-      const available = grid.clientHeight - hero.clientHeight - gapYGrid;
-      if (!(available > 0)) return;
+      // Measure with thumbnails unconstrained to avoid self-limiting from prior runs
+      const __prevH = thumbs.style.height;
+      const __prevFlex = thumbs.style.flex;
+      thumbs.style.height = 'auto';
+      thumbs.style.flex = '0 0 auto';
+      void thumbs.offsetHeight; // force reflow
 
+      // Available vertical space for thumbnails within the grid (unconstrained)
+      const gridHeightAuto = grid.clientHeight;
+      const available = gridHeightAuto - hero.clientHeight - gapYGrid;
+      if (!(available > 0)) {
+        // Restore and bail
+        thumbs.style.height = __prevH;
+        thumbs.style.flex = __prevFlex;
+        return;
+      }
+
+      // Baseline rows using unconstrained measurement
       let rowsFit = Math.floor((available + gapX) / (tile + gapX));
       if (rowsFit < 1) rowsFit = 1; // always show at least one full row
+
+      // Config-driven multi-row support (up to 3 rows by default)
+      const cfg = getGalleryCfg(card);
+      const heroStyle = getComputedStyle(hero);
+      const heroMinH = parseFloat(heroStyle.minHeight || '0') || (cfg.heroMinHeightFallback ?? 120);
+      const maxAvailableWithHeroMin = Math.max(0, gridHeightAuto - heroMinH - gapYGrid);
+      const rowsWithMin = Math.floor((maxAvailableWithHeroMin + gapX) / (tile + gapX));
+
+      // Per-card tallness relative to CSS min-height
+      const cardStyle = getComputedStyle(card);
+      const cardMinH = parseFloat(cardStyle.minHeight || '0') || 0;
+      const cardHeight = card.clientHeight || parseFloat(cardStyle.height || '0') || 0;
+      const delta = Math.max(0, cardHeight - cardMinH);
+      let extraAllowed = 0;
+      const d1 = cfg.extraRow1DeltaPx ?? 500;
+      const d2 = cfg.extraRow2DeltaPx ?? 800;
+      if (delta >= d2) extraAllowed = 2; else if (delta >= d1) extraAllowed = 1;
+
+      const maxRows = cfg.maxRows ?? 3;
+      const desired = Math.min(1 + extraAllowed, rowsWithMin, maxRows);
+      rowsFit = Math.max(rowsFit, desired);
 
       const items = Array.from(thumbs.children);
       const visibleCount = Math.min(items.length, columns * rowsFit);
@@ -2416,12 +2470,12 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       rafId = requestAnimationFrame(layoutAllGalleries);
     };
 
-    // Observe size changes of the gallery grid to recalc rows
+    // Observe size changes of the gallery grid and the card itself to recalc rows
     cards.forEach(card => {
       const grid = card.querySelector('.gallery-grid');
-      if (!grid) return;
       const ro = new ResizeObserver(() => schedule());
-      ro.observe(grid);
+      if (grid) ro.observe(grid);
+      ro.observe(card);
     });
 
     window.addEventListener('resize', schedule);
@@ -2429,7 +2483,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   // Main animation function with perfect audio sync
   async function animateBentoCards() {
-    console.log('🎵 animateBentoCards() called', { 
+    console.log('ðŸŽµ animateBentoCards() called', { 
       hasSystem: !!bentoAnimationSystem, 
       isPlaying: bentoAnimationSystem?.isPlaying,
       stack: new Error().stack 
@@ -2445,7 +2499,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     
     // Extra safety: prevent multiple calls
     if (bentoAnimationSystem.isPlaying) {
-      console.log('🎵 Animation already playing, skipping...');
+      console.log('ðŸŽµ Animation already playing, skipping...');
       return;
     }
     
@@ -2454,7 +2508,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
 
   // Reset function for overlay close
   function resetBentoCards() {
-    console.log('🎵 resetBentoCards() called globally');
+    console.log('ðŸŽµ resetBentoCards() called globally');
     if (bentoAnimationSystem) {
       bentoAnimationSystem.reset();
     }
@@ -2478,5 +2532,5 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
     });
   }
 
-  // No shimmer animation — simplified glass for clarity
+  // No shimmer animation â€” simplified glass for clarity
 </script>

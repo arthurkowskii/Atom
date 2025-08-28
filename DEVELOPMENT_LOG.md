@@ -6,7 +6,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 
 **ðŸ¤– For Agents**: Start with `CLAUDE.md` for startup protocol, then read `SESSION_CONTEXT.md` for current status.
 
-Last updated: 2025-08-28 (Gallery thumbnails grid + Lightbox focus mode)
+Last updated: 2025-08-28 (Gallery thumbnails grid + Lightbox focus mode + Dynamic rows/config)
 
 ## Project Snapshot
 
@@ -671,3 +671,34 @@ The filtering system achieves optimal balance between visual focus and interacti
 - **Production Ready**: Enhanced UI system maintains performance, accessibility, and cross-browser compatibility while providing professional portfolio presentation
 
 The portfolio now features enterprise-level UI sophistication with complete design coherence, modern interaction patterns, and comprehensive customization capabilities suitable for professional creative portfolio standards.
+
+## Recent Changes (Gallery Auto-Rows + Config)
+
+- Dynamic rows for thumbnails (per-card):
+  - Uses each gallery card’s actual height vs its CSS min-height to decide rows.
+  - Unconstrained measurement avoids self-locking to one row from prior layout passes.
+  - Allows up to 3 rows when there’s real space: 2 rows at +500px, 3 rows at +800px above min-height.
+  - Correctly parses grid-template-columns: repeat(n, ...) to count columns.
+  - Adds ResizeObserver to both .gallery-grid and .gallery-card for reliable relayout.
+
+- Configuration surfaced to user-tweaks:
+  - Added bentoGallery in src/user-tweaks.js:
+    - extraRow1DeltaPx: 500
+    - extraRow2DeltaPx: 800
+    - heroMinHeightFallback: 120
+    - maxRows: 3
+  - Threaded via src/atom.config.js as atomConfig.bentoGallery.
+  - Injected next to the component as JSON for client logic in src/components/ProjectBento.astro:1670.
+
+- Files touched:
+  - src/components/ProjectBento.astro
+    - Added config reader and multi-row logic; fixed column parsing; unconstrained measure; observers.
+  - src/user-tweaks.js
+    - New bentoGallery block with thresholds and caps.
+  - src/atom.config.js
+    - Exposes bentoGallery to the client.
+
+- Verification:
+  - Built successfully (astro build); custom validator passed.
+  - Behavior: tall cards (e.g., FMOD showcase) show 2–3 rows as space allows; compact cards remain 1 row.
+

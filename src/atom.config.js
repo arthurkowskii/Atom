@@ -308,6 +308,14 @@ export default {
     }
   },
 
+  // Bento gallery layout configuration
+  bentoGallery: userTweaks.bentoGallery || {
+    extraRow1DeltaPx: 500,
+    extraRow2DeltaPx: 800,
+    heroMinHeightFallback: 120,
+    maxRows: 3
+  },
+
   // Bento animations configuration
   bentoAnimations: userTweaks.bentoAnimations || {
     enabled: false,

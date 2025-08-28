@@ -395,6 +395,20 @@ export const userTweaks = {
     buttonLabel: 'Enter Portfolio',
     noindex: true,               // add noindex robots meta on welcome page
     audioPrewarm: true           // try to unlock audio on click
+  },
+
+  // dY_ Gallery Layout (Bento)
+  // Controls how many thumbnail rows can appear in the gallery card
+  // based on how much taller the card renders above its CSS min-height.
+  // extraRow1DeltaPx => enables 2 rows when cardHeight >= minHeight + this many px
+  // extraRow2DeltaPx => enables 3 rows when cardHeight >= minHeight + this many px
+  // heroMinHeightFallback => JS fallback if computed min-height isn't available
+  // maxRows => global cap
+  bentoGallery: {
+    extraRow1DeltaPx: 500,
+    extraRow2DeltaPx: 1000,
+    heroMinHeightFallback: 120,
+    maxRows: 3
   }
 
 };
