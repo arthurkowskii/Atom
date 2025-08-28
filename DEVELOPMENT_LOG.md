@@ -6,7 +6,7 @@ Use this as an executive summary for agentic AIs. Full details live in:
 
 **🤖 For Agents**: Start with `CLAUDE.md` for startup protocol, then read `SESSION_CONTEXT.md` for current status.
 
-Last updated: 2025-08-27 (Header navigation system with project filtering; Bio social card WIP)
+Last updated: 2025-08-28 (Gallery thumbnails grid + Lightbox focus mode)
 
 ## Project Snapshot
 
@@ -23,17 +23,30 @@ Last updated: 2025-08-27 (Header navigation system with project filtering; Bio s
 
 ## Next Actions
 
+- Improve the gallery slider design (spacing, captions, swipe polish)
 - Validate dynamic shells across 1–5 domain folders; tune spacing/label density if needed.
 - Decide production Decap backend for deployment (git-gateway or GitHub).
 - Add SEO/meta polish for `/bio` (title/description/og image) when finalizing.
-- Bio social card: finalize icon set (X, Bluesky, GitHub, LinkedIn, Instagram). Currently wired: X + LinkedIn (static SVG). Instagram removed until static icon is provided. Add remaining platforms + CMS dropdown and platform→icon map.
+
+## Recent Changes (Gallery)
+
+- Gallery card overhaul in `ProjectBento.astro`:
+  - Thumbnails switched to CSS grid (3 per row desktop/tablet, 2 per row mobile landscape; hidden on small portrait).
+  - Dynamic row calculation shows only full rows based on available card height; extras are hidden.
+  - Fixed vertical gap by avoiding flex growth and explicitly sizing the thumbnail container to the computed rows.
+  - Square tiles via `aspect-ratio: 1/1`; featured hero remains full-width square.
+- Gallery Focus Mode (lightbox):
+  - In-page modal with dark scrim; opens from hero or any thumbnail.
+  - Navigation via Prev/Next arrows and keyboard (←/→); Esc closes and restores focus.
+  - Video slides supported; videos pause when navigating away.
+  - Sits above the project overlay; Esc closes lightbox first (overlay remains open).
+  - Lightbox CSS is global to style dynamically injected DOM.
+  - Minimal, dependency-free implementation kept inline in `ProjectBento.astro` for reliability; modular controller can be introduced later if needed.
 
 ## Work in Progress (Bio Social Card)
 
 - Implemented initial social card using local static SVGs (X, LinkedIn). Removed “Portfolio” link.
-- Instagram: GIF removed; awaiting static SVG/PNG to add back (no animations by default).
 - To do:
-  - Add Bluesky and GitHub icons and mapping.
   - Update `public/admin/config.yml` to present platform dropdown (X, Bluesky, GitHub, LinkedIn, Instagram).
   - Optional: Provide static Instagram icon, then wire it.
   - Verify both `/bio` and overlay rendering after additions.
@@ -48,6 +61,8 @@ Last updated: 2025-08-27 (Header navigation system with project filtering; Bio s
 - src/user-tweaks.js: Central knobs (sizes, speeds, transitions, micro, labels, dynamicShells).
 - src/content/config.ts: Content schema; `src/content/projects/**` now folder-driven domains.
 - public/admin/config.yml: Decap config (domain select removed; rely on folders).
+- src/components/ProjectBento.astro: Bento layout, gallery card grid + lightbox (inline implementation).
+- src/atom/ui/GalleryLightbox.js: Prototype modular lightbox controller (currently unused; kept for future refactor).
 
 ## How It Works
 
@@ -111,6 +126,7 @@ Last updated: 2025-08-27 (Header navigation system with project filtering; Bio s
 - Units: Angles in degrees for OrbitSystem; convert to radians only for trig.
 - Cross-browser: Firefox cannot CSS-animate SVG r; use GSAP attr for radius.
 - Inline JSON: Inject with set:html; avoid HTML-escaped JSON that breaks JSON.parse.
+- Lightbox CSS must be global (Astro style scoping won’t reach dynamically injected DOM under `document.body`).
 - Event flood: Use rAF throttling for mousemove; precompute squared distances.
 - State: Keep a single state machine; kill GSAP tweens on transitions to avoid buildup.
 - Scope: Pass server-only values through atom.config.js; don’t import userTweaks in client code. When using dynamic shells, inject a client-safe cfg JSON and read it before initializing clients (e.g., OrbitSystem).

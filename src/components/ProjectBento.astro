@@ -1638,6 +1638,31 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   }
 </style>
 
+<style is:global>
+  /* Gallery Lightbox (global) */
+  html.glb-scroll-lock, html.glb-scroll-lock body { overflow: hidden !important; }
+  .glb-root { position: fixed; inset: 0; display: none; z-index: 10002; }
+  .glb-scrim { position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
+  .glb-container { 
+    position: absolute; inset: 0; margin: auto; 
+    width: min(90vw, 1100px); height: min(90vh, 750px);
+    background: #0b0c0f; border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5); border-radius: 14px;
+    display: grid; grid-template-columns: 56px 1fr 56px; grid-template-rows: 1fr 40px;
+    z-index: 10003; color: #fff;
+  }
+  /* Keep media in center column so nav buttons never overlay it */
+  .glb-viewport { grid-column: 2; grid-row: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 18px 18px 8px; }
+  .glb-counter { grid-column: 2; grid-row: 2; display: flex; align-items: center; justify-content: center; opacity: 0.9; font-size: 0.9rem; }
+  .glb-close { position: absolute; top: 8px; right: 8px; z-index: 10004; border: 0; background: rgba(0,0,0,0.45); color: #fff; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 22px; line-height: 1; }
+  .glb-close:hover { background: rgba(0,0,0,0.6); }
+  .glb-nav { border: 0; background: transparent; color: #fff; cursor: pointer; font-size: 34px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+  .glb-prev { grid-column: 1; grid-row: 1; }
+  .glb-next { grid-column: 3; grid-row: 1; }
+  .glb-nav:hover { color: #ddd; }
+  @media (prefers-reduced-motion: reduce) { .glb-container, .glb-scrim { transition: none !important; } }
+</style>
+
 <div class="project-bento">
   <div class="bento-container">
     
@@ -1833,7 +1858,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
         <h3 class="card-title">{(bento.gallery?.title) || 'Gallery'}</h3>
         <div class="gallery-grid">
           {galleryImages[0] && (
-            <div class="gallery-hero" onclick={galleryImages[0].src ? `window.open('${galleryImages[0].src}', '_blank')` : undefined}>
+            <div class="gallery-hero" data-gallery-index="0" tabindex="0" role="button" aria-label="Open image">
               {galleryImages[0].isVideo ? (
                 <video src={galleryImages[0].src} muted loop autoplay playsinline loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"></video>
               ) : (
@@ -1844,8 +1869,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
           )}
           {galleryImages.length > 1 && (
             <div class="gallery-thumbnails">
-              {galleryImages.slice(1).map(image => (
-                <div class="gallery-thumb" onclick={`window.open('${image.src}', '_blank')`}>
+              {galleryImages.slice(1).map((image, i) => (
+                <div class="gallery-thumb" data-gallery-index={String(i + 1)} tabindex="0" role="button" aria-label="Open image">
                   {image.isVideo ? (
                     <video src={image.src} muted loop autoplay playsinline loading="lazy" style="width: 100%; height: 100%; object-fit: cover;"></video>
                   ) : (
@@ -1855,6 +1880,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
               ))}
             </div>
           )}
+          <script type="application/json" class="gallery-data" set:html={JSON.stringify(galleryImages)}></script>
         </div>
       </div>
     )}
@@ -1902,6 +1928,19 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   // PLACEHOLDER: Tone.js is temporary - will be replaced with custom OGG audio files
   // See docs/history/PHASE_LOGS.md Phase 3C for audio architecture plan
   import { Synth, Chorus, start, now, gainToDb, context } from 'tone';
+  // Gallery lightbox: lazy-loaded on first click for reliability across contexts
+  let __GLB = null;
+  async function ensureLightbox() {
+    if (!__GLB) {
+      try {
+        const mod = await import('../atom/ui/GalleryLightbox.js');
+        __GLB = mod?.default || mod;
+      } catch (err) {
+        console.warn('Failed to load GalleryLightbox module:', err);
+      }
+    }
+    return __GLB;
+  }
 
   // Simple Bento Animation System with Synced Audio
   class BentoAnimationSystem {
@@ -2104,6 +2143,173 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
   let bentoAnimationSystem = null;
 
   // ==========================
+  // Minimal Lightbox (Step 1): Single-media viewer
+  // ==========================
+  let __basicGlb = null;
+  let __basicGlbOpen = false;
+  let __basicLastFocus = null;
+  let __basicItems = [];
+  let __basicIndex = 0;
+  const onBasicKey = (e) => {
+    if (!__basicGlbOpen) return;
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      e.preventDefault();
+      closeBasicLightbox();
+    }
+    if (e.key === 'ArrowLeft') { e.stopPropagation(); e.preventDefault(); basicPrev(); }
+    if (e.key === 'ArrowRight') { e.stopPropagation(); e.preventDefault(); basicNext(); }
+  };
+
+  function ensureBasicLightbox() {
+    if (__basicGlb) return __basicGlb;
+    console.log('[GLB] creating basic lightbox DOM');
+    const root = document.createElement('div');
+    root.className = 'glb-root';
+    root.style.display = 'none';
+
+    const scrim = document.createElement('div');
+    scrim.className = 'glb-scrim';
+    scrim.addEventListener('click', () => closeBasicLightbox());
+
+    const container = document.createElement('div');
+    container.className = 'glb-container';
+    container.style.display = 'grid';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'glb-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', () => closeBasicLightbox());
+
+    const viewport = document.createElement('div');
+    viewport.className = 'glb-viewport';
+
+    const counter = document.createElement('div');
+    counter.className = 'glb-counter';
+    counter.textContent = '';
+
+    const btnPrev = document.createElement('button');
+    btnPrev.className = 'glb-nav glb-prev';
+    btnPrev.setAttribute('aria-label', 'Previous');
+    btnPrev.textContent = '‹';
+    btnPrev.addEventListener('click', () => basicPrev());
+
+    const btnNext = document.createElement('button');
+    btnNext.className = 'glb-nav glb-next';
+    btnNext.setAttribute('aria-label', 'Next');
+    btnNext.textContent = '›';
+    btnNext.addEventListener('click', () => basicNext());
+
+    container.appendChild(closeBtn);
+    container.appendChild(btnPrev);
+    container.appendChild(viewport);
+    container.appendChild(btnNext);
+    container.appendChild(counter);
+
+    root.appendChild(scrim);
+    root.appendChild(container);
+    document.body.appendChild(root);
+    console.log('[GLB] basic lightbox DOM appended to body');
+    __basicGlb = { root, scrim, container, viewport, counter, closeBtn, btnPrev, btnNext };
+    return __basicGlb;
+  }
+
+  function renderBasicSlide() {
+    const glb = __basicGlb || ensureBasicLightbox();
+    if (!__basicItems.length) return;
+    const item = __basicItems[__basicIndex];
+    if (!item) return;
+    // Pause any existing video
+    try { glb.viewport.querySelector('video')?.pause(); } catch {}
+    glb.viewport.innerHTML = '';
+    let el;
+    if (item.isVideo) {
+      el = document.createElement('video');
+      el.src = item.src; el.controls = true; el.playsInline = true;
+      el.style.maxWidth = '100%'; el.style.maxHeight = '100%';
+    } else {
+      el = document.createElement('img');
+      el.src = item.src; el.alt = item.alt || '';
+      el.style.maxWidth = '100%'; el.style.maxHeight = '100%';
+      el.decoding = 'async'; el.loading = 'eager';
+    }
+    glb.viewport.appendChild(el);
+    glb.counter.textContent = `${__basicIndex + 1} / ${__basicItems.length}`;
+    // Preload neighbors (images only)
+    const prev = __basicItems[(__basicIndex - 1 + __basicItems.length) % __basicItems.length];
+    const next = __basicItems[(__basicIndex + 1) % __basicItems.length];
+    [prev, next].forEach(n => { if (n && !n.isVideo) { const img = new Image(); img.src = n.src; } });
+  }
+
+  function basicPrev() {
+    if (!__basicItems.length) return;
+    __basicIndex = (__basicIndex - 1 + __basicItems.length) % __basicItems.length;
+    renderBasicSlide();
+  }
+  function basicNext() {
+    if (!__basicItems.length) return;
+    __basicIndex = (__basicIndex + 1) % __basicItems.length;
+    renderBasicSlide();
+  }
+
+  function openBasicLightboxWithItems(items, startIndex, returnEl) {
+    const glb = ensureBasicLightbox();
+    __basicItems = Array.isArray(items) ? items.slice() : [];
+    __basicIndex = Math.min(Math.max(0, startIndex || 0), Math.max(0, __basicItems.length - 1));
+    __basicLastFocus = returnEl || document.activeElement;
+    glb.root.style.display = 'block';
+    glb.root.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('glb-scroll-lock');
+    __basicGlbOpen = true;
+    renderBasicSlide();
+    try { glb.closeBtn.focus({ preventScroll: true }); } catch {}
+    document.addEventListener('keydown', onBasicKey, true);
+  }
+
+  function closeBasicLightbox() {
+    const glb = __basicGlb;
+    if (!glb) return;
+    __basicGlbOpen = false;
+    glb.root.style.display = 'none';
+    glb.root.setAttribute('aria-hidden', 'true');
+    glb.viewport.innerHTML = '';
+    document.documentElement.classList.remove('glb-scroll-lock');
+    document.removeEventListener('keydown', onBasicKey, true);
+    try { __basicLastFocus?.focus({ preventScroll: true }); } catch {}
+  }
+
+  // Attach click handlers to open lightbox for each gallery card
+  function setupGalleryClickHandlers(scope = document) {
+    const cards = scope.querySelectorAll('.gallery-card');
+    console.debug('[GLB] setupGalleryClickHandlers: found cards =', cards.length);
+    cards.forEach(card => {
+      if (card.dataset.glbBound === '1') return;
+      card.dataset.glbBound = '1';
+      const dataEl = card.querySelector('.gallery-data');
+      let items = [];
+      try { items = JSON.parse(dataEl?.textContent || '[]'); } catch (e) { console.warn('[GLB] JSON parse failed', e); }
+      const clickables = card.querySelectorAll('[data-gallery-index]');
+      console.debug('[GLB] card bound. items =', items.length, 'clickables =', clickables.length);
+      clickables.forEach(el => {
+        const idx = parseInt(el.getAttribute('data-gallery-index') || '0', 10) || 0;
+        el.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.debug('[GLB] click on index', idx, 'items total', items.length);
+          if (items && items.length) openBasicLightboxWithItems(items, idx, el);
+        }, { passive: false });
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            el.click();
+          }
+        });
+      });
+    });
+  }
+
+  // ==========================
   // Gallery layout (dynamic rows)
   // - Thumbnails are a CSS grid (3 cols desktop, 2 cols mobile landscape)
   // - Show as many full rows as fit; hide the rest
@@ -2195,8 +2401,9 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       stack: new Error().stack 
     });
     
-    // Ensure gallery rows are laid out before animating cards
+    // Ensure gallery rows and click handlers are ready before animating cards
     layoutAllGalleries();
+    setupGalleryClickHandlers();
 
     if (!bentoAnimationSystem) {
       bentoAnimationSystem = new BentoAnimationSystem();
@@ -2233,6 +2440,7 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
       // Initial gallery layout + observers
       layoutAllGalleries();
       setupGalleryObservers();
+      setupGalleryClickHandlers();
     });
   }
 
