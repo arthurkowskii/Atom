@@ -17,14 +17,8 @@
       <button class="filter-btn" data-filter="tech">Tech</button>
     </nav>
     
-    <!-- Theme toggle (right) -->
-    <div class="theme-toggle-container">
-      <span class="theme-label" id="theme-label">Light</span>
-      <label class="theme-toggle" for="theme-switch" aria-label="Toggle dark mode">
-        <input type="checkbox" id="theme-switch" />
-        <span class="toggle-slider"></span>
-      </label>
-    </div>
+    <!-- Empty space (right) to maintain filter centering -->
+    <div></div>
   </div>
 </header>
 
@@ -125,88 +119,9 @@
     color: #171717;
   }
   
-  /* Theme toggle (right) */
-  .theme-toggle-container {
-    display: flex;
-    align-items: center;
-    justify-self: end;
-    gap: 12px;
-  }
-  
-  .theme-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #525252;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    transition: color 0.3s ease;
-  }
-  
-  html[data-theme="dark"] .theme-label {
-    color: #a1a1aa;
-  }
-  
-  .theme-toggle {
-    position: relative;
-    display: inline-block;
-    width: 48px;
-    height: 24px;
-    cursor: pointer;
-  }
-  
-  .theme-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .toggle-slider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #007AFF; /* iOS blue */
-    border-radius: 24px;
-    transition: all 0.3s ease;
-  }
-  
-  .toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 2px;
-    top: 2px;
-    background: white;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* When checked (dark mode), move circle to right */
-  .theme-toggle input:checked + .toggle-slider:before {
-    transform: translateX(24px);
-  }
-  
-  /* Light mode toggle color */
-  .theme-toggle input:not(:checked) + .toggle-slider {
-    background: #007AFF;
-  }
-  
-  /* Dark mode toggle color */
-  .theme-toggle input:checked + .toggle-slider {
-    background: #007AFF;
-  }
-  
   /* Remove iOS/Android tap highlight */
-  .theme-toggle, .toggle-slider, .filter-btn {
+  .filter-btn {
     -webkit-tap-highlight-color: transparent;
-  }
-
-  /* Completely remove browser focus visuals in header */
-  .theme-toggle input:focus + .toggle-slider,
-  .theme-toggle input:focus-visible + .toggle-slider {
-    box-shadow: none !important;
   }
   .filter-btn:focus,
   .filter-btn:focus-visible {
@@ -229,20 +144,6 @@
       font-size: 13px;
     }
     
-    .theme-toggle {
-      width: 42px;
-      height: 22px;
-    }
-    
-    .toggle-slider:before {
-      height: 18px;
-      width: 18px;
-      font-size: 10px;
-    }
-    
-    .theme-toggle input:checked + .toggle-slider:before {
-      transform: translateX(20px);
-    }
   }
   
   @media (max-width: 600px) {
@@ -259,33 +160,10 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const themeToggle = document.getElementById('theme-switch');
-    const themeLabel = document.getElementById('theme-label');
-    
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-    
-    // Apply initial theme
-    document.documentElement.setAttribute('data-theme', initialTheme);
-    themeToggle.checked = initialTheme === 'dark';
-    themeLabel.textContent = initialTheme === 'dark' ? 'Dark' : 'Light';
-    
-  // Handle theme toggle
-  themeToggle.addEventListener('change', function() {
-    const newTheme = this.checked ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    themeLabel.textContent = newTheme === 'dark' ? 'Dark' : 'Light';
-    // Remove focus ring after click/tap to avoid persistent highlight
-    try { this.blur(); } catch {}
-  });
-
-  // Also blur filter buttons on click to avoid highlight sticking
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => { try { btn.blur(); } catch {} });
-  });
+    // Blur filter buttons on click to avoid highlight sticking
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => { try { btn.blur(); } catch {} });
+    });
   });
 </script>
 </header>
