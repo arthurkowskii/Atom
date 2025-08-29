@@ -5,6 +5,14 @@ import atomConfig from '../atom.config.js';
 
 const entry = await getEntryBySlug('bio', 'about');
 const data = entry?.data || {};
+
+// Social meta tag setup
+const socialConfig = atomConfig.socialMeta;
+const siteUrl = import.meta.env.SITE || socialConfig.siteUrl;
+const currentUrl = `${siteUrl}/bio`;
+const ogImage = `${siteUrl}${socialConfig.bio.image}`;
+const bioTitle = data.title || socialConfig.bio.title;
+const bioDescription = data.bio ? (data.bio.length > 160 ? data.bio.slice(0, 160) + '...' : data.bio) : socialConfig.bio.description;
 ---
 
 <html lang="en">
@@ -29,7 +37,36 @@ const data = entry?.data || {};
       upgrade-insecure-requests;
     ">
     
-    <title>Bio — Arthur Kowskii</title>
+    <title>{bioTitle}</title>
+    <meta name="description" content={bioDescription} />
+    <meta name="author" content={socialConfig.author} />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content={bioTitle} />
+    <meta property="og:description" content={bioDescription} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={socialConfig.bio.imageAlt} />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={socialConfig.siteName} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content="Arthur" />
+    <meta property="profile:last_name" content="Kowskii" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content={socialConfig.twitter.cardType} />
+    <meta name="twitter:site" content={socialConfig.twitter.handle} />
+    <meta name="twitter:creator" content={socialConfig.twitter.handle} />
+    <meta name="twitter:title" content={bioTitle} />
+    <meta name="twitter:description" content={bioDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={socialConfig.bio.imageAlt} />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href={currentUrl} />
+    
     <style>
       :root { --bg:#fff; --fg:#000; }
       * { box-sizing: border-box; }

@@ -29,6 +29,27 @@ const useBentoLayout = entry.data.useBentoLayout || false;
 
 // Extract only the bentoAnimations config for client-side use
 const bentoAnimationsConfig = atomConfig.bentoAnimations || {};
+
+// Social meta tag setup for project pages
+const socialConfig = atomConfig.socialMeta;
+const siteUrl = import.meta.env.SITE || socialConfig.siteUrl;
+const currentUrl = `${siteUrl}/projects/${slug}`;
+
+// Generate dynamic social meta content
+const projectTitle = `${entry.data.title} — ${socialConfig.siteName}`;
+const projectDescription = entry.data.description;
+
+// Try to use project hero image for social preview, fallback to default
+let ogImage = `${siteUrl}${socialConfig.images.defaultFallback}`;
+if (entry.data.useBentoLayout && entry.data.bento?.hero?.backgroundImage) {
+  // For bento layout projects, try to use the hero image
+  ogImage = `${siteUrl}${entry.data.bento.hero.backgroundImage}`;
+} else if (entry.data.image) {
+  // For atomic layout projects, use the image field
+  ogImage = `${siteUrl}${entry.data.image}`;
+}
+
+const imageAlt = socialConfig.project.imageAlt.replace('{projectTitle}', entry.data.title);
 ---
 
 <html lang="en">
@@ -54,7 +75,37 @@ const bentoAnimationsConfig = atomConfig.bentoAnimations || {};
       upgrade-insecure-requests;
     ">
     
-    <title>{entry.data.title} — Project</title>
+    <title>{projectTitle}</title>
+    <meta name="description" content={projectDescription} />
+    <meta name="author" content={socialConfig.author} />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content={projectTitle} />
+    <meta property="og:description" content={projectDescription} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:url" content={currentUrl} />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content={socialConfig.siteName} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="article:author" content={socialConfig.author} />
+    <meta property="article:section" content="Portfolio" />
+    {entry.data.tech && <meta property="article:tag" content={entry.data.tech.join(', ')} />}
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content={socialConfig.twitter.cardType} />
+    <meta name="twitter:site" content={socialConfig.twitter.handle} />
+    <meta name="twitter:creator" content={socialConfig.twitter.handle} />
+    <meta name="twitter:title" content={projectTitle} />
+    <meta name="twitter:description" content={projectDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href={currentUrl} />
+    
     <style>
       /* View Transition radial mask (progressive enhancement) */
       :root { view-transition-name: root; }

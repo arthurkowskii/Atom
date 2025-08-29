@@ -350,5 +350,18 @@ export default {
     volume: 0.2,
     events: {},
     synthesis: {}
+  },
+
+  // Social sharing meta tags configuration
+  socialMeta: userTweaks.socialMeta || {
+    siteName: 'Arthur Kowskii Portfolio',
+    siteUrl: 'https://arthur-portfolio.com',
+    author: 'Arthur Kowskii',
+    defaultDescription: 'Interactive portfolio showcasing music production, game audio design, and technical projects.',
+    home: {},
+    bio: {},
+    project: {},
+    images: {},
+    twitter: {}
   }
 };

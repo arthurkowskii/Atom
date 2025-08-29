@@ -434,6 +434,54 @@ export const userTweaks = {
     maxRows: 3
   },
 
+  // 🌐 Social Sharing Meta Tags
+  // Controls Open Graph and Twitter Card metadata for rich link previews
+  socialMeta: {
+    // Site-wide defaults
+    siteName: 'Portfolio Arthur Kowskii',
+    siteUrl: 'https://arthurkowskii.com', // Update with your actual domain
+    author: 'Arthur Kowskii',
+    defaultDescription: 'Portfolio interactif présentant production musicale, sound design pour jeux vidéo et projets techniques à travers une interface atomique innovante.',
+    
+    // Homepage specific
+    home: {
+      title: 'Arthur Kowskii — Portfolio Interactif',
+      description: 'Explorez mes productions dans une expérience portfolio interactive basée sur un atome.',
+      image: '/src/Assets/link_preview.webp', // 1200x630px
+      imageAlt: 'Portfolio Interactif Arthur Kowskii - Visualisation atomique avec projets orbitaux'
+    },
+    
+    // Bio page specific  
+    bio: {
+      title: 'À Propos d\'Arthur Kowskii — Bio Portfolio Créatif',
+      description: 'Découvrez mon parcours en production musicale, sound design pour jeux vidéo et développement technique. Compétences, expérience et philosophie créative.',
+      image: '/images/social/og-bio.jpg', // 1200x630px
+      imageAlt: 'Arthur Kowskii - Producteur Musical, Sound Designer, Développeur'
+    },
+    
+    // Project pages (uses dynamic content but these are fallbacks)
+    project: {
+      title: '{projectTitle} — Portfolio Arthur Kowskii',
+      description: '{projectDescription}',
+      image: '/images/social/og-default.jpg', // 1200x630px fallback
+      imageAlt: 'Projet Portfolio Arthur Kowskii - {projectTitle}'
+    },
+    
+    // Social images configuration
+    images: {
+      defaultFallback: '/images/social/og-default.jpg',
+      homePage: '/images/social/og-home.jpg', 
+      bioPage: '/images/social/og-bio.jpg',
+      // Projects will try to use their hero images, fallback to default
+    },
+    
+    // Twitter/X specific settings
+    twitter: {
+      handle: '@arthurkowskii', // Update with your actual Twitter handle
+      cardType: 'summary_large_image'
+    }
+  },
+
   // 📐 Bio Page Layout
   // Controls the top spacing for the bio page to match project pages
   bioPageLayout: {

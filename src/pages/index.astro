@@ -21,6 +21,12 @@ import { userTweaks } from '../user-tweaks.js';
 import { calculateElectronPositions } from '../atom/utils/electronPositioning.js';
 import { sanitizeText } from '../utils/sanitize.js';
 
+// Social meta tag setup
+const socialConfig = atomConfig.socialMeta;
+const siteUrl = import.meta.env.SITE || socialConfig.siteUrl;
+const currentUrl = siteUrl;
+const ogImage = `${siteUrl}${socialConfig.home.image}`;
+
 // Get all projects and compute domains from folder structure (prefix-ordered)
 const projects = await getCollection('projects');
 // console.log('🔍 DEBUG: Total projects loaded:', projects.length);
@@ -332,7 +338,34 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 			form-action 'self' https:;
 		">
 		
-		<title>Atom Portfolio</title>
+		<title>{socialConfig.home.title}</title>
+		<meta name="description" content={socialConfig.home.description} />
+		<meta name="author" content={socialConfig.author} />
+		
+		<!-- Open Graph Meta Tags -->
+		<meta property="og:title" content={socialConfig.home.title} />
+		<meta property="og:description" content={socialConfig.home.description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:alt" content={socialConfig.home.imageAlt} />
+		<meta property="og:url" content={currentUrl} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={socialConfig.siteName} />
+		<meta property="og:locale" content="en_US" />
+		
+		<!-- Twitter Card Meta Tags -->
+		<meta name="twitter:card" content={socialConfig.twitter.cardType} />
+		<meta name="twitter:site" content={socialConfig.twitter.handle} />
+		<meta name="twitter:creator" content={socialConfig.twitter.handle} />
+		<meta name="twitter:title" content={socialConfig.home.title} />
+		<meta name="twitter:description" content={socialConfig.home.description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={socialConfig.home.imageAlt} />
+		
+		<!-- Additional SEO Meta Tags -->
+		<meta name="robots" content="index, follow" />
+		<meta name="googlebot" content="index, follow" />
+		<link rel="canonical" href={currentUrl} />
+		
 			<style>
             body {
                 margin: 0;
