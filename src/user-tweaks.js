@@ -400,23 +400,23 @@ export const userTweaks = {
     
     // Animation timing controls
     animations: {
-      overlayFadeDuration: 1,    // seconds - background fade in/out (currently 2s)
-      cardAnimationDuration: 1,  // seconds - card scale/movement (currently 1.8s) 
-      cardDelay: 0.5,              // seconds - delay before card starts moving (currently 0.5s)
-      focusDelay: 1,             // seconds - delay before focusing card (currently 1s)
+      overlayFadeDuration: 0.4,    // seconds - background fade in/out (snappier response)
+      cardAnimationDuration: 0.6,  // seconds - card scale/movement (matches atom interactions) 
+      cardDelay: 0.15,              // seconds - delay before card starts moving (minimal wait)
+      focusDelay: 0.8,             // seconds - delay before focusing card (reduced)
       
-      // Card starting position
-      cardStartScale: 0.1,       // starting scale (0-1, currently 0.3)
-      cardStartRotation: -10,    // starting rotation in degrees (currently -5)
-      cardStartY: 200,           // starting Y offset in pixels (currently 100px)
+      // Card starting position - refined for sophistication
+      cardStartScale: 0.85,       // starting scale (subtle 15% growth matching atom proportions)
+      cardStartRotation: 0,       // starting rotation in degrees (geometric precision)
+      cardStartY: 30,             // starting Y offset in pixels (gentle upward drift)
       
-      // Animation easing
-      overlayEasing: 'ease-in-out',  // CSS easing for overlay fade
-      cardEasing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',  // CSS easing for card
+      // Animation easing - portfolio-aligned sophistication
+      overlayEasing: 'cubic-bezier(0.4, 0, 0.2, 1)',  // CSS easing for overlay fade
+      cardEasing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',  // CSS easing for card (matches bento animations)
       
       // Force animations (override reduced motion)
       forceAnimations: true,     // true = ignore reduced motion preferences, false = respect them
-      debugMode: true            // true = show console debug info for animation states
+      debugMode: false           // true = show console debug info for animation states
     }
   },
 
