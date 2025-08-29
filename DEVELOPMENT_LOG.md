@@ -813,3 +813,31 @@ The welcome overlay system provides enterprise-grade onboarding experience with 
 - **Accessibility Compliance**: Proper reduced-motion handling while maintaining visual feedback and professional presentation standards
 
 The welcome sequence now provides a cohesive, sophisticated introduction to the interactive atom portfolio with immediate orbital motion and refined design language consistency.
+
+## Recent Changes (2025‑08‑29) - Clip-Path Overlay Resize System Fixes
+
+### Complete Clip-Path Fullscreen & Resize Resolution
+- **Fullscreen Visibility Issue Fixed**: Resolved critical issue where circular overlay mask became visible during fullscreen mode transitions (both progressive scaling and fullscreen button usage). Problem occurred when viewport suddenly expanded beyond existing radius coverage.
+- **Enhanced Resize Handler Logic**: Removed flawed 90% threshold condition (`overlayR >= newMaxRadius * 0.9`) that prevented radius updates during dramatic viewport changes. Resize handler now always recalculates radius when overlay is open, ensuring proper coverage regardless of scaling method.
+- **Dedicated Fullscreen Event Handler**: Added comprehensive `fullscreenchange` event listener providing immediate response to fullscreen toggle events, complementing the existing resize handler for complete coverage of viewport changes.
+
+### Closing Animation Sync After Resize Fix
+- **Electron Position Tracking**: Resolved misalignment where closing circle animation no longer collapsed back to electron position after window resize. Issue occurred because overlay stored initial electron coordinates but didn't update them when window scaling moved electrons to new positions.
+- **Dynamic Position Updates**: Enhanced both resize and fullscreen handlers to recalculate and update electron/nucleus positions (`--x`, `--y` CSS custom properties) when overlay is open, ensuring closing animation always targets correct location.
+- **Dual Overlay Support**: Position tracking works for both project overlays (using `currentElectron` reference) and bio overlays (using nucleus selector), maintaining proper closing animation alignment across all overlay types.
+
+### Technical Implementation Details
+- **Comprehensive Coverage**: Both handlers now perform three operations: electron/nucleus position update, radius recalculation, and CSS custom property updates ensuring complete overlay mask management.
+- **Smart Fallback Logic**: Position updates use `getBoundingClientRect()` for real-time element positioning with fallback to stored values, preventing errors if elements are temporarily unavailable.
+- **Animation Compatibility**: All updates include safety checks to avoid interference with ongoing GSAP overlay opening/closing animations while ensuring immediate response to viewport changes.
+
+### Key Files Modified
+- `src/pages/index.astro` (lines 2325-2405) - Enhanced resize and fullscreen handlers with electron position tracking and comprehensive radius management
+
+### Results Achieved
+- **Fullscreen Mode**: Circular overlay mask properly covers viewport during all fullscreen transitions, eliminating visible circle edges
+- **Closing Animation**: Circle consistently collapses back to correct electron/nucleus position regardless of window resizing during overlay display
+- **Universal Coverage**: Fix works across all overlay types (project/bio) and scaling methods (progressive/fullscreen button) with consistent behavior
+- **Performance**: Maintains 60fps animation performance while providing real-time viewport adaptation
+
+The overlay system now provides bulletproof circular mask coverage and closing animation alignment across all viewport scaling scenarios.

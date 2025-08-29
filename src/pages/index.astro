@@ -2325,22 +2325,82 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             // Fix for clip-path resize issue: recalculate overlay mask on window resize
             window.addEventListener('resize', () => {
               if (overlayOpen && overlayR > 0) {
+                // Update electron/nucleus position if overlay is open
+                let newCx, newCy;
+                
+                if (currentElectron) {
+                  // Update project electron position
+                  const electronRect = currentElectron.getBoundingClientRect();
+                  newCx = electronRect.left + electronRect.width / 2;
+                  newCy = electronRect.top + electronRect.height / 2;
+                  overlay.style.setProperty('--x', `${newCx}px`);
+                  overlay.style.setProperty('--y', `${newCy}px`);
+                } else if (currentOverlayType === 'bio') {
+                  // Update nucleus position for bio overlay
+                  const nucleus = document.querySelector('.nucleus');
+                  if (nucleus) {
+                    const nucleusRect = nucleus.getBoundingClientRect();
+                    newCx = nucleusRect.left + nucleusRect.width / 2;
+                    newCy = nucleusRect.top + nucleusRect.height / 2;
+                    overlay.style.setProperty('--x', `${newCx}px`);
+                    overlay.style.setProperty('--y', `${newCy}px`);
+                  }
+                }
+                
                 // Recalculate the maximum radius needed to cover the new viewport
                 const vw = window.innerWidth;
                 const vh = window.innerHeight;
-                const overlayX = parseFloat(overlay.style.getPropertyValue('--x')) || vw / 2;
-                const overlayY = parseFloat(overlay.style.getPropertyValue('--y')) || vh / 2;
+                const overlayX = newCx || parseFloat(overlay.style.getPropertyValue('--x')) || vw / 2;
+                const overlayY = newCy || parseFloat(overlay.style.getPropertyValue('--y')) || vh / 2;
                 
                 // Calculate maximum distance to any corner from the overlay center
                 const dx = Math.max(overlayX, vw - overlayX);
                 const dy = Math.max(overlayY, vh - overlayY);
                 const newMaxRadius = Math.hypot(dx, dy);
                 
-                // Only update if the overlay is fully open (not during animation)
-                if (overlayR >= newMaxRadius * 0.9) {
-                  overlay.style.setProperty('--r', `${newMaxRadius}px`);
-                  overlayR = newMaxRadius;
+                // Always update radius when overlay is open (fixed for fullscreen mode)
+                overlay.style.setProperty('--r', `${newMaxRadius}px`);
+                overlayR = newMaxRadius;
+              }
+            });
+            
+            // Additional handler for fullscreen changes to ensure immediate response
+            document.addEventListener('fullscreenchange', () => {
+              if (overlayOpen && overlayR > 0) {
+                // Update electron/nucleus position for fullscreen toggle
+                let newCx, newCy;
+                
+                if (currentElectron) {
+                  // Update project electron position
+                  const electronRect = currentElectron.getBoundingClientRect();
+                  newCx = electronRect.left + electronRect.width / 2;
+                  newCy = electronRect.top + electronRect.height / 2;
+                  overlay.style.setProperty('--x', `${newCx}px`);
+                  overlay.style.setProperty('--y', `${newCy}px`);
+                } else if (currentOverlayType === 'bio') {
+                  // Update nucleus position for bio overlay
+                  const nucleus = document.querySelector('.nucleus');
+                  if (nucleus) {
+                    const nucleusRect = nucleus.getBoundingClientRect();
+                    newCx = nucleusRect.left + nucleusRect.width / 2;
+                    newCy = nucleusRect.top + nucleusRect.height / 2;
+                    overlay.style.setProperty('--x', `${newCx}px`);
+                    overlay.style.setProperty('--y', `${newCy}px`);
+                  }
                 }
+                
+                // Force immediate recalculation on fullscreen toggle
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const overlayX = newCx || parseFloat(overlay.style.getPropertyValue('--x')) || vw / 2;
+                const overlayY = newCy || parseFloat(overlay.style.getPropertyValue('--y')) || vh / 2;
+                
+                const dx = Math.max(overlayX, vw - overlayX);
+                const dy = Math.max(overlayY, vh - overlayY);
+                const newMaxRadius = Math.hypot(dx, dy);
+                
+                overlay.style.setProperty('--r', `${newMaxRadius}px`);
+                overlayR = newMaxRadius;
               }
             });
             // (Backdrop click and deep-link auto-open were removed per request)
