@@ -316,6 +316,11 @@ export default {
     maxRows: 3
   },
 
+  // Bio page layout configuration
+  bioPageLayout: userTweaks.bioPageLayout || {
+    topGapPx: 80
+  },
+
   // Bento animations configuration
   bentoAnimations: userTweaks.bentoAnimations || {
     enabled: false,

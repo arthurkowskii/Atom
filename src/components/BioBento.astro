@@ -55,7 +55,7 @@ function logoSrcFor(label: string): string | null {
 const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
 ---
 
-<style>
+<style define:vars={{ topGap: `${atomConfig.bioPageLayout?.topGapPx || 80}px` }}>
   :root { color-scheme: light; }
   
   /* Layout Structure */
@@ -64,7 +64,10 @@ const sanitizedBio = data?.bio ? await sanitizeMarkdown(data.bio) : '';
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 32px 24px;
+    padding-top: var(--topGap);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 2rem;
     background: #ffffff;
   }
 

@@ -432,6 +432,12 @@ export const userTweaks = {
     extraRow2DeltaPx: 1000,
     heroMinHeightFallback: 120,
     maxRows: 3
+  },
+
+  // 📐 Bio Page Layout
+  // Controls the top spacing for the bio page to match project pages
+  bioPageLayout: {
+    topGapPx: 100        // Top gap in pixels (you can adjust this value)
   }
 
 };
