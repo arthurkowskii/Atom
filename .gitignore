@@ -26,3 +26,6 @@ pnpm-debug.log*
 # docs large example projects (ignored)
 docs/Frontend-Projects/
 docs/liquid-glass-react/
+
+# backup folder (original assets before optimization)
+backup/
