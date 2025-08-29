@@ -1,4 +1,5 @@
-[Welcome] Enter clicked
-index.astro:1283 [Intro] runAtomIntro() {force: true, fromWelcome: true, prefersReduced: true, respectReducedMotion: true, introCfg: {…}}
-index.astro:1297 [Intro] Reduced-motion enabled; applying final state instantly.
-OrbitSystem.js:233 OrbitSystem started
+🎬 [Welcome Debug] Welcome overlay removed from DOM
+index.astro:2661 🔍 [Preview Debug] Detailed positioning: {electronLeft: 1011.4359741210938, electronRight: 1057.9959716796875, electronTop: 487.6648864746094, electronBottom: 534.2249145507812, atomContainerLeft: 204, …}
+index.astro:2701 🔍 [Preview Debug] Final position: {x: 1077.9959716796875, y: 387.6648864746094}
+index.astro:2661 🔍 [Preview Debug] Detailed positioning: {electronLeft: 1122.815185546875, electronRight: 1169.375244140625, electronTop: 520.3533325195312, electronBottom: 566.913330078125, atomContainerLeft: 204, …}
+index.astro:2701 🔍 [Preview Debug] Final position: {x: 1189.375244140625, y: 420.35333251953125}

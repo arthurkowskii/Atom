@@ -675,9 +675,9 @@ The portfolio now features enterprise-level UI sophistication with complete desi
 ## Recent Changes (Gallery Auto-Rows + Config)
 
 - Dynamic rows for thumbnails (per-card):
-  - Uses each gallery card’s actual height vs its CSS min-height to decide rows.
+  - Uses each gallery cardï¿½s actual height vs its CSS min-height to decide rows.
   - Unconstrained measurement avoids self-locking to one row from prior layout passes.
-  - Allows up to 3 rows when there’s real space: 2 rows at +500px, 3 rows at +800px above min-height.
+  - Allows up to 3 rows when thereï¿½s real space: 2 rows at +500px, 3 rows at +800px above min-height.
   - Correctly parses grid-template-columns: repeat(n, ...) to count columns.
   - Adds ResizeObserver to both .gallery-grid and .gallery-card for reliable relayout.
 
@@ -700,5 +700,74 @@ The portfolio now features enterprise-level UI sophistication with complete desi
 
 - Verification:
   - Built successfully (astro build); custom validator passed.
-  - Behavior: tall cards (e.g., FMOD showcase) show 2–3 rows as space allows; compact cards remain 1 row.
+  - Behavior: tall cards (e.g., FMOD showcase) show 2ï¿½3 rows as space allows; compact cards remain 1 row.
 
+## Recent Changes (2025â€‘08â€‘29) - Welcome Overlay Animation System Implementation
+
+### Welcome Animation System Complete Implementation  
+- **Enter Button Animation Flow**: Implemented comprehensive welcome overlay system with smooth fade-in/fade-out animations, atom scale-up entrance, and audio prewarming on first user interaction. System provides professional onboarding experience while unlocking browser audio requirements.
+- **Animation Configuration**: Added complete animation parameter system in `user-tweaks.js` with configurable overlay fade duration, card animation timing, scale/rotation parameters, focus delays, and debug mode for development testing.
+- **Cross-Browser Compatibility**: Enhanced animation system with `prefers-reduced-motion` support using faster animations (0.8s/0.6s) instead of disabled animations, plus force-animation override system for consistent visual feedback across accessibility preferences.
+
+### Critical Technical Challenges Resolved
+
+**Problem 1: Invisible Welcome Animations**  
+- **Root Cause**: `prefers-reduced-motion: reduce` CSS rule was setting `transition: none` completely disabling all animations
+- **Solution**: Replaced disabled animations with faster but visible animations and added `forceAnimations` override class with `!important` declarations
+- **Implementation**: CSS custom properties for animation parameters with force-animation override system and comprehensive debug logging
+
+**Problem 2: Atom Flash Before Overlay**  
+- **Root Cause**: OrbitSystem initialization occurred before overlay visibility, causing brief atom visibility during page load
+- **Solution**: Modified initialization sequence to delay orbit system setup until welcome overlay logic determines proper timing
+- **Technical Fix**: Moved `orbitSystem.init()` from immediate execution to conditional initialization within welcome overlay branch
+
+**Problem 3: Structural Hierarchy Conflict**  
+- **Root Cause**: Welcome overlay was nested inside atom-container div, so hiding atom container also hid the welcome overlay
+- **Solution**: Extracted welcome overlay as independent sibling element outside atom-container with separate visibility control
+- **Architecture**: Welcome overlay now positioned after atom-container closing tag maintaining complete independence
+
+**Problem 4: CSS Timing Race Condition**  
+- **Root Cause**: JavaScript added visibility classes after page render, causing atom to appear briefly before hiding
+- **Solution**: Implemented pre-paint script in document head that adds CSS classes before initial render
+- **Technical Implementation**: Early script checks sessionStorage and applies CSS classes before paint, ensuring atom starts hidden
+
+**Problem 5: Electron Preview Positioning Offset**  
+- **Root Cause**: Duplicate CSS definitions for `.atom-container` caused centering properties to be overridden, positioning atom ~204px off-center
+- **Solution**: Removed conflicting CSS definitions and restored proper flexbox centering with `justify-content: center`
+- **Fix Details**: SVG sizing conflict between HTML attributes and CSS `100vmin` resolved by maintaining consistent coordinate system
+
+### Animation System Architecture
+- **Multi-Stage Animation Flow**: Welcome card emergence with configurable scale/rotation/position transforms, overlay fade timing, and atom scale-up with bouncy easing
+- **State Management**: SessionStorage-based entry tracking with proper cleanup, CSS class-based animation states, and DOM removal after completion
+- **Debug System**: Comprehensive debug logging with animation state tracking, timing measurement, and CSS property inspection for development troubleshooting
+- **Audio Integration**: Web Audio API prewarming on user interaction with browser audio unlock requirements and non-blocking audio context initialization
+
+### Technical Implementation Details  
+- **CSS Custom Properties**: Dynamic animation parameters via Astro `define:vars` with configurable timing, easing, scale, rotation, and positioning
+- **RequestAnimationFrame Timing**: Proper CSS transition triggering with rAF for reliable animation start and browser render optimization
+- **Accessibility Compliance**: Reduced motion support with faster animations instead of disabled animations, plus manual override system for consistent experience
+- **Cross-Browser Testing**: Verified animation behavior across Chrome, Firefox, Safari with consistent timing and visual results
+
+### Configuration System Enhancement
+- **User-Tweaks Integration**: Complete welcome animation configuration in `user-tweaks.js` with 15+ parameters for timing, positioning, and visual effects
+- **Debug Mode**: Optional development debugging with console logging, animation state tracking, and timing measurement for troubleshooting
+- **Theme Awareness**: Light/dark mode support for welcome overlay with automatic theme detection and CSS custom property integration
+
+### Key Files Modified
+- `src/pages/index.astro` - Welcome overlay HTML structure, animation JavaScript, pre-paint initialization script, and orbit system integration
+- `src/user-tweaks.js` - Comprehensive animation configuration with timing, positioning, and visual parameters  
+- Welcome overlay CSS with theme-aware styling, responsive design, and animation state management
+
+### Performance & UX Impact
+- **Smooth Onboarding**: Professional welcome experience with 91% asset optimization maintaining fast load times
+- **Audio Unlock**: Browser audio requirements satisfied through user interaction without intrusive prompts
+- **Animation Polish**: Sophisticated scale-up entrance with bounce effects providing premium portfolio experience  
+- **Accessibility**: Proper reduced motion handling while maintaining visual feedback for all users
+
+### Future Enhancement Opportunities
+- **Animation Refinement**: Further polish of timing curves, scale parameters, and transition choreography for enhanced visual appeal
+- **Interaction Design**: Potential hover effects on welcome card, enhanced focus states, and micro-interaction details
+- **Configuration Expansion**: Additional animation parameters for advanced customization and theme-specific welcome variations
+- **Performance Optimization**: Animation frame rate monitoring and GPU acceleration enhancements for mobile devices
+
+The welcome overlay system provides enterprise-grade onboarding experience with comprehensive animation control, accessibility compliance, and professional visual polish while maintaining the portfolio's interactive atom core experience.

@@ -363,7 +363,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
             #atom-svg {
                 cursor: grab;
                 touch-action: none; /* prevent touch scrolling/zoom white borders */
-                /* Use layout sizing for crisp vectors instead of CSS transform scaling */
+                /* Use CSS sizing for proper display size */
                 width: 100vmin;
                 height: 100vmin;
             }
@@ -656,6 +656,206 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 outline: none !important;
                 box-shadow: none !important;
             }
+
+            /* Welcome Overlay Styling */
+            .welcome-overlay {
+                position: fixed;
+                inset: 0;
+                background: #ffffff;
+                z-index: 9997;
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+                transition: opacity var(--overlay-duration, 2s) var(--overlay-easing, ease-in-out), 
+                           visibility var(--overlay-duration, 2s) var(--overlay-easing, ease-in-out);
+            }
+
+            .welcome-overlay.visible {
+                opacity: 1 !important;
+                visibility: visible !important;
+                pointer-events: auto;
+            }
+
+            .welcome-container {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+            }
+
+            .welcome-card {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                border: 1px solid #e5e7eb;
+                border-radius: 16px;
+                padding: 36px 40px;
+                background: #ffffff;
+                color: #111827;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+                transform: scale(var(--card-start-scale, 0.3)) translateY(var(--card-start-y, 100px)) rotate(var(--card-start-rotation, -5deg));
+                opacity: 0;
+                transition: all var(--card-duration, 1.8s) var(--card-easing, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+                max-width: 400px;
+                width: 100%;
+            }
+
+            .welcome-overlay.visible .welcome-card {
+                transform: scale(1) translateY(0px) rotate(0deg);
+                opacity: 1;
+                transition-delay: var(--card-delay, 0.5s);
+            }
+
+            .welcome-title {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+                line-height: 1.2;
+                letter-spacing: -0.025em;
+            }
+
+            .welcome-description {
+                margin: 0;
+                font-size: 14px;
+                color: #6b7280;
+                text-align: center;
+                line-height: 1.4;
+            }
+
+            .welcome-button {
+                -webkit-appearance: none;
+                appearance: none;
+                border: 1px solid #111827;
+                background: #111827;
+                color: #ffffff;
+                padding: 12px 24px;
+                border-radius: 12px;
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 1;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                min-width: 140px;
+            }
+
+            .welcome-button:hover {
+                background: #000000;
+                border-color: #000000;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .welcome-button:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Dark Mode Welcome Overlay */
+            html[data-theme="dark"] .welcome-overlay {
+                background: #0a0a0a;
+            }
+
+            html[data-theme="dark"] .welcome-card {
+                background: #1a1a1a;
+                border-color: #333333;
+                color: #ffffff;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            }
+
+            html[data-theme="dark"] .welcome-title {
+                color: #ffffff;
+            }
+
+            html[data-theme="dark"] .welcome-description {
+                color: #a1a1aa;
+            }
+
+            html[data-theme="dark"] .welcome-button {
+                background: #ffffff;
+                border-color: #ffffff;
+                color: #000000;
+            }
+
+            html[data-theme="dark"] .welcome-button:hover {
+                background: #f5f5f5;
+                border-color: #f5f5f5;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+            }
+
+            /* Mobile Responsive */
+            @media (max-width: 640px) {
+                .welcome-container {
+                    padding: 20px;
+                }
+                
+                .welcome-card {
+                    padding: 28px 32px;
+                    gap: 16px;
+                }
+                
+                .welcome-title {
+                    font-size: 22px;
+                }
+                
+                .welcome-button {
+                    padding: 10px 20px;
+                    font-size: 14px;
+                }
+            }
+
+            /* Accessibility: Faster animations for reduced motion (instead of disabling) */
+            @media (prefers-reduced-motion: reduce) {
+                .welcome-overlay {
+                    transition: opacity 0.8s ease-in-out, 
+                               visibility 0.8s ease-in-out;
+                }
+                .welcome-card {
+                    transition: all 0.6s ease-out;
+                    transform: scale(var(--card-start-scale, 0.8)) translateY(var(--card-start-y, 20px)) rotate(0deg);
+                }
+                .welcome-overlay.visible .welcome-card {
+                    transition-delay: 0.2s;
+                }
+                .welcome-button {
+                    transition: all 0.15s ease-out;
+                }
+            }
+            
+            /* Force animations override (configurable) */
+            .welcome-overlay.force-animations {
+                transition: opacity var(--overlay-duration, 2s) var(--overlay-easing, ease-in-out), 
+                           visibility var(--overlay-duration, 2s) var(--overlay-easing, ease-in-out) !important;
+            }
+            
+            .welcome-overlay.force-animations.visible {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            .welcome-overlay.force-animations .welcome-card {
+                transition: all var(--card-duration, 1.8s) var(--card-easing, cubic-bezier(0.25, 0.46, 0.45, 0.94)) !important;
+            }
+
+
+            /* Atom SVG - hidden by default */
+            .atom-container svg {
+                opacity: 0;
+                transform: scale(0.8);
+                pointer-events: none;
+                transition: opacity 0.6s ease-out, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+
+            /* Show atom SVG when user has entered or when explicitly shown */
+            body.show-atom .atom-container svg,
+            body.entering .atom-container svg {
+                opacity: 1;
+                transform: scale(1);
+                pointer-events: auto;
+            }
 		</style>
 
         <!-- Theme init (before paint) -->
@@ -666,6 +866,13 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
               const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
               const theme = saved || (prefersDark ? 'dark' : 'light');
               document.documentElement.setAttribute('data-theme', theme);
+              
+              // Show atom if user has already entered
+              const key = 'entered'; // Match the default key from config
+              const entered = (() => { try { return sessionStorage.getItem(key); } catch { return null; } })();
+              if (entered) {
+                document.body.classList.add('show-atom');
+              }
             } catch {}
           })();
         </script>
@@ -884,17 +1091,6 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				})}
 			</svg>
 			
-			<!-- Welcome Overlay (same-document) -->
-			<div id="welcome-overlay" style="display:none; position: fixed; inset: 0; background: #fff; z-index: 9997; display: none;">
-				<div style="position:absolute; inset: 0; display:flex; align-items:center; justify-content:center; padding:24px;">
-					<div class="enter-card" role="dialog" aria-labelledby="enter-title" aria-describedby="enter-desc" style="display:flex;flex-direction:column;align-items:center;gap:16px;border:1px solid #e5e7eb;border-radius:12px;padding:28px 32px;background:#ffffff;color:#111827;box-shadow:0 4px 20px rgba(0,0,0,0.06);">
-						<h2 id="enter-title" class="enter-title" style="margin:0;font-size:20px;">Enter Portfolio</h2>
-						<p id="enter-desc" class="enter-hint" style="margin:0;font-size:12px;color:#6b7280;">Click to enter the portfolio</p>
-						<button id="enter-btn-inline" class="enter-btn" aria-label="Enter Portfolio" style="-webkit-appearance:none;appearance:none;border:1px solid #111827;background:#111827;color:#fff;padding:10px 18px;border-radius:9999px;cursor:pointer;font-size:14px;line-height:1;">Enter Portfolio</button>
-					</div>
-				</div>
-			</div>
-
 			<!-- Electron Hover Preview -->
 			<div id="electron-preview" class="electron-preview" style="display: none;">
 				<div class="preview-content">
@@ -903,6 +1099,29 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 				</div>
 				<div class="preview-hero">
 					<img id="preview-image" src="" alt="" class="preview-img">
+				</div>
+			</div>
+		</div>
+
+		<!-- Welcome Overlay (same-document) -->
+		<div id="welcome-overlay" 
+			class={`welcome-overlay ${userTweaks.prePage?.animations?.forceAnimations ? 'force-animations' : ''}`} 
+			role="dialog" aria-modal="true" aria-labelledby="enter-title" aria-describedby="enter-desc"
+			style={`
+				--overlay-duration: ${userTweaks.prePage?.animations?.overlayFadeDuration || 2}s;
+				--overlay-easing: ${userTweaks.prePage?.animations?.overlayEasing || 'ease-in-out'};
+				--card-duration: ${userTweaks.prePage?.animations?.cardAnimationDuration || 1.8}s;
+				--card-delay: ${userTweaks.prePage?.animations?.cardDelay || 0.5}s;
+				--card-easing: ${userTweaks.prePage?.animations?.cardEasing || 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'};
+				--card-start-scale: ${userTweaks.prePage?.animations?.cardStartScale || 0.3};
+				--card-start-rotation: ${userTweaks.prePage?.animations?.cardStartRotation || -5}deg;
+				--card-start-y: ${userTweaks.prePage?.animations?.cardStartY || 100}px;
+			`}>
+			<div class="welcome-container">
+				<div class="welcome-card" tabindex="-1">
+					<h2 id="enter-title" class="welcome-title">{userTweaks.prePage?.title || 'Enter Portfolio'}</h2>
+					<p id="enter-desc" class="welcome-description">{userTweaks.prePage?.description || 'Press Enter or click the button to access the interactive portfolio experience'}</p>
+					<button id="enter-btn-inline" class="welcome-button" aria-label="Enter Portfolio and enable audio" autofocus>{userTweaks.prePage?.buttonLabel || 'Enter Portfolio'}</button>
 				</div>
 			</div>
 		</div>
@@ -1262,16 +1481,13 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
 					root.style.setProperty('--preview-content-max-width', Math.max(textMaxWidth, 100) + 'px'); // Minimum 100px
 				}
 
-                // Create orbit system (start after welcome overlay or immediately when bypassed)
+                // Create orbit system but don't initialize immediately - wait for welcome overlay logic
                 const orbitSystem = new OrbitSystem(cfg);
-                orbitSystem.init();
 				
                 // Store reference globally immediately for event handlers
                 window.orbitSystem = orbitSystem;
 
-                // Intro animation removed per request; orbits will start based on welcome overlay state.
-
-                  // Welcome overlay gating (same-document)
+                  // Welcome overlay gating (same-document) - handles orbit initialization
                   (function setupWelcomeOverlay(){
                     try {
                       const preEnabled = (cfg?.prePage?.enabled ?? true) !== false;
@@ -1279,7 +1495,26 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                       const overlay = document.getElementById('welcome-overlay');
                       const btn = document.getElementById('enter-btn-inline');
                       const entered = (() => { try { return sessionStorage.getItem(key); } catch { return null; } })();
-                      console.debug('[Welcome] Overlay setup', { preEnabled, entered, hasOverlay: !!overlay });
+                      const debugMode = cfg?.prePage?.animations?.debugMode ?? false;
+                      const forceAnimations = cfg?.prePage?.animations?.forceAnimations ?? false;
+                      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                      
+                      
+                      if (debugMode) {
+                        console.log('🎬 [Welcome Debug] Animation setup:', {
+                          preEnabled, 
+                          entered, 
+                          hasOverlay: !!overlay,
+                          forceAnimations,
+                          prefersReduced,
+                          overlayClasses: overlay?.className,
+                          cssVars: {
+                            overlayDuration: overlay?.style.getPropertyValue('--overlay-duration'),
+                            cardDuration: overlay?.style.getPropertyValue('--card-duration'),
+                            cardStartScale: overlay?.style.getPropertyValue('--card-start-scale')
+                          }
+                        });
+                      }
 
                       function prewarmAudio() {
                         try {
@@ -1296,17 +1531,121 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                       }
 
                       if (preEnabled && overlay && !entered) {
-                        overlay.style.display = 'block';
+                        if (debugMode) {
+                          console.log('🎬 [Welcome Debug] Starting fade-in animation sequence...');
+                        }
+                        
+                        // DO NOT initialize orbit system yet - wait until Enter is clicked
+                        
+                        // Show overlay with smooth fade-in animation
+                        // Use requestAnimationFrame to ensure CSS transition triggers properly
+                        requestAnimationFrame(() => {
+                          overlay.classList.add('visible');
+                          
+                          if (debugMode) {
+                            console.log('🎬 [Welcome Debug] Added "visible" class to overlay');
+                            console.log('🎬 [Welcome Debug] Overlay computed styles:', {
+                              opacity: getComputedStyle(overlay).opacity,
+                              visibility: getComputedStyle(overlay).visibility,
+                              transition: getComputedStyle(overlay).transition
+                            });
+                          }
+                          
+                          // Focus management for accessibility (after animation starts)
+                          const focusDelay = (cfg?.prePage?.animations?.focusDelay || 2) * 1000;
+                          if (debugMode) {
+                            console.log(`🎬 [Welcome Debug] Focus will trigger in ${focusDelay}ms`);
+                          }
+                          
+                          setTimeout(() => {
+                            const welcomeCard = overlay.querySelector('.welcome-card');
+                            if (welcomeCard) {
+                              welcomeCard.focus();
+                              if (debugMode) {
+                                console.log('🎬 [Welcome Debug] Focus applied to welcome card');
+                              }
+                            }
+                          }, focusDelay);
+                        });
+                        
                         btn?.addEventListener('click', async () => {
                           try { sessionStorage.setItem(key, '1'); } catch {}
+                          
+                          if (debugMode) {
+                            console.log('🎬 [Welcome Debug] Starting fade-out animation sequence...');
+                          }
+                          
+                          // Start fade-out animation immediately
+                          overlay.classList.remove('visible');
+                          
+                          // Trigger atom scale-up animation
+                          document.body.classList.add('entering');
+                          
+                          if (debugMode) {
+                            console.log('🎬 [Welcome Debug] Removed "visible" class from overlay, started atom scale-up');
+                          }
+                          
+                          // Prewarm audio during fade-out (non-blocking)
                           prewarmAudio();
-                          overlay.style.display = 'none';
-                          // Start orbits now that user has entered
-                          try { if (!window.orbitSystem?.isRunning) window.orbitSystem?.start(); } catch {}
+                          
+                          // Initialize and start orbits after fade-out completes
+                          const fadeOutDuration = (cfg?.prePage?.animations?.overlayFadeDuration || 2) * 1000;
+                          if (debugMode) {
+                            console.log(`🎬 [Welcome Debug] Orbits will initialize and start in ${fadeOutDuration}ms`);
+                          }
+                          
+                          setTimeout(() => {
+                            try { 
+                              // Initialize orbit system now
+                              orbitSystem.init();
+                              if (!window.orbitSystem?.isRunning) {
+                                window.orbitSystem?.start();
+                                if (debugMode) {
+                                  console.log('🎬 [Welcome Debug] Orbit system initialized and started');
+                                }
+                              }
+                              // Replace entering class with permanent show-atom class
+                              document.body.classList.remove('entering');
+                              document.body.classList.add('show-atom');
+                              
+                              // Remove welcome overlay from DOM completely to prevent interference with preview positioning
+                              if (overlay && overlay.parentNode) {
+                                overlay.parentNode.removeChild(overlay);
+                                if (debugMode) {
+                                  console.log('🎬 [Welcome Debug] Welcome overlay removed from DOM');
+                                }
+                              }
+                            } catch {}
+                          }, fadeOutDuration);
+                          
                         }, { once: true });
+                        
+                        // Enhanced keyboard support
+                        document.addEventListener('keydown', function handleEnterKey(e) {
+                          if (overlay.classList.contains('visible')) {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              btn?.click();
+                              document.removeEventListener('keydown', handleEnterKey);
+                            }
+                            // Trap focus within modal
+                            if (e.key === 'Tab') {
+                              e.preventDefault();
+                              btn?.focus();
+                            }
+                            // Close on Escape (though not typical for welcome screens)
+                            if (e.key === 'Escape') {
+                              // For now, just move focus back to button
+                              btn?.focus();
+                            }
+                          }
+                        });
                       } else {
-                        // No overlay → start orbits immediately
-                        try { if (!window.orbitSystem?.isRunning) window.orbitSystem?.start(); } catch {}
+                        // No overlay → initialize and start orbits immediately
+                        try { 
+                          orbitSystem.init();
+                          if (!window.orbitSystem?.isRunning) window.orbitSystem?.start(); 
+                        } catch {}
                       }
                     } catch {}
                   })();
@@ -2284,6 +2623,22 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 
                 // Position preview (configurable offset from electron with viewport edge detection)
                 const electronRect = electron.getBoundingClientRect();
+                
+                // Check if atom SVG has transform scale and adjust coordinates if needed
+                const atomSvg = electron.closest('svg');
+                const computedStyle = getComputedStyle(atomSvg);
+                const transform = computedStyle.transform;
+                
+                // Extract scale from transform matrix (if any)
+                let scale = 1;
+                if (transform && transform !== 'none') {
+                  const matrix = transform.match(/matrix\(([^)]+)\)/);
+                  if (matrix) {
+                    const values = matrix[1].split(',').map(parseFloat);
+                    scale = values[0]; // First value in matrix is scaleX
+                  }
+                }
+                
                 const previewWidth = cfg.electronPreview.width;
                 const previewHeight = cfg.electronPreview.height;
                 const offsetX = cfg.electronPreview.offsetX;
@@ -2291,6 +2646,7 @@ const cfg = { ...(atomConfig as any), shells: dynamicShells, viewport: dynamicVi
                 
                 let x = electronRect.right + offsetX;
                 let y = electronRect.top + offsetY;
+                
                 
                 // Check right edge of viewport
                 if (x + previewWidth > window.innerWidth) {

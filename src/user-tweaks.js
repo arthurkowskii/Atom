@@ -202,31 +202,31 @@ export const userTweaks = {
     
     // Audio settings
     audio: {
-      enabled: true,
-      volume: 0.4,        // Volume level (0-1)
+      enabled: false,     // Enable/disable bento card animation sounds
+      volume: 0,        // Volume level (0-1)
       syncWithAnimation: true,  // Sync audio with animation start
       
       // Card-specific pitches (musical notes)
       pitches: {
-        hero: 'C3',       // Low, impactful
-        stats: 'E3',      // Mid tone
-        actions: 'G3',    // Higher tone
-        tech: 'C4',       // Bright
-        gallery: 'E4',    // Visual, bright
-        process: 'G4',    // High, detailed
-        challenges: 'B3', // Mid-range
-        results: 'D4'     // Conclusive
+        hero: 'C3',
+        stats: 'E3',
+        actions: 'G3',
+        tech: 'C4',
+        gallery: 'E4',
+        process: 'G4',
+        challenges: 'B3', 
+        results: 'D4'     
       },
       
       // Tone synthesis settings
       synthesis: {
-        attack: 0.01,     // Quick bubble pop attack
-        decay: 0.3,       // Bubbly decay
-        sustain: 0,       // No sustain (pure burst)
-        release: 0.8,     // Gentle release
+        attack: 0.01, // Quick bubble pop attack
+        decay: 0.3, // Bubbly decay
+        sustain: 0, // No sustain (pure burst)
+        release: 0.8, // Gentle release
         chorus: {
-          frequency: 4,   // Wobble frequency
-          depth: 0.3      // Chorus depth
+          frequency: 4, // Wobble frequency
+          depth: 0.3 // Chorus depth
         }
       }
     }
@@ -279,7 +279,7 @@ export const userTweaks = {
 
   // 🔊 ATOM INTERFACE SOUNDS (Tone.js Placeholders)
   atomSounds: {
-    enabled: true,
+    enabled: false,
     volume: 0.2,        // Lower than bento sounds for subtlety
     
     // Sound events with placeholder Tone.js pitches
@@ -392,9 +392,32 @@ export const userTweaks = {
     enabled: true,
     path: '/welcome',
     storageKey: 'entered',       // sessionStorage key to mark entry
+    title: 'Bienvenue !',
+    description: 'Vous êtes sur le portfolio dArthur Kowskii. Ce site est encore en construction, et de nouvelles fonctionnalités sont prévues très bientôt !',
     buttonLabel: 'Enter Portfolio',
     noindex: true,               // add noindex robots meta on welcome page
-    audioPrewarm: true           // try to unlock audio on click
+    audioPrewarm: true,          // try to unlock audio on click
+    
+    // Animation timing controls
+    animations: {
+      overlayFadeDuration: 1,    // seconds - background fade in/out (currently 2s)
+      cardAnimationDuration: 1,  // seconds - card scale/movement (currently 1.8s) 
+      cardDelay: 0.5,              // seconds - delay before card starts moving (currently 0.5s)
+      focusDelay: 1,             // seconds - delay before focusing card (currently 1s)
+      
+      // Card starting position
+      cardStartScale: 0.1,       // starting scale (0-1, currently 0.3)
+      cardStartRotation: -10,    // starting rotation in degrees (currently -5)
+      cardStartY: 200,           // starting Y offset in pixels (currently 100px)
+      
+      // Animation easing
+      overlayEasing: 'ease-in-out',  // CSS easing for overlay fade
+      cardEasing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',  // CSS easing for card
+      
+      // Force animations (override reduced motion)
+      forceAnimations: true,     // true = ignore reduced motion preferences, false = respect them
+      debugMode: true            // true = show console debug info for animation states
+    }
   },
 
   // dY_ Gallery Layout (Bento)

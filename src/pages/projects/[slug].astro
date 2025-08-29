@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ProjectBento from '../../components/ProjectBento.astro';
+import atomConfig from '../../atom.config.js';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -25,6 +26,9 @@ if (!entry) {
 }
 
 const useBentoLayout = entry.data.useBentoLayout || false;
+
+// Extract only the bentoAnimations config for client-side use
+const bentoAnimationsConfig = atomConfig.bentoAnimations || {};
 ---
 
 <html lang="en">
@@ -227,6 +231,11 @@ const useBentoLayout = entry.data.useBentoLayout || false;
           window.location.assign(url);
         }
       });
+    </script>
+    
+    <!-- Set global atomConfig for ProjectBento component -->
+    <script define:vars={{ bentoAnimationsConfig }}>
+      window.atomConfig = { bentoAnimations: bentoAnimationsConfig };
     </script>
   </body>
   </html>

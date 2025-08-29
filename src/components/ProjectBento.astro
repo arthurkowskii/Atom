@@ -2117,7 +2117,8 @@ const accentColorRgb = hexRgb.match(/.{2}/g)?.map(hex => parseInt(hex, 16)).join
             // PLACEHOLDER: Replace with Web Audio API buffer source playback
             // Use Tone.now() + small offset to prevent timing conflicts
             const when = now() + 0.01; // 10ms offset to ensure proper scheduling
-            this.synth.triggerAttackRelease(pitch, '8n', when);
+            // TEMPORARILY DISABLED: Commenting out sound playing
+            // this.synth.triggerAttackRelease(pitch, '8n', when);
           } catch (error) {
             console.warn(`Audio error for ${cardType}:`, error);
           }

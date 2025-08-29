@@ -11,7 +11,7 @@ useBentoLayout: true
 # Bento Layout Configuration
 bento:
   # Accent color theme
-  accentColor: "#f5f5f5ff"
+  accentColor: "#2b2b2bff"
   
   # Centralized assets folder for hero/logo and gallery images
   assetsFolder: "/src/content/projects/1_Music/Assets_hr"
